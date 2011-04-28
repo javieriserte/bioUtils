@@ -22,7 +22,6 @@ public class DistanceMatrix {
 		this.numberOfOTUS = numberOfOTU;
 		this.setData(new double[positions]);
 		this.names = new String[numberOfOTU];
-		
 	}
 
 	// GETTERS & SETTERS
@@ -75,7 +74,6 @@ public class DistanceMatrix {
 	public void clearDescription() {
 		this.description="";
 	}
-
 	
 	public void setValue(int posX, int posY, double value) {
 		int pos =0;
@@ -107,8 +105,31 @@ public class DistanceMatrix {
 		return this.getData()[pos];
 	}
 	
+	public void printToFile(DistanceMatrixWriter writer, String filepath){
+		writer.printToFile(this, filepath);
+	}
 	
+	/**
+	 * Exporta los datos de dos matrices de distancia encolumnados para poder graficar la correlación entre ellos.
+	 * Asume que las matrices contienen los mismo OTUs y en la misma posición.
+	 * 
+	 * @param otherMatrix La otra Matriz con la que se compara.
+	 * @return String que es el texto encolumanado de los valores de la primer matriz y el correspondiente valor de la sengunda matriz.
+	 */
+	public String MatrixCorrelationWith(DistanceMatrix otherMatrix) {
+		String result="";
 		
+		for (int i=0; i<this.getNumberOfOTU()-1;i++) {
+			for (int j=i+1; j<this.getNumberOfOTU();j++) {
+				result = result + this.getValue(i, j) + "\t" + otherMatrix.getValue(i, j)+ "\n";
+			}
+		}
+		return result;
+	}
+	
+	
+	// MÉTODOS PROTEGIDOS Y PRIVADOS
+	
 	protected double searchMax(){
 		// Se asume que no hay distancias negativas
 		double maxValue=0;
@@ -123,9 +144,5 @@ public class DistanceMatrix {
 		if (posX>posY) {int tmp = posY; posY=posX; posX=tmp;}
 		realPos = (posY-1)*posY/2+posX;
 		return realPos;
-	}
-	
-	public void printToFile(DistanceMatrixWriter writer, String filepath){
-		writer.printToFile(this, filepath);
 	}
 }
