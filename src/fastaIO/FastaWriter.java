@@ -16,8 +16,7 @@ public class FastaWriter {
 		}  
 		pw.write(">" + description);
 		pw.write(sequence);
-		
-		
+		pw.close();
 	}
 	
 }
