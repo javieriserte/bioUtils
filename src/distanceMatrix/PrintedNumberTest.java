@@ -9,7 +9,10 @@ public class PrintedNumberTest {
 	public static void main(String[] args) throws ImposibleNumberRepresentationException {
 		// TODO Auto-generated method stub
 //		System.out.println(PrintedNumber.formatedFloat(14, 5, 1));
-		System.out.println(PrintedNumber.formatedFloat(-11231299.67, 1, 7));
+//		System.out.println(PrintedNumber.formatedFloat(-112399.67, 1, 7));
+		
+		
+		
 	}
 
 }

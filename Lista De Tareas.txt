@@ -1,0 +1,14 @@
+1) incorporar métodos para desplazar e intercambiar filas y columnas de la matriz.
+2) Extender una matriz de distancia que pueda guardar los datos de desviación estandar como mega.
+	Capaz que se puede hacer que se le pidan datos de la parte superior o inferior de la matriz.
+	por ejemplo. getvalue(upper o lower, x, y)
+3) Hacer el matriz reader para el formato phylip.
+4) Buscar si existe una especificación de los formatos de Mega y phylip y hacer la lectura con javacc.
+5) ¿Implementar un NJ o UPGMA ...?
+6) Mejorar la separación de paquetes.
+	Hacer un paquete para todas las excepciones.
+	Separar la clase de PrintedNumber en otro proyecto o paquete?
+7) Tratar de ver si se puede leer el formato de los números, sin inportar que el separador sea un punto o una coma.
+	Ver internacionalización.
+	Ver NumberFormat
+8) Implementar singletons.
