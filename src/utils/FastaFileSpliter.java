@@ -17,12 +17,9 @@ public class FastaFileSpliter {
 		FastaMultipleReader fmr = new FastaMultipleReader();
 		FastaWriter fw = new FastaWriter();
 
-		//String infile = JOptionPane.showInputDialog(null, "Input File: ",  "Enter Input File", 1);
-		//String outdir = JOptionPane.showInputDialog(null, "Output Dir: ",  "Enter Output Dir", 1);
-		
-		String infile = "C:\\JAvier\\DropBox\\My Dropbox\\Investigacion\\Sandra\\Filogenia SLEV - Mayo 2011\\Datos de Partida\\SLEV ORF nucleotido.fas";
-		String outdir = "C:\\JAvier\\DropBox\\My Dropbox\\Investigacion\\Sandra\\Filogenia SLEV - Mayo 2011\\Datos de Partida\\separados";		
-		
+		String infile = JOptionPane.showInputDialog(null, "Input File: ",  "Enter Input File", 1);
+		String outdir = JOptionPane.showInputDialog(null, "Output Dir: ",  "Enter Output Dir", 1);
+	
 		File file = new File(infile);
 		List<Pair<String, String>> fas = null;
 		try {
@@ -30,8 +27,6 @@ public class FastaFileSpliter {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
-		System.out.println(fas);
 		
 		for (Pair<String, String> pair : fas) {
 			String s = pair.getSecond();
