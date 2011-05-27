@@ -14,8 +14,8 @@ public class FastaWriter {
 		} catch (IOException e) {
 			System.out.println("An error ocurred while writing the file");
 		}  
-		pw.print(">" + description);
-		pw.print(sequence);
+		pw.println(">" + description);
+		pw.println(sequence);
 		pw.close();
 	}
 	
