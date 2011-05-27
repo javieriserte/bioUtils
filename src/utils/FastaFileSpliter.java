@@ -29,10 +29,10 @@ public class FastaFileSpliter {
 		}
 		
 		for (Pair<String, String> pair : fas) {
-			String s = pair.getFirst();
-			String d = pair.getSecond();
+			String s = pair.getSecond();
+			String d = pair.getFirst();
 			
-			fw.writeFile(outdir + "\\" + file.getName(), s, d);
+			fw.writeFile(outdir + "\\" + d.substring(0,30) , s, d);
 		}
 	}
 }
