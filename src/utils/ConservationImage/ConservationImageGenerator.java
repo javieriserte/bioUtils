@@ -1,6 +1,8 @@
 package utils.ConservationImage;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.TrayIcon.MessageType;
 import java.awt.image.BufferedImage;
@@ -66,8 +68,13 @@ public class ConservationImageGenerator {
 	}
 	
 	public BufferedImage 		render								(ColoringStrategy color, double[] data, int windowLen) {
-		BufferedImage bi = new BufferedImage(data.length-windowLen+1, 50, BufferedImage.TYPE_INT_RGB);
+		BufferedImage bi = new BufferedImage(data.length-windowLen+1, 100, BufferedImage.TYPE_INT_RGB);
 		Graphics2D g = bi.createGraphics();
+
+		
+		g.setColor(Color.white);
+		g.fillRect(0, 0, bi.getWidth(), bi.getHeight());
+
 		
 		double windowValue =0;
 		for (int i =0; i<windowLen;i++) {
@@ -85,6 +92,37 @@ public class ConservationImageGenerator {
 			setColorOnGraphic(g,xPos,color.getColor(windowValue));
 			
 		}
+		
+		
+		g.setColor(Color.BLACK);
+		
+		int minRuleDiv = 100;
+		int maxRuleDiv = 1000;
+		int midRuleDiv = 500;
+		
+		
+		
+		g.setStroke(new BasicStroke(4));
+		
+		g.drawLine(0, 80, bi.getWidth(), 80);
+		for (int i=0;i<data.length-windowLen+1;i=i+minRuleDiv) {
+			g.drawLine(i, 75, i, 80);
+		}
+
+		for (int i=0;i<data.length-windowLen+1;i=i+midRuleDiv) {
+			g.drawLine(i, 70, i, 80);
+		}
+
+		g.setFont(new Font("Verdana", Font.BOLD, 18));
+		for (int i=0;i<data.length-windowLen+1;i=i+maxRuleDiv) {
+			g.drawLine(i, 60, i, 80);
+			String numberString = String.valueOf(i); 
+			int h= g.getFontMetrics().bytesWidth(numberString.getBytes(), 0, numberString.length());
+			g.drawString( numberString, i - (h/2) , 98);
+		}
+		
+
+		
 		return bi;
 	}
 	
