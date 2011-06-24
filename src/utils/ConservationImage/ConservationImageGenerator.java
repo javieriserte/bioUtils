@@ -140,7 +140,7 @@ public class ConservationImageGenerator {
 			e.printStackTrace();
 		}
 		
-		Len = alin.get(0).getFirst().length();
+		Len = alin.get(0).getSecond().length();
 		if (isDNA) N=4; else N=20;
 		p = new double[Len][N];
 		S_max = Math.log(N)/Math.log(2);
@@ -155,10 +155,12 @@ public class ConservationImageGenerator {
 			double s_obs=0;
 
 			for (int j = 0; j < N; j++) {
-				s_obs = s_obs +  p[i][j] *  Math.log(p[i][j]) / Math.log(2);
+				if (p[i][j]!= 0 ) { 
+					s_obs = s_obs +  p[i][j] *  Math.log(p[i][j]) / Math.log(2);
+				}
 			}
 			 
-			data[i] = S_max + s_obs;
+			data[i] = (S_max + s_obs) / S_max;
 		}
 
 		return data;
@@ -188,14 +190,20 @@ public class ConservationImageGenerator {
 		
 		// count caracters in each postition
 		
-		for (int i = 0; i<p[0].length; i++) {
+		for (int i = 0; i<p.length; i++) {
 			//iterate over each position
 			
 			for (int j = 0; j < n_seqs; j++) {
 				//iterate over each sequence
 
-				char c = Character.toUpperCase(alin.get(j).getFirst().charAt(i));
-				p[i][chars.lastIndexOf(c)]++;
+				char c = Character.toUpperCase(alin.get(j).getSecond().charAt(i));
+				
+				try {
+					p[i][chars.lastIndexOf(c)]++;	
+				} catch (Exception e) {
+					System.out.println("el caracter es: " +  c + " y el índice es: " + chars.lastIndexOf(c));
+				}
+				
 				
 			} 
 			
@@ -234,24 +242,30 @@ public class ConservationImageGenerator {
 
 		int responseInt=0;
 		String response= null; 
-		responseInt = JOptionPane.showOptionDialog(null, "Crear Imagen desde Clustal? Elegir No implica crear la imagen a pritr del alineamiento usando el contenido informativo", "Elegir método", JOptionPane.YES_NO_OPTION ,JOptionPane.QUESTION_MESSAGE, null, null, null);
+		responseInt = JOptionPane.showOptionDialog(null, "Crear Imagen desde Clustal? Elegir 'No' implica crear la imagen a pritr del alineamiento usando el contenido informativo", "Elegir método", JOptionPane.YES_NO_OPTION ,JOptionPane.QUESTION_MESSAGE, null, null, null);
 		
 		if (responseInt== JOptionPane.YES_NO_OPTION) {
-			response = JOptionPane.showInputDialog(null, "Clustal", "Escribir la secuencia de simbolos de conservación de clustal",  JOptionPane.QUESTION_MESSAGE);
+			response = JOptionPane.showInputDialog(null, "Escribir la secuencia de simbolos de conservación de clustal",  "Clustal", JOptionPane.QUESTION_MESSAGE);
 			cig.setData( cig.getDataFromClustal(response) );	
 			System.out.println( cig.getDataFromClustal(response) );
 			
 		} else {
-			response = JOptionPane.showInputDialog(null, "Buscar Archivo", "Escribir la ruta del alineamiento",  JOptionPane.QUESTION_MESSAGE);
+			response = JOptionPane.showInputDialog(null, "Escribir la ruta del alineamiento", "Buscar Archivo",   JOptionPane.QUESTION_MESSAGE);
 			
 			responseInt = JOptionPane.showOptionDialog(null, "Es DNA ? Elegir No implica que son proteinas", "DNA O PROTEINA", JOptionPane.YES_NO_OPTION ,JOptionPane.QUESTION_MESSAGE, null, null, null);
 			
 			cig.setData( cig.getDataFromInformationContent(new File(response), responseInt == JOptionPane.YES_OPTION) );
 		}
 		
+		response = JOptionPane.showInputDialog(null, "Escriba el tamaño de la ventana que quiere usar", "Elegir Ventana", JOptionPane.QUESTION_MESSAGE);
+		
+		int windowSize = Integer.parseInt(response);
+		
+		response = JOptionPane.showInputDialog(null, "Escribir la ruta del archivo de salida",  "Archivo de Salida", JOptionPane.QUESTION_MESSAGE);
+		
 		
 		try {
-			cig.printImage(new File("/","image.jpg"), new RedBlueColorringStrategy(),21 );
+			cig.printImage(new File(response), new RedBlueColorringStrategy(),windowSize );
 		} catch (ImageFormatException e) {
 			System.out.println("Hubo Un error con el formato de la imagen");
 			e.printStackTrace();
