@@ -332,7 +332,7 @@ public class ConservationImageGenerator {
 			} 
 		}
 		
-		// count caracters in each postition
+		// count characters in each position
 		
 		for (int i = 0; i<p.length; i++) {
 			//iterate over each position
