@@ -67,9 +67,9 @@ public class TextConsumer {
 	 */
 	public String consumeLine() throws IOException {
 
-		String winEOF = "\r\n";
-		String linuxEOF = "\n";
-		String macEOF = "\r";
+		final String winEOF = "\r\n";
+		final String linuxEOF = "\n";
+		final String macEOF = "\r";
 		String result = "";
 		int loc;
 		this.transfer();
