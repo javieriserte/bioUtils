@@ -1,8 +1,8 @@
 Work To Do:
 	1 - Change Implementation using a compiler-compiler.
-	2 - Write the code for FastaWriter
+	2 - Write the code for FastaWriter // DONE
 	3 - Implement test case units.
 	4 - Include more examples.
 	5 - Decouple reading the file and interpret contents.
 	6 - Manage Exceptions when format are incorrect.
-	7 - Support sequences interleaved in multiple lines.
+	7 - Support sequences interleaved in multiple lines. // DONE
