@@ -20,50 +20,48 @@ public class OrfFinder {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		System.out.println(OrfFinder.nextORF("agcttggatggggcagattgttgccgttttccaagctatccctgagattctaaacgaggcaattaacattgtgataattgtgatcataatgttcaccctcatcaagggcgttttcaatctatacaaatccggtcttttccagctggtcatctttctcctactctgtggcaagcgttgtgactcatcattgctatcaggattcaatctggagacagttcatttcaacatgtcactgttgagctccatccctatggtctctgaacagcagcactgcatccagcacaatcacagctccataaccttcagtttgctgaccaacaagtccgacttggaaaagtgcaatttcacccgcctgcaagctgttgacagggtgatctttgatctgttcagagagtttcatcaccgtgttggggattttcctgttacttctgatctgaaatgctctcacaacaccagctacagagtgatagaatatgaagtcaccaaagagagtctccctcgattgcaggaagctgtgagcaccttgttcccagacctccatctctccgaagataggtttctgcaaattcaggcccatgatgacaagaactgcactggtctacacccattgaactacctgaggctcctgaaagagaattcagaaacccactacaaagtgaggaaattaatgaaattgtttcagtggtctttgagtgatgagacaggtagccctctgccaggtggacactgtctagaaagatggctcatctttgcgtctgatataaagtgctttgataatgcagcgattgccaaatgcaataaagagcatgatgaggagttctgtgacatgttgaggctatttgactacaacaaagcaagtattgccaagcttaggggcgaagcctcaagctcgatcaacttgttgtcggggagaatcaatgccatcatttcagacacacttttgatgagatcatccctcaagaggctgatgggcataccatactgcaattatacaaagttctggtatttaaaccatacaaaactggggatacattctttaccccgatgttggctggttagtaatgggagttacctcaacgaaacaaaatttactcatgatatggaagatgaggcagataaactgctgaccgagatgctaaagaaagagtatgttaggagacaagagaaaacacccattactctgatggacatactgatgtttagtgtctctttctatatgttttctgtaacactatgcatatgcaacatacccacccatcggcacatcacaggtttgccgtgtcccaaaccacacagactcagaaagaatggcacctgtgcctgtggcttctttaagtcaataaacaggtccactggttgggccaaacactgagagtcccaacacagggaccccatgaccgtcactccgctttgcggagtgacggtcatggggtccgtggagactcacagactcagcttggctgctgttctgaagatcatgtctgcaggcagcaagttccttatgggctcttggtaaagttgcccattcactgctgattcatacatgatacagtccatcagtgcacaatgtggtgtaatctctttcttccctttcttggacttggtcacaacaattccagtatgctggttgcaaaaggtcttgtatgagtcccaaacctggtcctcgaactttctagaggcctcttttgacatttgaatatcaatgaatttcacgtcccttctaccttgactgtgaaggagtttttcaatgtcatccttcccctgacaggttatcaccatgccaagggggagtctttccaacactgctgtggttagtccaggttgggtggagcaaagctgagtgaaatccatgccatgacagtacttgctgtcatttttgaattgtttttgatccgtgggctctctgtagaagtggaggcaaagtctttcttctggctggaatattgctatctccaccggatcatcaggtctaccttcaatgtccatccatgttctccccttggggttcaggtttttcataatgtcatctaagagttgagattggctgaagctcacacccacaggaaattggtggggggcttttgctctttcgttctgtggaggtgtagggtcctttggagtcatatcaatgactgtgttgtcccaggatctgccttttatgctggttctggaagagatgtatggccaaccctcacctgataagcagatcttgtatagtagattctcatacgggtttctttctcctggaacctcagacacaaacatctgtactttgttccttgcagttagagttgccttgatcacgtcatcaatatttctgctgttcaattcaatggtctccaacatgtctcctcccttcatgagagacgcaccagctttgaccaatgaagcaagactcaagttgtaacctgaaatgttgatcgcagaatcacaattgcttacatagtctaaaactggatgcttgttctttagcttgtccagatcatccatgttgggaaactttgcggtgtaaatgaggcccagatctacacaggcttggacactatcattcagatctacccttgtctgtctggttaaacaggccagtgtcagacttggcatagtgccaaactgattgttcaggagagaagagtctttgacgtcccagaccctcacaactgtgttccttgttggcctcggggtgcccataccaatcatgttgaggagctctgacctcctgcccaattgatcctgactcagattccccctatagactccagggcctctggcttcggtcctggtcaccttctttttgagtttctccagatctgttgccagaatcatcaactcatcagaggttagtttcccaacaccaaccctgttcttcttattgctcgatttaaggtccaccaagccatccactgtctggttcaattctctcaatttcattaggtcctcgtcattccttttatcctttctcatgagtctctggacatcggacaccatagagaaatcaaggccgttgatcagactcacggcatccttgacaactttggctctcacgtccgtgcaaaacggggagagctctcttctcagagtctgtaaccaaaggaaggatttcacttcttttgattgggacatattgtgagacaagatgtcgacaagcgcagaagagaaagctcactggaggaagtaagtgtcctataaacg",100)[0]);
-		System.out.println(OrfFinder.nextComplementatyOrfFromEnd("agcttggatggggcagattgttgccgttttccaagctatccctgagattctaaacgaggcaattaacattgtgataattgtgatcataatgttcaccctcatcaagggcgttttcaatctatacaaatccggtcttttccagctggtcatctttctcctactctgtggcaagcgttgtgactcatcattgctatcaggattcaatctggagacagttcatttcaacatgtcactgttgagctccatccctatggtctctgaacagcagcactgcatccagcacaatcacagctccataaccttcagtttgctgaccaacaagtccgacttggaaaagtgcaatttcacccgcctgcaagctgttgacagggtgatctttgatctgttcagagagtttcatcaccgtgttggggattttcctgttacttctgatctgaaatgctctcacaacaccagctacagagtgatagaatatgaagtcaccaaagagagtctccctcgattgcaggaagctgtgagcaccttgttcccagacctccatctctccgaagataggtttctgcaaattcaggcccatgatgacaagaactgcactggtctacacccattgaactacctgaggctcctgaaagagaattcagaaacccactacaaagtgaggaaattaatgaaattgtttcagtggtctttgagtgatgagacaggtagccctctgccaggtggacactgtctagaaagatggctcatctttgcgtctgatataaagtgctttgataatgcagcgattgccaaatgcaataaagagcatgatgaggagttctgtgacatgttgaggctatttgactacaacaaagcaagtattgccaagcttaggggcgaagcctcaagctcgatcaacttgttgtcggggagaatcaatgccatcatttcagacacacttttgatgagatcatccctcaagaggctgatgggcataccatactgcaattatacaaagttctggtatttaaaccatacaaaactggggatacattctttaccccgatgttggctggttagtaatgggagttacctcaacgaaacaaaatttactcatgatatggaagatgaggcagataaactgctgaccgagatgctaaagaaagagtatgttaggagacaagagaaaacacccattactctgatggacatactgatgtttagtgtctctttctatatgttttctgtaacactatgcatatgcaacatacccacccatcggcacatcacaggtttgccgtgtcccaaaccacacagactcagaaagaatggcacctgtgcctgtggcttctttaagtcaataaacaggtccactggttgggccaaacactgagagtcccaacacagggaccccatgaccgtcactccgctttgcggagtgacggtcatggggtccgtggagactcacagactcagcttggctgctgttctgaagatcatgtctgcaggcagcaagttccttatgggctcttggtaaagttgcccattcactgctgattcatacatgatacagtccatcagtgcacaatgtggtgtaatctctttcttccctttcttggacttggtcacaacaattccagtatgctggttgcaaaaggtcttgtatgagtcccaaacctggtcctcgaactttctagaggcctcttttgacatttgaatatcaatgaatttcacgtcccttctaccttgactgtgaaggagtttttcaatgtcatccttcccctgacaggttatcaccatgccaagggggagtctttccaacactgctgtggttagtccaggttgggtggagcaaagctgagtgaaatccatgccatgacagtacttgctgtcatttttgaattgtttttgatccgtgggctctctgtagaagtggaggcaaagtctttcttctggctggaatattgctatctccaccggatcatcaggtctaccttcaatgtccatccatgttctccccttggggttcaggtttttcataatgtcatctaagagttgagattggctgaagctcacacccacaggaaattggtggggggcttttgctctttcgttctgtggaggtgtagggtcctttggagtcatatcaatgactgtgttgtcccaggatctgccttttatgctggttctggaagagatgtatggccaaccctcacctgataagcagatcttgtatagtagattctcatacgggtttctttctcctggaacctcagacacaaacatctgtactttgttccttgcagttagagttgccttgatcacgtcatcaatatttctgctgttcaattcaatggtctccaacatgtctcctcccttcatgagagacgcaccagctttgaccaatgaagcaagactcaagttgtaacctgaaatgttgatcgcagaatcacaattgcttacatagtctaaaactggatgcttgttctttagcttgtccagatcatccatgttgggaaactttgcggtgtaaatgaggcccagatctacacaggcttggacactatcattcagatctacccttgtctgtctggttaaacaggccagtgtcagacttggcatagtgccaaactgattgttcaggagagaagagtctttgacgtcccagaccctcacaactgtgttccttgttggcctcggggtgcccataccaatcatgttgaggagctctgacctcctgcccaattgatcctgactcagattccccctatagactccagggcctctggcttcggtcctggtcaccttctttttgagtttctccagatctgttgccagaatcatcaactcatcagaggttagtttcccaacaccaaccctgttcttcttattgctcgatttaaggtccaccaagccatccactgtctggttcaattctctcaatttcattaggtcctcgtcattccttttatcctttctcatgagtctctggacatcggacaccatagagaaatcaaggccgttgatcagactcacggcatccttgacaactttggctctcacgtccgtgcaaaacggggagagctctcttctcagagtctgtaaccaaaggaaggatttcacttcttttgattgggacatattgtgagacaagatgtcgacaagcgcagaagagaaagctcactggaggaagtaagtgtcctataaacg",100)[0]);
+//		System.out.println(OrfFinder.nextORF("agcttggatggggcagattgttgccgttttccaagctatccctgagattctaaacgaggcaattaacattgtgataattgtgatcataatgttcaccctcatcaagggcgttttcaatctatacaaatccggtcttttccagctggtcatctttctcctactctgtggcaagcgttgtgactcatcattgctatcaggattcaatctggagacagttcatttcaacatgtcactgttgagctccatccctatggtctctgaacagcagcactgcatccagcacaatcacagctccataaccttcagtttgctgaccaacaagtccgacttggaaaagtgcaatttcacccgcctgcaagctgttgacagggtgatctttgatctgttcagagagtttcatcaccgtgttggggattttcctgttacttctgatctgaaatgctctcacaacaccagctacagagtgatagaatatgaagtcaccaaagagagtctccctcgattgcaggaagctgtgagcaccttgttcccagacctccatctctccgaagataggtttctgcaaattcaggcccatgatgacaagaactgcactggtctacacccattgaactacctgaggctcctgaaagagaattcagaaacccactacaaagtgaggaaattaatgaaattgtttcagtggtctttgagtgatgagacaggtagccctctgccaggtggacactgtctagaaagatggctcatctttgcgtctgatataaagtgctttgataatgcagcgattgccaaatgcaataaagagcatgatgaggagttctgtgacatgttgaggctatttgactacaacaaagcaagtattgccaagcttaggggcgaagcctcaagctcgatcaacttgttgtcggggagaatcaatgccatcatttcagacacacttttgatgagatcatccctcaagaggctgatgggcataccatactgcaattatacaaagttctggtatttaaaccatacaaaactggggatacattctttaccccgatgttggctggttagtaatgggagttacctcaacgaaacaaaatttactcatgatatggaagatgaggcagataaactgctgaccgagatgctaaagaaagagtatgttaggagacaagagaaaacacccattactctgatggacatactgatgtttagtgtctctttctatatgttttctgtaacactatgcatatgcaacatacccacccatcggcacatcacaggtttgccgtgtcccaaaccacacagactcagaaagaatggcacctgtgcctgtggcttctttaagtcaataaacaggtccactggttgggccaaacactgagagtcccaacacagggaccccatgaccgtcactccgctttgcggagtgacggtcatggggtccgtggagactcacagactcagcttggctgctgttctgaagatcatgtctgcaggcagcaagttccttatgggctcttggtaaagttgcccattcactgctgattcatacatgatacagtccatcagtgcacaatgtggtgtaatctctttcttccctttcttggacttggtcacaacaattccagtatgctggttgcaaaaggtcttgtatgagtcccaaacctggtcctcgaactttctagaggcctcttttgacatttgaatatcaatgaatttcacgtcccttctaccttgactgtgaaggagtttttcaatgtcatccttcccctgacaggttatcaccatgccaagggggagtctttccaacactgctgtggttagtccaggttgggtggagcaaagctgagtgaaatccatgccatgacagtacttgctgtcatttttgaattgtttttgatccgtgggctctctgtagaagtggaggcaaagtctttcttctggctggaatattgctatctccaccggatcatcaggtctaccttcaatgtccatccatgttctccccttggggttcaggtttttcataatgtcatctaagagttgagattggctgaagctcacacccacaggaaattggtggggggcttttgctctttcgttctgtggaggtgtagggtcctttggagtcatatcaatgactgtgttgtcccaggatctgccttttatgctggttctggaagagatgtatggccaaccctcacctgataagcagatcttgtatagtagattctcatacgggtttctttctcctggaacctcagacacaaacatctgtactttgttccttgcagttagagttgccttgatcacgtcatcaatatttctgctgttcaattcaatggtctccaacatgtctcctcccttcatgagagacgcaccagctttgaccaatgaagcaagactcaagttgtaacctgaaatgttgatcgcagaatcacaattgcttacatagtctaaaactggatgcttgttctttagcttgtccagatcatccatgttgggaaactttgcggtgtaaatgaggcccagatctacacaggcttggacactatcattcagatctacccttgtctgtctggttaaacaggccagtgtcagacttggcatagtgccaaactgattgttcaggagagaagagtctttgacgtcccagaccctcacaactgtgttccttgttggcctcggggtgcccataccaatcatgttgaggagctctgacctcctgcccaattgatcctgactcagattccccctatagactccagggcctctggcttcggtcctggtcaccttctttttgagtttctccagatctgttgccagaatcatcaactcatcagaggttagtttcccaacaccaaccctgttcttcttattgctcgatttaaggtccaccaagccatccactgtctggttcaattctctcaatttcattaggtcctcgtcattccttttatcctttctcatgagtctctggacatcggacaccatagagaaatcaaggccgttgatcagactcacggcatccttgacaactttggctctcacgtccgtgcaaaacggggagagctctcttctcagagtctgtaaccaaaggaaggatttcacttcttttgattgggacatattgtgagacaagatgtcgacaagcgcagaagagaaagctcactggaggaagtaagtgtcctataaacg",100)[0]);
+//		System.out.println(OrfFinder.nextComplementatyOrfFromEnd("agcttggatggggcagattgttgccgttttccaagctatccctgagattctaaacgaggcaattaacattgtgataattgtgatcataatgttcaccctcatcaagggcgttttcaatctatacaaatccggtcttttccagctggtcatctttctcctactctgtggcaagcgttgtgactcatcattgctatcaggattcaatctggagacagttcatttcaacatgtcactgttgagctccatccctatggtctctgaacagcagcactgcatccagcacaatcacagctccataaccttcagtttgctgaccaacaagtccgacttggaaaagtgcaatttcacccgcctgcaagctgttgacagggtgatctttgatctgttcagagagtttcatcaccgtgttggggattttcctgttacttctgatctgaaatgctctcacaacaccagctacagagtgatagaatatgaagtcaccaaagagagtctccctcgattgcaggaagctgtgagcaccttgttcccagacctccatctctccgaagataggtttctgcaaattcaggcccatgatgacaagaactgcactggtctacacccattgaactacctgaggctcctgaaagagaattcagaaacccactacaaagtgaggaaattaatgaaattgtttcagtggtctttgagtgatgagacaggtagccctctgccaggtggacactgtctagaaagatggctcatctttgcgtctgatataaagtgctttgataatgcagcgattgccaaatgcaataaagagcatgatgaggagttctgtgacatgttgaggctatttgactacaacaaagcaagtattgccaagcttaggggcgaagcctcaagctcgatcaacttgttgtcggggagaatcaatgccatcatttcagacacacttttgatgagatcatccctcaagaggctgatgggcataccatactgcaattatacaaagttctggtatttaaaccatacaaaactggggatacattctttaccccgatgttggctggttagtaatgggagttacctcaacgaaacaaaatttactcatgatatggaagatgaggcagataaactgctgaccgagatgctaaagaaagagtatgttaggagacaagagaaaacacccattactctgatggacatactgatgtttagtgtctctttctatatgttttctgtaacactatgcatatgcaacatacccacccatcggcacatcacaggtttgccgtgtcccaaaccacacagactcagaaagaatggcacctgtgcctgtggcttctttaagtcaataaacaggtccactggttgggccaaacactgagagtcccaacacagggaccccatgaccgtcactccgctttgcggagtgacggtcatggggtccgtggagactcacagactcagcttggctgctgttctgaagatcatgtctgcaggcagcaagttccttatgggctcttggtaaagttgcccattcactgctgattcatacatgatacagtccatcagtgcacaatgtggtgtaatctctttcttccctttcttggacttggtcacaacaattccagtatgctggttgcaaaaggtcttgtatgagtcccaaacctggtcctcgaactttctagaggcctcttttgacatttgaatatcaatgaatttcacgtcccttctaccttgactgtgaaggagtttttcaatgtcatccttcccctgacaggttatcaccatgccaagggggagtctttccaacactgctgtggttagtccaggttgggtggagcaaagctgagtgaaatccatgccatgacagtacttgctgtcatttttgaattgtttttgatccgtgggctctctgtagaagtggaggcaaagtctttcttctggctggaatattgctatctccaccggatcatcaggtctaccttcaatgtccatccatgttctccccttggggttcaggtttttcataatgtcatctaagagttgagattggctgaagctcacacccacaggaaattggtggggggcttttgctctttcgttctgtggaggtgtagggtcctttggagtcatatcaatgactgtgttgtcccaggatctgccttttatgctggttctggaagagatgtatggccaaccctcacctgataagcagatcttgtatagtagattctcatacgggtttctttctcctggaacctcagacacaaacatctgtactttgttccttgcagttagagttgccttgatcacgtcatcaatatttctgctgttcaattcaatggtctccaacatgtctcctcccttcatgagagacgcaccagctttgaccaatgaagcaagactcaagttgtaacctgaaatgttgatcgcagaatcacaattgcttacatagtctaaaactggatgcttgttctttagcttgtccagatcatccatgttgggaaactttgcggtgtaaatgaggcccagatctacacaggcttggacactatcattcagatctacccttgtctgtctggttaaacaggccagtgtcagacttggcatagtgccaaactgattgttcaggagagaagagtctttgacgtcccagaccctcacaactgtgttccttgttggcctcggggtgcccataccaatcatgttgaggagctctgacctcctgcccaattgatcctgactcagattccccctatagactccagggcctctggcttcggtcctggtcaccttctttttgagtttctccagatctgttgccagaatcatcaactcatcagaggttagtttcccaacaccaaccctgttcttcttattgctcgatttaaggtccaccaagccatccactgtctggttcaattctctcaatttcattaggtcctcgtcattccttttatcctttctcatgagtctctggacatcggacaccatagagaaatcaaggccgttgatcagactcacggcatccttgacaactttggctctcacgtccgtgcaaaacggggagagctctcttctcagagtctgtaaccaaaggaaggatttcacttcttttgattgggacatattgtgagacaagatgtcgacaagcgcagaagagaaagctcactggaggaagtaagtgtcctataaacg",100)[0]);
 		
 		FastaMultipleReader fmr = new FastaMultipleReader();
 		
 		try {
-			List<Pair<String,String>> res = fmr.readFile("C:\\JAvier\\DropBox\\My Dropbox\\Investigacion\\Tesis\\Figuras\\#Intro.Filogenias\\arena_S.fas");
+			List<Pair<String,String>> res = fmr.readFile("C:\\JAvier\\Bioinfo\\blast-2.2.24+\\bin\\z.fas");
 
-			FileWriter bf = new FileWriter("C:\\JAvier\\DropBox\\My Dropbox\\Investigacion\\Tesis\\Figuras\\#Intro.Filogenias\\arena_S.desc",false);
-			FileWriter bfg = new FileWriter("C:\\JAvier\\DropBox\\My Dropbox\\Investigacion\\Tesis\\Figuras\\#Intro.Filogenias\\arena_S.G.fas",false);
-			FileWriter bfn = new FileWriter("C:\\JAvier\\DropBox\\My Dropbox\\Investigacion\\Tesis\\Figuras\\#Intro.Filogenias\\arena_S.N.fas",false);
-
+			System.out.println("hay " + res.size() + " secuencias en el archivo");
 			
+			FileWriter bf = new FileWriter("C:\\JAvier\\Bioinfo\\blast-2.2.24+\\bin\\zs.seq",false);
 			
 			for (Pair<String, String> pair : res) {
 				
-				
-				Object[] g = OrfFinder.nextORF(pair.getSecond(), 100);
+				Object[] g = OrfFinder.firstORF(pair.getSecond(), 240);
 				String prot_g = (String) g[0];
-				int st_g = (Integer) g[1];
-				int le_g = (Integer) g[2];
+//				int st_g = (Integer) g[1];
+//				int le_g = (Integer) g[2];
 				
-				Object[] n = OrfFinder.nextComplementatyOrfFromEnd(pair.getSecond(), 100);
+				Object[] n = OrfFinder.firstComplementatyOrfFromEnd(pair.getSecond(), 240);
 				String prot_n = (String) n[0];
-				int st_n = (Integer) n[1];
-				int le_n = (Integer) n[2];
-				
-				
-				bfg.write(">" + pair.getFirst() + "\r\n");
-				bfg.write(prot_g + "\r\n");
+//				int st_n = (Integer) n[1];
+//				int le_n = (Integer) n[2];
 
-				bfn.write(">" + pair.getFirst() + "\r\n");
-				bfn.write(prot_n + "\r\n");
+				System.out.println("found : " + prot_g);
+				System.out.println("size  : " + prot_g.length());
+				System.out.println("found : " + prot_n);
+				System.out.println("size  : " + prot_n.length());
+				
+				if (prot_g.length()<600 && prot_g.length()>240) {
 
+					bf.write(">" + pair.getFirst() + "\r\n");
+					bf.write(prot_g + "\r\n");
+					
+				}
 				
-				bf.write("Virus     : " + pair.getFirst() + "\r\n" );
-				bf.write("ORF G     : " + prot_g + "\r\n");
-				bf.write("Inicia en : " + st_g + "\r\n");
-				bf.write("Longitud  : " + le_g + "\r\n");
-				bf.write("ORF N     : " + prot_n + "\r\n");
-				bf.write("Inicia en : " + st_n + "\r\n");
-				bf.write("Longitud  : " + le_n + "\r\n");
-				bf.write("\r\n");
-				
+				if (prot_n.length()<600 && prot_n.length()>240) {
+
+					bf.write(">" + pair.getFirst() + "\r\n");
+					bf.write(prot_n + "\r\n");
+					
+				}
 				
 			}
 			bf.close();
@@ -108,10 +106,45 @@ public class OrfFinder {
 		return result;
 	}
 	
+	public static Object[] firstORF(String sequence, int largerThan) {
+		
+		int maxATG=0;
+		int maxLength=0;
+		
+		int[] ATGs = OrfFinder.scanATG(sequence);
+		int[] STOPs = OrfFinder.scanSTOP(sequence);
+		
+		
+		for (int atg : ATGs) {
+			int stopCounter=0;
+			
+			while(  stopCounter < STOPs.length && !((STOPs[stopCounter]>atg) && ((STOPs[stopCounter] - atg)%3 == 0))) {
+				stopCounter++;
+			}
+			
+			if (stopCounter<STOPs.length) {
+				int currentLength = STOPs[stopCounter] - atg;
+				if (currentLength > maxLength && currentLength >= largerThan) {
+					maxATG=atg;
+					maxLength=currentLength;
+					Object[] result = {(Object) sequence.substring(maxATG, maxATG + maxLength), maxATG, maxLength};
+					return result;
+				}
+			}
+		} 
+		Object[] result = {(Object) sequence.substring(maxATG, maxATG + maxLength), maxATG, maxLength};
+		return result;
+	}
+	
 	public static Object[] nextComplementatyOrfFromEnd(String sequence, int largerThan) {
 		return nextORF(reverseComplementary(sequence),largerThan);
 	}
+	
+	public static Object[] firstComplementatyOrfFromEnd(String sequence, int largerThan) {
+		return firstORF(reverseComplementary(sequence),largerThan);
+	}
 
+	
 	//////////////////
 	// Private Methods
 
