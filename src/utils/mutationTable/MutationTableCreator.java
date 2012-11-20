@@ -22,8 +22,8 @@ public class MutationTableCreator {
 	 */
 	public static void main(String[] args) throws IOException {
 	
-		String inPath = "C:\\Javier\\Dropbox\\My Dropbox\\Investigacion\\Sandra\\Tablas de Mutaciones - Enero 2011\\Datos de Partida\\SLEV NS2B aas viremia aves.fas";
-		String outPath = "C:\\Javier\\Dropbox\\My Dropbox\\Investigacion\\Sandra\\Tablas de Mutaciones - Enero 2011\\Tablas";
+		String inPath = "B:\\Javier\\Dropbox\\Investigacion\\Tesis\\Figuras\\#CepaVacunal\\L.fas";
+		String outPath = "B:\\Javier\\Dropbox\\Investigacion\\Tesis\\Figuras\\#CepaVacunal";
 		
 		File pathFile = new File(inPath);
 		FastaMultipleReader fmr;
