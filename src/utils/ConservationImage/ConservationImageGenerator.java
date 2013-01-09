@@ -241,6 +241,37 @@ public class ConservationImageGenerator {
 		g.drawLine(paddingW+xPos,paddingV+ yPos, paddingW+xPos, paddingV+ yPos + lineHeight);
 	}
 
+	/**
+	 * A line above the alignment is used to mark strongly conserved positions. Three characters ('*', ':' and '.') are used:<br>
+     * <b>'*'</b> indicates positions which have a single, fully conserved residue.<br>
+     * <b>':'</b> indicates that one of the following 'strong' groups is fully conserved: <br>
+     * <ol type=disc>
+     * <li>STA</li>
+     * <li>NEQK</li>
+     * <li>NHQK</li>
+     * <li>NDEQ</li>
+     * <li>QHRK</li>
+     * <li>MILV</li>
+     * <li>MILF</li>
+     * <li>HY</li>
+     * <li>FYW</li>
+     * </ol>
+     * '.' indicates that one of the following 'weaker' groups is fully conserved:<br>
+     * <ol type=disc>
+     * <li>CSA</li>
+     * <li>ATV</li>
+     * <li>SAG</li>
+     * <li>STNK</li>
+     * <li>STPA</li>
+     * <li>SGND</li>
+     * <li>SNDEQK</li>
+     * <li>NDEQHK</li>
+     * <li>NEQHRK</li>
+     * <li>FVLIM</li>
+     * <li>HFY</li>
+     * </ol>
+     * These are all the positively scoring groups that occur in the Gonnet Pam250 matrix. The strong and weak groups are defined as strong score >0.5 and weak score =<0.5 respectively.
+	 */
 	private double[]			getDataFromClustal					(String line) {
 		double[] data = new double[line.length()];
 		
@@ -381,8 +412,8 @@ public class ConservationImageGenerator {
 	// Executable Main
 	
 	public static void 			main								(String[] args) {
-//		dialogMain();
-		processMany();
+		dialogMain();
+//		processMany();
 	}
 	
 
@@ -446,7 +477,7 @@ public class ConservationImageGenerator {
 		
 	}
 
-	
+
 	@SuppressWarnings("restriction")
 	public static void dialogMain() {
 		ConservationImageGenerator cig = new ConservationImageGenerator();
