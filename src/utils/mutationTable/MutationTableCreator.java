@@ -25,6 +25,7 @@ public class MutationTableCreator {
 		String inPath = "B:\\Javier\\Dropbox\\Investigacion\\Tesis\\Figuras\\#CepaVacunal\\L.fas";
 		String outPath = "B:\\Javier\\Dropbox\\Investigacion\\Tesis\\Figuras\\#CepaVacunal";
 		
+		@SuppressWarnings("unused")
 		File pathFile = new File(inPath);
 		FastaMultipleReader fmr;
 		MutationTableCreator mtc = new MutationTableCreator();

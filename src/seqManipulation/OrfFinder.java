@@ -1,9 +1,6 @@
 package seqManipulation;
 
-import java.io.BufferedOutputStream;
-import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
@@ -15,7 +12,7 @@ import fastaIO.Pair;
 public class OrfFinder {
 
 	/**
-	 * Search ORFs in a given sequence
+	 * Search ORFs in a given sequence 
 	 * 
 	 * @param args
 	 */
@@ -88,6 +85,7 @@ public class OrfFinder {
 	 * @param circular True if the sequence is from a circular DNA molecule (i.e. a plasmid). 
 	 *  
 	 */
+	@SuppressWarnings("unused")
 	public static Object[][] allOrfs(String sequence, int largerThan, boolean bothStrands, boolean circular, int frame) {
 
 		int[] ATGs = OrfFinder.scanATG(sequence);

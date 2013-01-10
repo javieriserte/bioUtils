@@ -4,20 +4,28 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
-import java.awt.TrayIcon.MessageType;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
-import java.nio.CharBuffer;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.Vector;
 
-import javax.swing.JDialog;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
+import cmdGA.NoOption;
+import cmdGA.Parser;
+import cmdGA.SingleOption;
+import cmdGA.exceptions.IncorrectParameterTypeException;
+import cmdGA.parameterType.InputStreamParameter;
+import cmdGA.parameterType.IntegerParameter;
+import cmdGA.parameterType.OutFileParameter;
 
 import com.sun.image.codec.jpeg.*;
 
@@ -272,6 +280,98 @@ public class ConservationImageGenerator {
      * </ol>
      * These are all the positively scoring groups that occur in the Gonnet Pam250 matrix. The strong and weak groups are defined as strong score >0.5 and weak score =<0.5 respectively.
 	 */
+	private double[]			getDataFromClustalConservationProfile	(InputStream inputFastaAlignment, boolean isDNA) {
+		
+		FastaMultipleReader fmr = new FastaMultipleReader();
+		List<Pair<String, String>> alin = null;
+		
+		String[] majorSets = new String[]{"STA","NEQK", "NHQK", "NDEQ", "QHRK", "MILV","MILF","HY", "FYW"};
+		String[] minorSets = new String[]{"CSA","ATV", "SAG", "STNK", "STPA", "SGND","SNDEQK","NDEQHK", "NEQHRK","FVLIM","HFY"};
+		
+		List<Set<Character>> majorSetsList = getSetListFromStringArray(majorSets);
+		List<Set<Character>> minorSetsList = getSetListFromStringArray(minorSets);
+		
+		alin = fmr.readBuffer(new BufferedReader(new InputStreamReader(inputFastaAlignment)));
+
+		int Len = alin.get(0).getSecond().length();
+
+		StringBuilder sb = new StringBuilder(Len);
+		if (isDNA) {
+			// Just Check for identity.
+			for (int x=0; x<Len;x++) {
+				Set<Character> cs = getCharsAtColumn(alin,x);
+				if (cs.size()==1) {
+					sb.append("*");
+				} else {
+					sb.append(" ");
+				}; 
+			}
+		} else {
+			// If is no DNA, is a protein
+			for (int x=0; x<Len;x++) {
+				Set<Character> cs = getCharsAtColumn(alin,x);
+				if (cs.size()==1) {
+					// check for identity
+					sb.append("*");
+				} else {
+					// check major groups
+					boolean found = false;
+					for (Set<Character> group : majorSetsList) {
+						if (!found && group.equals(cs)) {
+							found = true;
+						}
+					}
+					if (found) {
+						sb.append(":");
+					} else {
+						// check minor groups
+						for (Set<Character> group : minorSetsList) {
+							if (!found && group.equals(cs)) {
+								found = true;
+							}
+						}
+						if (found) {
+							sb.append(".");
+						} else {
+							sb.append(" ");					
+						}
+					}
+				}
+			}
+		}
+		return this.getDataFromClustal(sb.toString());
+	}
+	
+	/**
+	 * Given an array of String, converts it to a List of Sets. Where each set represents one of the strings and the elements within the set are the characters from the string. 
+	 * @param strings an array of strings
+	 * @return
+	 */
+	private List<Set<Character>> getSetListFromStringArray(String[] strings) {
+		List<Set<Character>> setslist = new Vector<Set<Character>>();
+		for(String s: strings) {
+			Set<Character> sc = new HashSet<Character>();
+			for (char c: s.toCharArray()) { sc.add(c); }
+			setslist.add(sc);
+		}
+		return setslist;
+	}
+
+	/**
+	 * Given a List<Pair<String, String>> that represents a multiple sequence alignment, this method returns the set of Characters from a single column. 
+	 * @param alin List<Pair<String, String>> that represents an alignment.
+	 * @param column is the position number of the column.
+	 * @return an array of Character with all the characters in the column
+	 */
+	private Set<Character> getCharsAtColumn(List<Pair<String, String>> alin, int column) {
+		Set<Character> set = new HashSet<Character>();
+		for (int x=0;x<alin.size(); x++) {
+			set.add(alin.get(x).getSecond().charAt(column));
+		}
+		return set;
+		
+	}
+	
 	private double[]			getDataFromClustal					(String line) {
 		double[] data = new double[line.length()];
 		
@@ -292,7 +392,7 @@ public class ConservationImageGenerator {
 		return data;
 	}
 	
-	private double[]			getDataFromInformationContent		(File inputFastaAlignment, boolean isDNA) {
+	private double[]			getDataFromInformationContent		(InputStream inputFastaAlignment, boolean isDNA) {
 		// From "Crooks, Gavin,E. et al, WebLogo: a Aequence Logo Generator. 2004"
 		// R_seq = S_max - S_obs = Log_2(N) - ( - SUM(n=1,N) p_n * Log_2(p_n) )
 
@@ -307,13 +407,9 @@ public class ConservationImageGenerator {
 		int n_seqs=0;
 
 		
-		try {
-			alin = fmr.readFile(inputFastaAlignment);
-			n_seqs = alin.size();
-		} catch (FileNotFoundException e) {
-			System.out.println("hubo un error al leer el alineamiento");
-			e.printStackTrace();
-		}
+
+		alin = fmr.readBuffer(new BufferedReader(new InputStreamReader(inputFastaAlignment)));
+		n_seqs = alin.size();
 		
 		Len = alin.get(0).getSecond().length();
 		if (isDNA) N=4; else N=20;
@@ -412,50 +508,56 @@ public class ConservationImageGenerator {
 	// Executable Main
 	
 	public static void 			main								(String[] args) {
-		dialogMain();
+		commandlineMain(args);
+		
+//		try {
+//			dialogMain();
+//		} catch (FileNotFoundException e) {
+//			e.printStackTrace();
+//		}
 //		processMany();
 	}
 	
 
-	public static void processMany() {
-		ConservationImageGenerator cig = new ConservationImageGenerator();
-		File[] files = new File[] {
-		new File("C:\\Javier\\Dropbox\\My Dropbox\\Investigacion\\Sandra\\Graficos De Conservacion SLEV - 2011\\Slec.Amino.Conserv.txt"),
-		new File("C:\\Javier\\Dropbox\\My Dropbox\\Investigacion\\Sandra\\Graficos De Conservacion SLEV - 2011\\SLEV.Amino.fas"),
-		new File("C:\\Javier\\Dropbox\\My Dropbox\\Investigacion\\Sandra\\Graficos De Conservacion SLEV - 2011\\Slec.Nuc.Conserv.txt"),
-		new File("C:\\Javier\\Dropbox\\My Dropbox\\Investigacion\\Sandra\\Graficos De Conservacion SLEV - 2011\\Datos De Partida\\SLEV ORF nucleotido.fas")
-		};
-		
-		boolean[] isDNA     = new boolean[] {false,false,true,true};
-		boolean[] isClustal = new boolean[] {true,false,true,false};
-
-		for (int x=0; x<files.length; x++) {
-
-			
-			
-			if (isClustal[x]) {
-				char[] cBuf = new char[(int) files[x].length()] ;
-
-				try { 
-					(new BufferedReader(new FileReader(files[x]))).read(cBuf);
-				} catch (FileNotFoundException e) {	} catch (IOException e) { }
-			
-				StringBuilder s = new StringBuilder();
-				s.append(cBuf);
-				String filepref = files[x].getAbsolutePath();
-				filepref= filepref.substring(0,filepref.length()-3);
-				loopWindow(cig.getDataFromClustal(s.toString()),cig, filepref);
-			} else {
-				
-				
-				String filepref = files[x].getAbsolutePath();
-				filepref= filepref.substring(0,filepref.length()-3);
-				loopWindow(cig.getDataFromInformationContent(files[x], isDNA[x]),cig, filepref);
-				
-			}
-			
-		}
-	}
+//	public static void processMany() {
+//		ConservationImageGenerator cig = new ConservationImageGenerator();
+//		File[] files = new File[] {
+//		new File("C:\\Javier\\Dropbox\\My Dropbox\\Investigacion\\Sandra\\Graficos De Conservacion SLEV - 2011\\Slec.Amino.Conserv.txt"),
+//		new File("C:\\Javier\\Dropbox\\My Dropbox\\Investigacion\\Sandra\\Graficos De Conservacion SLEV - 2011\\SLEV.Amino.fas"),
+//		new File("C:\\Javier\\Dropbox\\My Dropbox\\Investigacion\\Sandra\\Graficos De Conservacion SLEV - 2011\\Slec.Nuc.Conserv.txt"),
+//		new File("C:\\Javier\\Dropbox\\My Dropbox\\Investigacion\\Sandra\\Graficos De Conservacion SLEV - 2011\\Datos De Partida\\SLEV ORF nucleotido.fas")
+//		};
+//		
+//		boolean[] isDNA     = new boolean[] {false,false,true,true};
+//		boolean[] isClustal = new boolean[] {true,false,true,false};
+//
+//		for (int x=0; x<files.length; x++) {
+//
+//			
+//			
+//			if (isClustal[x]) {
+//				char[] cBuf = new char[(int) files[x].length()] ;
+//
+//				try { 
+//					(new BufferedReader(new FileReader(files[x]))).read(cBuf);
+//				} catch (FileNotFoundException e) {	} catch (IOException e) { }
+//			
+//				StringBuilder s = new StringBuilder();
+//				s.append(cBuf);
+//				String filepref = files[x].getAbsolutePath();
+//				filepref= filepref.substring(0,filepref.length()-3);
+//				loopWindow(cig.getDataFromClustal(s.toString()),cig, filepref);
+//			} else {
+//				
+//				
+//				String filepref = files[x].getAbsolutePath();
+//				filepref= filepref.substring(0,filepref.length()-3);
+//				loopWindow(cig.getDataFromInformationContent(files[x], isDNA[x]),cig, filepref);
+//				
+//			}
+//			
+//		}
+//	}
 
 
 	@SuppressWarnings("restriction")
@@ -479,7 +581,7 @@ public class ConservationImageGenerator {
 
 
 	@SuppressWarnings("restriction")
-	public static void dialogMain() {
+	public static void dialogMain() throws FileNotFoundException {
 		ConservationImageGenerator cig = new ConservationImageGenerator();
 
 		int responseInt=0;
@@ -487,16 +589,16 @@ public class ConservationImageGenerator {
 		responseInt = JOptionPane.showOptionDialog(null, "Crear Imagen desde Clustal? Elegir 'No' implica crear la imagen a pritr del alineamiento usando el contenido informativo", "Elegir método", JOptionPane.YES_NO_OPTION ,JOptionPane.QUESTION_MESSAGE, null, null, null);
 		
 		if (responseInt== JOptionPane.YES_NO_OPTION) {
-			response = JOptionPane.showInputDialog(null, "Escribir la secuencia de simbolos de conservación de clustal",  "Clustal", JOptionPane.QUESTION_MESSAGE);
-			cig.setData( cig.getDataFromClustal(response) );	
-			System.out.println( cig.getDataFromClustal(response) );
+			response = JOptionPane.showInputDialog(null, "Escribir ruta del alineamiento",  "Clustal", JOptionPane.QUESTION_MESSAGE);
+			int responseDNA = JOptionPane.showOptionDialog(null, "Es DNA ? Elegir No implica que son proteinas", "DNA O PROTEINA", JOptionPane.YES_NO_OPTION ,JOptionPane.QUESTION_MESSAGE, null, null, null);
+			cig.setData( cig.getDataFromClustalConservationProfile(new FileInputStream(new File(response)), responseDNA == JOptionPane.YES_OPTION) );	
 			
 		} else {
 			response = JOptionPane.showInputDialog(null, "Escribir la ruta del alineamiento", "Buscar Archivo",   JOptionPane.QUESTION_MESSAGE);
 			
 			responseInt = JOptionPane.showOptionDialog(null, "Es DNA ? Elegir No implica que son proteinas", "DNA O PROTEINA", JOptionPane.YES_NO_OPTION ,JOptionPane.QUESTION_MESSAGE, null, null, null);
 			
-			cig.setData( cig.getDataFromInformationContent(new File(response), responseInt == JOptionPane.YES_OPTION) );
+			cig.setData( cig.getDataFromInformationContent(new FileInputStream(new File(response)), responseInt == JOptionPane.YES_OPTION) );
 		}
 		
 		response = JOptionPane.showInputDialog(null, "Escriba el tamaño de la ventana que quiere usar", "Elegir Ventana", JOptionPane.QUESTION_MESSAGE);
@@ -515,6 +617,63 @@ public class ConservationImageGenerator {
 			System.out.println("Hubo Un error con el archivo de salida");
 			e.printStackTrace();
 		}
+	}
+	
+	@SuppressWarnings("restriction")
+	public static void commandlineMain(String[] args) {
+		
+		if (args.length==0) {
+			System.err.println("No se ingresó ninguna opción.\nEjecución finalizada");
+			System.exit(1);
+		}
+		
+		// STEP ONE:
+		// Create a Parser.
+		Parser parser = new Parser();
+		
+		// STEP TWO:
+		// DEFINE THE POSSIBLE OPTIONS ACCEPTED IN THE COMMAND LINE. (TAKE CARE OF AVOID AMBIGUITY) 
+		SingleOption in  = new SingleOption(parser, System.in, "-infile", InputStreamParameter.getParameter());
+		SingleOption outfile = new SingleOption(parser, null, "-outfile", OutFileParameter.getParameter());
+		
+		SingleOption windowSize = new SingleOption(parser, 11, "-window", IntegerParameter.getParameter());
+		NoOption isProtein = new NoOption(parser, "-protein");
+		NoOption isInformationContent = new NoOption(parser, "-ic");
+		
+		
+		// STEP THREE
+		// PARSE THE COMMAND LINE
+		try {
+			parser.parseEx(args);
+		} catch ( IncorrectParameterTypeException e )  {
+			System.out.println( "Hubo un error:"       );
+			System.out.println(  e.getMessage()        );
+			System.out.println( "Ejecución finalizada" );
+			System.exit(1);
+		}
+		
+			
+		if (outfile.getValue() == null) {
+			System.err.println("No se provee un outfile.\n Por favor ingrese uno.");
+		}
+		
+		// Program 
+		ConservationImageGenerator cig = new ConservationImageGenerator();
+		InputStream invalue = (InputStream) in.getValue();
+		
+		
+		if (isInformationContent.getValue()) {
+			cig.setData(cig.getDataFromInformationContent(invalue, !isProtein.getValue()));
+		} else {
+			cig.setData(cig.getDataFromClustalConservationProfile(invalue, !isProtein.getValue()));
+		}
+		
+		try {   
+			cig.printImage((File)outfile.getValue(), new RedBlueColorringStrategy(),(Integer) windowSize.getValue() );   		
+			} catch (ImageFormatException e) { System.out.println("Hubo Un error con el formato de la imagen"); 
+				e.printStackTrace();  
+			} catch (IOException e) {          System.out.println("Hubo Un error con el archivo de salida");
+				e.printStackTrace(); }
 	}
 
 }
