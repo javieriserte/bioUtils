@@ -40,13 +40,23 @@ public class FeaturesParser {
 				} else {
 					// or is a Qualifier.
 					int eqpos = line.indexOf('=');
-					String q = line.substring(0,eqpos).trim();
+					String q ;
+					String v ;
+					if(eqpos >=0) {
+						q = line.substring(0,eqpos).trim();
+						v = this.dequote(line.substring(eqpos+1));						
+					} else {
+						q = line.trim();
+						v = "";						
+					}
 					q = q.substring(1);
-					String v = this.dequote(line.substring(eqpos+1));
+					
 					if (q.toUpperCase().equals("TRANSLATION")) {
 						v = v.replaceAll(" ", "");
+					
 					}
 					feat.get(feat.size()-1).addQualifier(q, v);
+					
 				}
 			}
 			
