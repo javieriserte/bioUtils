@@ -49,13 +49,18 @@ public class FeaturesParser {
 						q = line.trim();
 						v = "";						
 					}
-					q = q.substring(1);
-					
+					if (q.length()>1) {
+						q = q.substring(1);
+					}
 					if (q.toUpperCase().equals("TRANSLATION")) {
 						v = v.replaceAll(" ", "");
 					
 					}
-					feat.get(feat.size()-1).addQualifier(q, v);
+					if (!q.equals("")) {
+						if (feat.size()>0) {
+							feat.get(feat.size()-1).addQualifier(q, v);
+						}
+					}
 					
 				}
 			}
@@ -103,11 +108,16 @@ public class FeaturesParser {
 				
 				if (line==null) break;
 				
-				if (this.continuesAPreviousQualifier(line)) {
-					out.append(" " + line.substring(21));
-				} else {
-					if (out.length()!=0) {out.append("\r\n");}
-					out.append(line);
+				if (!line.trim().equals("")) {
+					// Skips blank lines
+					if (this.continuesAPreviousQualifier(line)) {
+						if (out.length()!=0) {
+							out.append(" " + line.substring(21));
+						}
+					} else {
+						if (out.length()!=0) {out.append("\r\n");}
+						out.append(line);
+					}
 				}
 				
 			}
@@ -123,11 +133,19 @@ public class FeaturesParser {
 	}
 	
 	private String getFeatureName(String line) {
+		if (line.length()>21) {
 		return line.substring(0,21).trim().toUpperCase();
+		} else {
+			return line.trim();
+		}
 	}
 	
 	private boolean continuesAPreviousQualifier(String line) {
+		if (line.length()>21) {
 		return (this.getFeatureName(line).equals("")) && (line.charAt(21)!='/');
+		} else {
+			return false;
+		}
 	}
 	
 	

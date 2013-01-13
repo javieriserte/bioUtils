@@ -23,7 +23,8 @@ public class GenBankHeader {
 	private String basecount;
 	private String contig;
 	private String nid;
-	
+	private List<String> otherFieldNames;
+	private List<String> otherFieldValues;
 	private List<Reference> references;	
 	
 
@@ -49,37 +50,74 @@ public class GenBankHeader {
 	}
 	
 	public void setFieldFromString(String fieldname, String value) {
-		if (fieldname.equals( "DEFINITION")) {this.setDefinition(value);};
-		if (fieldname.equals( "ACCESSION")) {this.setAccession(value);};
-		if (fieldname.equals( "VERSION")) {this.setAccession(value);};
-		if (fieldname.equals( "NID")) {this.setNid(value);};
-		if (fieldname.equals( "PROJECT")) {this.setProject(value);};
-		if (fieldname.equals( "DBLINK")) {this.setDblink(value);};
-		if (fieldname.equals( "KEYWORDS")) {this.setKeywords(value);};
-		if (fieldname.equals( "SEGMENT")) {this.setComment(value);};
-		if (fieldname.equals( "SOURCE")) {this.setSource(value);};
-		if (fieldname.equals( "ORGANISM")) {this.setOrganism(value);};
-		if (fieldname.equals( "COMMENT")) {this.setComment(value);};
-		if (fieldname.equals( "BASE COUNT")) {this.setBasecount(value);};
-		if (fieldname.equals( "CONTIG")) {this.setContig(value);};
+		boolean found = false;
+		if (fieldname.equals( "DEFINITION")) {this.setDefinition(value);found=true;};
+		if (fieldname.equals( "ACCESSION")) {this.setAccession(value);found=true;};
+		if (fieldname.equals( "VERSION")) {this.setAccession(value);found=true;};
+		if (fieldname.equals( "NID")) {this.setNid(value);found=true;};
+		if (fieldname.equals( "PROJECT")) {this.setProject(value);found=true;};
+		if (fieldname.equals( "DBLINK")) {this.setDblink(value);found=true;};
+		if (fieldname.equals( "KEYWORDS")) {this.setKeywords(value);found=true;};
+		if (fieldname.equals( "SEGMENT")) {this.setComment(value);found=true;};
+		if (fieldname.equals( "SOURCE")) {this.setSource(value);found=true;};
+		if (fieldname.equals( "ORGANISM")) {this.setOrganism(value);found=true;};
+		if (fieldname.equals( "COMMENT")) {this.setComment(value);found=true;};
+		if (fieldname.equals( "BASE COUNT")) {this.setBasecount(value);found=true;};
+		if (fieldname.equals( "CONTIG")) {this.setContig(value);found=true;};
 		
 		
   		if (fieldname.equals( "REFERENCE")) {
   			this.addReference(new Reference());
   			this.getReference(this.getNumberOfReferences()-1).setValue(value);
+  			found=true;
   			};
   		
-  		if (fieldname.equals( "AUTHORS")) {this.getReference(this.getNumberOfReferences()-1).setAuthors(value);};
-  		if (fieldname.equals( "CONSRTM")) {this.getReference(this.getNumberOfReferences()-1).setConsortiums(value);};
-  		if (fieldname.equals( "TITLE")) {this.getReference(this.getNumberOfReferences()-1).setTitle(value);};
-  		if (fieldname.equals( "JOURNAL")) {this.getReference(this.getNumberOfReferences()-1).setJournal(value);};
-  		if (fieldname.equals( "MEDLINE")) {this.getReference(this.getNumberOfReferences()-1).setMedline(value);};
-  		if (fieldname.equals( "PUBMED")) {this.getReference(this.getNumberOfReferences()-1).setPubmed(value);};
-  		if (fieldname.equals( "REMARK")) {this.getReference(this.getNumberOfReferences()-1).setRemark(value);};
+  		if (fieldname.equals( "AUTHORS")) {this.getReference(this.getNumberOfReferences()-1).setAuthors(value);found=true;};
+  		if (fieldname.equals( "CONSRTM")) {this.getReference(this.getNumberOfReferences()-1).setConsortiums(value);found=true;};
+  		if (fieldname.equals( "TITLE")) {this.getReference(this.getNumberOfReferences()-1).setTitle(value);found=true;};
+  		if (fieldname.equals( "JOURNAL")) {this.getReference(this.getNumberOfReferences()-1).setJournal(value);found=true;};
+  		if (fieldname.equals( "MEDLINE")) {this.getReference(this.getNumberOfReferences()-1).setMedline(value);found=true;};
+  		if (fieldname.equals( "PUBMED")) {this.getReference(this.getNumberOfReferences()-1).setPubmed(value);found=true;};
+  		if (fieldname.equals( "REMARK")) {this.getReference(this.getNumberOfReferences()-1).setRemark(value);found=true;};
+  		
+  		if (!found) {
+  			// If new Fields are added later, here will be stored.
+  			if (this.otherFieldNames == null) {
+  				this.otherFieldNames = new ArrayList<String>();
+  				this.otherFieldValues = new ArrayList<String>();
+  			}
+  			this.otherFieldNames.add(fieldname);
+  			this.otherFieldValues.add(value);
+  		}
+  		
 	}
 	
 	public String getFieldFromString(String fieldname) {
-		return "";
+		if (fieldname.equals( "DEFINITION")) {return this.getDefinition();};
+		if (fieldname.equals( "ACCESSION")) {return this.getAccession();};
+		if (fieldname.equals( "VERSION")) {return this.getAccession();};
+		if (fieldname.equals( "NID")) {return this.getNid();};
+		if (fieldname.equals( "PROJECT")) {return this.getProject();};
+		if (fieldname.equals( "DBLINK")) {return this.getDblink();};
+		if (fieldname.equals( "KEYWORDS")) {return this.getKeywords();};
+		if (fieldname.equals( "SEGMENT")) {return this.getComment();};
+		if (fieldname.equals( "SOURCE")) {return this.getSource();};
+		if (fieldname.equals( "ORGANISM")) {return this.getOrganism();};
+		if (fieldname.equals( "COMMENT")) {return this.getComment();};
+		if (fieldname.equals( "BASE COUNT")) {return this.getBasecount();};
+		if (fieldname.equals( "CONTIG")) {return this.getContig();};
+		
+		
+  		if (fieldname.equals( "REFERENCE")) {return String.valueOf(this.getNumberOfReferences() + " References.");};
+
+  		
+  		// If new Fields are added later, here will be stored.
+  			if (this.otherFieldNames != null) {
+  				
+  				int i = this.otherFieldNames.indexOf(fieldname);
+  				if (i>=0) return this.otherFieldValues.get(i);
+  			}
+  			return "";
 	}
 	
 	// Getters And Setters

@@ -134,7 +134,9 @@ public class GenBankHeaderParser {
 				
 				String currentLine = str.readLine();
 				
-				if (currentLine != null) {
+				if (currentLine == null) break;
+				if (!currentLine.trim().equals("")) {
+					// Skip Blank Lines
 					String field = this.getFieldName(currentLine);
 					if (!field.equals("")) {
 						if (out.length() != 0) {out.append("\r\n");}
@@ -143,11 +145,9 @@ public class GenBankHeaderParser {
 						out.append(" ");		
 						out.append(currentLine.substring(12));
 					}
-				} else {
-					break;
-					// if Reader is null goes out from the 'while' loop.
-				}
+				} 
 			}
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
