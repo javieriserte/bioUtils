@@ -1,4 +1,4 @@
-package genBankIO;
+package genBankIO.parsers;
 
 import genBankIO.elements.Feature;
 
@@ -9,22 +9,30 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *   The feature key begins in column 6 and may be no more than 15
+ * Parses the features part of a GenBank record.<br>
+ * 
+ * Each feature consist in a feature key or name, a location and qualifiers.
+ * The feature key begins in column 6 and may be no more than 15
  * characters in length. The location begins in column 22. Feature
  * qualifiers begin on subsequent lines at column 22. Location,
  * qualifier, and continuation lines may extend from column 22 to 80.
+ * 
+ * @author Javier Iserte (jiserte@unq.edu.ar)
+ *
  */
-
 public class FeaturesParser {
-	
+	/**
+	 * Parse an string with the features part of the record.
+	 * 
+	 * @param in
+	 * @return a <code>List<code> of <code>Feature</code> objects. 
+	 */
 	public List<Feature> parse(String in) {
 		BufferedReader br = new BufferedReader(new StringReader(deinterleaveFeatures(in)));
 		List<Feature> feat = new ArrayList<Feature>();
 		
 		
 		try {
-			
-//			br.readLine(); // Removes the first "FEATURES" field.
 			
 			while(br.ready()) {
 				
@@ -70,13 +78,13 @@ public class FeaturesParser {
 			e.printStackTrace();
 			
 		}
-				
-		
+
 		return feat;
 		
-		
 	}
-	
+
+	// Private Methods
+
 	/**
 	 * Removes quoting chars from the beginning or the end of a String.
 	 * @param string
@@ -91,8 +99,13 @@ public class FeaturesParser {
 		return string.substring(from, to);
 	}
 
-
-	// Private Methods
+	/**
+	 * Prepares the input string to be parsed.
+	 * Removes blank lines, join all the qualifier data in one line.
+	 * 
+	 * @param in the input features string.
+	 * @return a string modified in order to be more easily parsed.
+	 */
 	private String deinterleaveFeatures(String in) {
 		BufferedReader br = new BufferedReader(new StringReader(in));
 		StringBuilder out = new StringBuilder();
@@ -132,6 +145,12 @@ public class FeaturesParser {
 		return out.toString();
 	}
 	
+	/**
+	 * Returns the feature key name if there is one.
+	 * 
+	 * @param line a <code>String</code> with the line being parsed.
+	 * @return a <code>String</code> with the name of the Feature.
+	 */
 	private String getFeatureName(String line) {
 		if (line.length()>21) {
 		return line.substring(0,21).trim().toUpperCase();
@@ -139,7 +158,19 @@ public class FeaturesParser {
 			return line.trim();
 		}
 	}
-	
+
+	/**
+	 * Checks if the current line is likely to continue the qualifier 
+	 * data from the previous line.
+	 * 
+	 * There is a known case were the method do not behave as expected. 
+	 * When the first line being parsed do not have a feature name (a bad 
+	 * formed genbank record), this method informs that this first line 
+	 * continues a previous qualifier.   
+	 *  
+	 * @param line a <code>String</code> with the line being parsed.
+	 * @return <b>True</b> if the line appears to continue the previous, <b>False</b> otherwise.
+	 */
 	private boolean continuesAPreviousQualifier(String line) {
 		if (line.length()>21) {
 		return (this.getFeatureName(line).equals("")) && (line.charAt(21)!='/');
@@ -148,6 +179,7 @@ public class FeaturesParser {
 		}
 	}
 	
+
 	
 }
 

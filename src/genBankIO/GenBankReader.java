@@ -11,8 +11,10 @@ import java.util.Vector;
 
 import genBankIO.elements.Feature;
 import genBankIO.elements.GenBankHeader;
-import genBankIO.elements.GenBankRecord;
 import genBankIO.elements.Origin;
+import genBankIO.parsers.FeaturesParser;
+import genBankIO.parsers.GenBankHeaderParser;
+import genBankIO.parsers.OriginParser;
 
 final public class GenBankReader {
 
@@ -33,13 +35,17 @@ final public class GenBankReader {
 	
 	// Private Methods
 	/**
-	 * Parses genbank data.
+	 * Parses genbank data. Multiple adjacents records can be used as input.
+	 * If there is a format error in one of the GenBank records, the previous to the 
+	 * error could be parsed and returned with some types of errors. The others will no be parsed.<br>
 	 * 
 	 * The input is a buffered reader for two reasons:
-	 * 	1 - BufferedReader can be read complete lines of text.
-	 *  2 - BufferedReader can be on top of FileReaders, InputStreamReaders, Standard Input and other stuffs.
-	 * @param in
-	 * @return
+	 * <ol>
+	 * <li>BufferedReader can read complete lines of text.</li>
+	 * <li>BufferedReader can be on top of FileReaders, InputStreamReaders, Standard Input and other stuffs.</li>
+	 * </ol>
+	 * @param in a <code>BufferedReader</code> with the GenBank data.
+	 * @return a <code>List&lt;GenBankRecord></code>.
 	 */
 	static private List<GenBankRecord> readGenBank(BufferedReader in) throws GenBankFormatException {
 		
@@ -148,6 +154,9 @@ final public class GenBankReader {
 	}
 	
 	// Main Executable Example
+	/**
+	 * Example of use of the GenBankIO package.
+	 */
 	public static void main(String[] args) {
 		List<GenBankRecord> gbrd = null;
 		

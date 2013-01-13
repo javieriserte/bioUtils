@@ -1,5 +1,11 @@
 package genBankIO.elements;
 
+/**
+ * A class to store the origin data of a GenBank record.
+ * 
+ * @author Javier Iserte (jiserte@unq.edu.ar)
+ *
+ */
 public class Origin {
 	// PRIVATE INSTANCE VARIABLES
 	private String sequence;

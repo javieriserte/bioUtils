@@ -1,4 +1,4 @@
-package genBankIO;
+package genBankIO.parsers;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -6,8 +6,20 @@ import java.io.StringReader;
 
 import genBankIO.elements.GenBankHeader;
 
+/**
+ * Parses the header of a GenBank record
+ * 
+ * @author Javier Iserte (jiserte@unq.edu.ar)
+ *
+ */
 public class GenBankHeaderParser {
 	
+	/**
+	 * Parses a String with the header part of a GenBank record.
+	 * 
+	 * @param in the input String with the GenBank header data.
+	 * @return a <code>GenBankHeader</code> object with the data.
+	 */
 	public GenBankHeader parse(String in) {
 		GenBankHeader gbh = new GenBankHeader();
 		BufferedReader str = new BufferedReader(new StringReader(deInterleaveHeader(in)));
@@ -28,26 +40,30 @@ public class GenBankHeaderParser {
 				
 				String field = this.getFieldName(currentline);
 					// get the field name
-				gbh.setFieldFromString(field, currentline.substring(12));
+				if (currentline.length()>12) gbh.setFieldFromString(field, currentline.substring(12));
+				else gbh.setFieldFromString(field, "");
 					// stores the data for this field
 			}
 
 		} catch (IOException e) { e.printStackTrace(); }
 		
-		
-		
 		return gbh;
 
 	}
 
-	
+	// private Methods
+
+	/**
+	 * Retrieves the name of a fieldname is there is any.
+	 * 
+	 * @param currentline
+	 * @return a <code>String</code> with the name of the field.
+	 */
 	private String getFieldName(String currentline) {
-		return currentline.substring(0, 12).trim();
+		if (currentline.length()>=12) return currentline.substring(0, 12).trim();
+		return currentline.trim();
 		
 	}
-
-
-	// private Methods
 	/**
 	 * Parses the first line of a genbak header.<br>
 	 * 
