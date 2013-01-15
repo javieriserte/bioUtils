@@ -27,7 +27,7 @@
  *	Javier A. Iserte. <jiserte@unq.edu.ar>
  *	Mario E. Lozano. <mlozano@unq.edu.ar>
  */
-package fastaIO;
+package fileformats.fastaIO;
 /**
  * This class represents a pair of elements.
  * 

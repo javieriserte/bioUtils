@@ -1,4 +1,4 @@
-package genBankIO;
+package fileformats.genBankIO;
 /**
  * This es an <code>Exception</code> Object to inform that 
  * the GenBank record data is not well formed. 

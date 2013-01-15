@@ -1,4 +1,4 @@
-package genBankIO.elements;
+package fileformats.genBankIO.elements;
 
 import java.util.ArrayList;
 import java.util.List;

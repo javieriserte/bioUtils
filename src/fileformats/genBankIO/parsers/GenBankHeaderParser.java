@@ -1,10 +1,10 @@
-package genBankIO.parsers;
+package fileformats.genBankIO.parsers;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
 
-import genBankIO.elements.GenBankHeader;
+import fileformats.genBankIO.elements.GenBankHeader;
 
 /**
  * Parses the header of a GenBank record

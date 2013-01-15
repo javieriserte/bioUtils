@@ -1,8 +1,8 @@
-package genBankIO;
+package fileformats.genBankIO;
 
-import genBankIO.elements.Feature;
-import genBankIO.elements.GenBankHeader;
-import genBankIO.elements.Origin;
+import fileformats.genBankIO.elements.Feature;
+import fileformats.genBankIO.elements.GenBankHeader;
+import fileformats.genBankIO.elements.Origin;
 
 import java.util.List;
 

@@ -1,6 +1,6 @@
-package genBankIO.parsers;
+package fileformats.genBankIO.parsers;
 
-import genBankIO.elements.Feature;
+import fileformats.genBankIO.elements.Feature;
 
 import java.io.BufferedReader;
 import java.io.IOException;

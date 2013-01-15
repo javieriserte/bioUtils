@@ -1,4 +1,4 @@
-package fastaIO;
+package fileformats.fastaIO;
 
 
 import java.io.File;

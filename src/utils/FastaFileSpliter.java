@@ -7,9 +7,9 @@ import java.util.List;
 
 import javax.swing.JOptionPane;
 
-import fastaIO.FastaMultipleReader;
-import fastaIO.FastaWriter;
-import fastaIO.Pair;
+import fileformats.fastaIO.FastaMultipleReader;
+import fileformats.fastaIO.FastaWriter;
+import fileformats.fastaIO.Pair;
 
 public class FastaFileSpliter {
 

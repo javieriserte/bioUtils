@@ -6,8 +6,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Vector;
 
-import fastaIO.FastaMultipleReader;
-import fastaIO.Pair;
+import fileformats.fastaIO.FastaMultipleReader;
+import fileformats.fastaIO.Pair;
 
 public class OrfFinder {
 

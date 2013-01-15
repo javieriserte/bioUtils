@@ -1,4 +1,4 @@
-package genBankIO.elements;
+package fileformats.genBankIO.elements;
 
 /**
  * 

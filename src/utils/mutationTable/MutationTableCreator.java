@@ -5,7 +5,7 @@ import java.io.PrintStream;
 import java.util.List;
 import java.util.Vector;
 
-import fastaIO.*;
+import fileformats.fastaIO.*;
 
 public class MutationTableCreator {
 

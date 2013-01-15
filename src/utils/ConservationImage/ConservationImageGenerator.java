@@ -29,8 +29,8 @@ import cmdGA.parameterType.OutFileParameter;
 
 import com.sun.image.codec.jpeg.*;
 
-import fastaIO.FastaMultipleReader;
-import fastaIO.Pair;
+import fileformats.fastaIO.FastaMultipleReader;
+import fileformats.fastaIO.Pair;
 
 public class ConservationImageGenerator {
 

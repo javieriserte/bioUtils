@@ -27,7 +27,7 @@
  *	Javier A. Iserte. <jiserte@unq.edu.ar>
  *	Mario E. Lozano. <mlozano@unq.edu.ar>
  */
-package fastaIO;
+package fileformats.fastaIO;
 
 import java.io.BufferedReader;
 import java.io.CharArrayReader;
@@ -35,17 +35,21 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.List;
-import java.util.Vector;
 /**
- * This class is used to read a Fasta file containing multiple sequences.
+ * This class is used to read sequences files with just one sequence.
+ * By the moment, this class can not handle sequences with more than one line.  
  * 
  * @author "Javier Iserte <jiserte@unq.edu.ar>"
  * 
  */
-public class FastaMultipleReader {
-	
-	public List<Pair<String, String>> readFile(String filepath) throws FileNotFoundException {
+public class FastaReader {
+
+	/**
+	 * Reads a fasta file from a filepath 
+	 * @param filepath
+	 * @return 
+	 */
+	public Pair<String, String> readFile(String filepath) {
 		
 		File f = new File(filepath);
 		
@@ -56,10 +60,14 @@ public class FastaMultipleReader {
 	 * Reads a fasta file from a File Object 
 	 * @param filepath
 	 * @return 
-	 * @throws FileNotFoundException 
 	 */
-	public List<Pair<String, String>> readFile(File file) throws FileNotFoundException {
-		return this.readBuffer(new BufferedReader( new FileReader(file)));
+	public Pair<String, String> readFile(File file) {
+		try {
+			return this.readBuffer(new BufferedReader( new FileReader(file)));
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	/**
@@ -67,7 +75,7 @@ public class FastaMultipleReader {
 	 * @param string
 	 * @return
 	 */
-	public List<Pair<String, String>> readString(String string) {
+	public Pair<String, String> readString(String string) {
 		return this.readBuffer(new BufferedReader(new CharArrayReader(string.toCharArray())));
 	}
 	
@@ -76,38 +84,28 @@ public class FastaMultipleReader {
 	 * @param buffer
 	 * @return
 	 */
-	public List<Pair<String, String>> readBuffer(BufferedReader buffer) {
+	public Pair<String, String> readBuffer(BufferedReader buffer) {
 		
 		String d="";
 		String s="";
 		
-		List<Pair<String, String>> result = new Vector<Pair<String, String>>(); 
-		
-		TextConsumer textconsumer = new TextConsumer();
-		textconsumer.buffer = buffer;
+		TextConsumer tx = new TextConsumer();
+		tx.buffer = buffer;
 		
 		try {
-			textconsumer.consumeUntil( ">"); 
-				// discard everything before the first '>' symbol.
-			do { 
-				d = textconsumer.consumeLine(); // Description is the first line
-				s = textconsumer.consumeUntil(">"); // sequence is everything until the next '>'
-				s = s.replaceAll("[\r\n]", ""); // remove any  
-				result.add(new Pair<String,String>(d.substring(1),s));
-			} while (textconsumer.ready());
 
+			tx.consumeUntil( ">");
+			d = tx.consumeLine();
+			s = tx.consumeUntil(">");
+			s = s.replaceAll("[\r\n]", "");
+			return (Pair<String, String>) new Pair<String,String>(d.substring(1),s);				
+			
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		return result;
+		return null;
 	}
 	
-//	public static void main(String[] arg) {
-//		String fs = ">seq1\r\nAAAAAAA\r\nAAAAAAA\r\nAAAAAAAA\r\n>seq2\r\nTTTTTTT\r\nTTTTTTT\r\nTTTTTTTT\r\n>seq3\r\nGGGGGGG\r\nGGGGGGG\r\nGGGGGGGG\r\n>seq4\r\nCCCCCCC\r\nCCCCCCC\r\nCCCCCCCC";
-//		
-//		FastaMultipleReader fr = new FastaMultipleReader();
-//		System.out.println(fr.readString(fs));
-//		
-//		
-//	}
 }
+

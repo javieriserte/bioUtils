@@ -1,4 +1,4 @@
-package fastaIO;
+package fileformats.fastaIO;
 
 public class FastaReaderTest {
 

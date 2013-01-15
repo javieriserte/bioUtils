@@ -1,9 +1,10 @@
-package genBankIO.parsers;
+package fileformats.genBankIO.parsers;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
-import genBankIO.elements.Origin;
+
+import fileformats.genBankIO.elements.Origin;
 
 /**
  * Parses the origin part of a GenBank record.

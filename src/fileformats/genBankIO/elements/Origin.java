@@ -1,4 +1,4 @@
-package genBankIO.elements;
+package fileformats.genBankIO.elements;
 
 /**
  * A class to store the origin data of a GenBank record.

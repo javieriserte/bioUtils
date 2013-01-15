@@ -1,4 +1,4 @@
-package genBankIO;
+package fileformats.genBankIO;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -9,12 +9,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
-import genBankIO.elements.Feature;
-import genBankIO.elements.GenBankHeader;
-import genBankIO.elements.Origin;
-import genBankIO.parsers.FeaturesParser;
-import genBankIO.parsers.GenBankHeaderParser;
-import genBankIO.parsers.OriginParser;
+import fileformats.genBankIO.elements.Feature;
+import fileformats.genBankIO.elements.GenBankHeader;
+import fileformats.genBankIO.elements.Origin;
+import fileformats.genBankIO.parsers.FeaturesParser;
+import fileformats.genBankIO.parsers.GenBankHeaderParser;
+import fileformats.genBankIO.parsers.OriginParser;
 
 final public class GenBankReader {
 
