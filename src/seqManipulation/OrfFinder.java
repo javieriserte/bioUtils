@@ -1,101 +1,162 @@
 package seqManipulation;
 
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.lang.reflect.Array;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Vector;
 
-import fileformats.fastaIO.FastaMultipleReader;
-import fileformats.fastaIO.Pair;
+import cmdGA.NoOption;
+import cmdGA.Parser;
+import cmdGA.SingleOption;
+import cmdGA.exceptions.IncorrectParameterTypeException;
+import cmdGA.parameterType.InputStreamParameter;
+import cmdGA.parameterType.IntegerParameter;
+import cmdGA.parameterType.PrintStreamParameter;
 
 public class OrfFinder {
 
 	/**
-	 * Search ORFs in a given sequence 
+	 * Search ORFs in a given sequence. 
 	 * 
 	 * @param args
 	 */
 	public static void main(String[] args) {
 	
-		Object[] g = OrfFinder.firstORF("AATG", 240);
-		System.out.println();
+//		Object[] g = OrfFinder.firstORF("AATG", 240);
 		
-//		FastaMultipleReader fmr = new FastaMultipleReader();
-//		
-//		try {
-//			List<Pair<String,String>> res = fmr.readFile("C:\\JAvier\\DropBox\\My Dropbox\\Investigacion\\Tesis\\Figuras\\#Intro.Filogenias\\arena_L.fas");
-//
-//			System.out.println("hay " + res.size() + " secuencias en el archivo");
-//			
-//			FileWriter bfg = new FileWriter("C:\\JAvier\\DropBox\\My Dropbox\\Investigacion\\Tesis\\Figuras\\#Intro.Filogenias\\arena_L_Z.fas",false);
-//			FileWriter bfn = new FileWriter("C:\\JAvier\\DropBox\\My Dropbox\\Investigacion\\Tesis\\Figuras\\#Intro.Filogenias\\arena_L_L.fas",false);
-//			
-//			for (Pair<String, String> pair : res) {
-//				
-//				Object[] g = OrfFinder.firstORF(pair.getSecond(), 240);
-//				String prot_g = (String) g[0];
-////				int st_g = (Integer) g[1];
-////				int le_g = (Integer) g[2];
-//				
-//				Object[] n = OrfFinder.firstComplementatyOrfFromEnd(pair.getSecond(), 240);
-//				String prot_n = (String) n[0];
-////				int st_n = (Integer) n[1];
-////				int le_n = (Integer) n[2];
-//
-//				System.out.println("found : " + prot_g);
-//				System.out.println("size  : " + prot_g.length());
-//				System.out.println("found : " + prot_n);
-//				System.out.println("size  : " + prot_n.length());
-//				
-//				if (prot_g.length()>240) {
-//
-////					bfg.write(">" + pair.getFirst() + "\r\n");
-////					bfg.write(prot_g + "\r\n");
-//					
-//				}
-//				
-//				if (prot_n.length()>240) {
-//
-////					bfn.write(">" + pair.getFirst() + "\r\n");
-////					bfn.write(prot_n + "\r\n");
-//					
-//				}
-//				
-//			}
-//			bfg.close();
-//			bfn.close();
-//			
-//		} catch (FileNotFoundException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//		
+		// STEP ONE:
+		// Create a Parser.
+		Parser parser = new Parser();
+		
+		// STEP TWO:
+		// DEFINE THE POSSIBLE OPTIONS ACCEPTED IN THE COMMAND LINE. (TAKE CARE OF AVOID AMBIGUITY) 
+		SingleOption input = new SingleOption(parser, System.in, "-in", InputStreamParameter.getParameter());
+		NoOption cir = new NoOption(parser, "-circular");
+		SingleOption minsize = new SingleOption(parser, 100, "-min", IntegerParameter.getParameter());
+		SingleOption outfile = new SingleOption(parser, System.out, "-outfile", PrintStreamParameter.getParameter());
+		SingleOption frame = new SingleOption(parser, 0, "-frame", IntegerParameter.getParameter());
+		
+
+		// STEP THREE
+		// PARSE THE COMMAND LINE
+		try {
+			parser.parseEx(args);
+		} catch (IncorrectParameterTypeException e) {
+			System.out.println("There was an error:");
+			System.out.println(e.getMessage());
+			System.out.println("Program aborted.");
+			System.exit(1);
+		}
+		BufferedReader in = new BufferedReader(new InputStreamReader( (InputStream) input.getValue()));
+		PrintStream out = (PrintStream) outfile.getValue();
+		
+		try {
+			String line;
+			while ((line = in.readLine()) != null ) {
+				List<String> r = OrfFinder.allOrfs(line, (Integer) minsize.getValue(), (Boolean) cir.getValue(), (Integer) frame.getValue());
+			
+				for (String string : r) {
+					out.println("ORF Found: " + string);
+				}
+			}
+			
+		} catch (IOException e1) {
+			System.err.println("There was an IO error reading the input data.");
+		}
+
 	}
 
 	///////////////////
 	// Public Interface
 	/**
 	 * Search ORFs in a sequence.
+	 *
+	 * <pre>
+     * TAGATGNNN   ->Circular TAG |ATG NNN TAG| ATG NNN                                 -> 1 COPY NEEDED 
+     * TAGNATGNN   ->Circular T AGN ATG NNT AGN ATG NN                                  -> 1 COPY NEEDED 
+     * TAGNNATGN   ->Circular TA GNN ATG NTA GNN ATG N                                  -> 1 COPY NEEDED
+     * 
+     * TAGATGNNNN  ->Circular TAG |ATG NNN NTA GAT GNN NNT AGA TGN NNN TAG| ATG NNN N   -> 3 COPY NEEDED
+     * TAGNATGNNN  ->Circular T AGN |ATG NNN TAG| NAT GNN NTA GNA TGN NNT AGN ATG NNN   -> 1 COPY NEEDED
+     * TAGNNATGNN  ->Circular TA GNN |ATG NNT AGN NAT GNN TAG| NNA TGN NTA GNN ATG NN   -> 2 COPY NEEDED
+     * 
+     * TAGATGNNNNN TAG |ATG NNN NNT AGA TGN NNN NTA GAT GNN NNN TAG| ATG NNN NN         -> 3 COPY NEEDED
+     * TAGNATGNNNN T AGN |ATG NNN NTA GNA TGN NNN TAG| NAT GNN NNT AGN ATG NNN N        -> 2 COPY NEEDED
+     * TAGNNATGNNN TA GNN |ATG NNN TAG| NNA TGN NNT AGN NAT GNN NTA GNN ATG NNN         -> 1 COPY NEEDED
+	 * </pre> 
 	 * 
 	 * @param sequence A nucleotide sequence. 
 	 * @param frame <code>0</code> for All, <code>1-3</code> for specific frame.
 	 * @param bothStrands search in the given sequence and in the reverse complementary sequence.
-	 * @param largerthan minimum size of the ORF to report.
+	 * @param minSize minimum size of the ORF to report.
 	 * @param circular True if the sequence is from a circular DNA molecule (i.e. a plasmid). 
-	 *  
+	 * 
+	 * @return a list of String that contain all the orfs in the sequence
 	 */
-	@SuppressWarnings("unused")
-	public static Object[][] allOrfs(String sequence, int largerThan, boolean bothStrands, boolean circular, int frame) {
+	public static List<String> allOrfs(String sequence, int minSize, boolean bothStrands, boolean circular, int frame) {
+		List<String> result = new ArrayList<String>();
+		if (bothStrands) {
+			result = allOrfs(sequence, minSize, circular, frame);
+			result.addAll(allOrfs(Complementary.reverseComplementary(sequence), minSize, circular, frame));
+		} else {
+			result = allOrfs(sequence, minSize, circular, frame);
+		}
+		return result;
+		
+	}
+	 
+	/**
+	 * Search ORFs in a sequence.
+	 *
+	 * <pre>
+	 * For circular sequences, an ORF could start at the end of the sequence and 
+	 * end at the beginning. For this, the sequence needs to be replicated.
+	 * 
+     * TAGATGNNN   ->Circular TAG |ATG NNN TAG| ATG NNN                                 -> 1 COPY NEEDED 
+     * TAGNATGNN   ->Circular T AGN ATG NNT AGN ATG NN                                  -> 1 COPY NEEDED 
+     * TAGNNATGN   ->Circular TA GNN ATG NTA GNN ATG N                                  -> 1 COPY NEEDED
+     * 
+     * TAGATGNNNN  ->Circular TAG |ATG NNN NTA GAT GNN NNT AGA TGN NNN TAG| ATG NNN N   -> 3 COPY NEEDED
+     * TAGNATGNNN  ->Circular T AGN |ATG NNN TAG| NAT GNN NTA GNA TGN NNT AGN ATG NNN   -> 1 COPY NEEDED
+     * TAGNNATGNN  ->Circular TA GNN |ATG NNT AGN NAT GNN TAG| NNA TGN NTA GNN ATG NN   -> 2 COPY NEEDED
+     * 
+     * TAGATGNNNNN ->Circular TAG |ATG NNN NNT AGA TGN NNN NTA GAT GNN NNN TAG| ATG NNN NN         -> 3 COPY NEEDED
+     * TAGNATGNNNN ->Circular T AGN |ATG NNN NTA GNA TGN NNN TAG| NAT GNN NNT AGN ATG NNN N        -> 2 COPY NEEDED
+     * TAGNNATGNNN ->Circular TA GNN |ATG NNN TAG| NNA TGN NNT AGN NAT GNN NTA GNN ATG NNN         -> 1 COPY NEEDED
+	 * </pre> 
+	 * 
+	 * @param sequence A nucleotide sequence. 
+	 * @param frame <code>0</code> for All, <code>1-3</code> for specific frame.
+	 * @param minSize minimum size of the ORF to report, the size is measured in bases, no amino acids.
+	 * @param circular True if the sequence is from a circular DNA molecule (i.e. a Plasmid). 
+	 * 
+	 * @return a list of String that contain all the ORFs in the sequence
+	 */
+	public static List<String> allOrfs(String sequence, int minSize, boolean circular, int frame) {
 
 		int[] ATGs = OrfFinder.scanATG(sequence);
 		int[] STOPs = OrfFinder.scanSTOP(sequence);
+		int unitLength = sequence.length();
 		
+		@SuppressWarnings("unchecked")
+		List<Integer>[] ATGsAnsSTOPsByFrame = (List<Integer>[]) new List[3];
+		ATGsAnsSTOPsByFrame[0] = new ArrayList<Integer>();
+		ATGsAnsSTOPsByFrame[1] = new ArrayList<Integer>();
+		ATGsAnsSTOPsByFrame[2] = new ArrayList<Integer>();
+
+		@SuppressWarnings("unchecked")
+		List<Boolean>[] ATGorStop = (List<Boolean>[]) new List[3];
+		ATGorStop[0] = new ArrayList<Boolean>();
+		ATGorStop[1] = new ArrayList<Boolean>();
+		ATGorStop[2] = new ArrayList<Boolean>();
+
+		List<String> result = new ArrayList<String>();
+
 		Arrays.sort(ATGs);
 		Arrays.sort(STOPs);
 		
@@ -103,176 +164,38 @@ public class OrfFinder {
 			
 			if (sequence.length()%3 == 0) {
 				
-				int[] nATGs = new int[2*ATGs.length];
-				int[] nSTOPs = new int[2*STOPs.length];
-				for (int i=0 ; i < 2*ATGs.length  ; i++) nATGs[i]  = ATGs[i % ATGs.length] + sequence.length() * ((int)(i / ATGs.length));
-				for (int i=0 ; i < 2*STOPs.length ; i++) nSTOPs[i] = STOPs[i % STOPs.length]+ sequence.length() * ((int)(i / STOPs.length));
+				int by = 2;
 				
-				ATGs = nATGs;
-				STOPs = nSTOPs;
+				ATGs = replicateArray(sequence, ATGs, by);
+				
+				STOPs = replicateArray(sequence, STOPs, by);
+				
+				sequence = sequence + sequence;
 				
 			} else {
-				int[] nATGs = new int[4*ATGs.length];
-				int[] nSTOPs = new int[4*STOPs.length];
-				for (int i=0 ; i < 4*ATGs.length  ; i++) nATGs[i]  = ATGs[i % ATGs.length] + sequence.length() * ((int)(i / ATGs.length));
-				for (int i=0 ; i < 4*STOPs.length ; i++) nSTOPs[i] = STOPs[i % STOPs.length]+ sequence.length() * ((int)(i / STOPs.length));
 				
-				ATGs = nATGs;
-				STOPs = nSTOPs;			
+				int by = 4;
+				
+				ATGs = replicateArray(sequence, ATGs, by);
+
+				STOPs = replicateArray(sequence, STOPs, by);
+				
+				sequence = sequence + sequence + sequence + sequence;
 			}
 		
 		}
 		
-		System.out.println(ATGs);
-		System.out.println(STOPs);
+		separateByFrame(frame, ATGs, STOPs, ATGsAnsSTOPsByFrame, ATGorStop);
 		
-		// TAGATGNNN  ->Circular TAG |ATG NNN TAG| ATG NNN -> 1 COPY NEEDED 
-		// TAGNATGNN  ->Circular T AGN ATG NNT AGN ATG NN  -> 1 COPY NEEDED 
-		// TAGNNATGN  ->Circular TA GNN ATG NTA GNN ATG N  -> 1 COPY NEEDED
-		// 
-		// TAGATGNNNN TAG |ATG NNN NTA GAT GNN NNT AGA TGN NNN TAG| ATG NNN N   -> 3 COPY NEEDED
-		// TAGNATGNNN T AGN |ATG NNN TAG| NAT GNN NTA GNA TGN NNT AGN ATG NNN   -> 1 COPY NEEDED
-		// TAGNNATGNN TA GNN |ATG NNT AGN NAT GNN TAG| NNA TGN NTA GNN ATG NN   -> 2 COPY NEEDED
-		//
-		// TAGATGNNNNN TAG |ATG NNN NNT AGA TGN NNN NTA GAT GNN NNN TAG| ATG NNN NN  -> 3 COPY NEEDED
-		// TAGNATGNNNN T AGN |ATG NNN NTA GNA TGN NNN TAG| NAT GNN NNT AGN ATG NNN N -> 2 COPY NEEDED
-		// TAGNNATGNNN TA GNN |ATG NNN TAG| NNA TGN NNT AGN NAT GNN NTA GNN ATG NNN  -> 1 COPY NEEDED
+		excludeAdjacentATGorSTOP(ATGsAnsSTOPsByFrame, ATGorStop);
 		
+		retriveORFs(sequence, unitLength, ATGsAnsSTOPsByFrame, ATGorStop, result, minSize);
 		
-		
-//		int[] maxLengthATGForSTOP = new int[STOPs.length];
-//		
-//
-//		for (int stop : STOPs) {
-//			// Look in every Stop mark.
-//			int seqLenght = sequence.length();
-//			Integer previousStop = OrfFinder.getPreviousStop(stop,STOPs,circular,seqLenght);
-//				// get the previous stop in the same frame.
-//
-//			Integer previousATG = getPreviousATG(circular, ATGs, stop, seqLenght, previousStop);
-//				// an ATG in the same frame must exits between the two STOPs, 
-//				// if more of one is found, the closest is recovered.
-//			
-//		}
-		
-		//
-		//
-		//
-		//
-		//
-		//
-		
-		
-		return null;
-		
-		
-		
+		return result;
 		
 	}
 
-	/**
-	 * Given two consecutive stop marks, returns the position of the an ATG between these two 
-	 * that is nearest to the first stop.
-	 *   
-	 * @param circular
-	 * @param ATGs
-	 * @param stop
-	 * @param seqLenght
-	 * @param previousStop
-	 * @return
-	 */
-	protected static Integer getPreviousATG(boolean circular, int[] ATGs, int stop, int seqLenght, Integer previousStop) {
-		Integer previousATG=null;
-		for (int atg : ATGs) {
-			// Look for every ATG
-		if (atg<stop) {
-				// The ATG is before the current Stop
-				if (atg%3 == stop%3) {
-					// They are in the same frame
-					if (previousATG==null || (atg<previousATG || previousATG>stop)) {
-						// |-------------|-------------|-------------|<
-						//           a p         s                    < this      (p =previousATG, s= current stop
-			            //                       s       a  p         < or this   (a = atg being analyzed 	
-						if (previousATG > previousStop) {
-							previousATG = atg;
-						}
-					}
-				}
-			} else
-			// This stop mark is after the current stop mark.
-			if (circular) {
-				// if circular may be useful
-				if ((stop + seqLenght - atg)%3 ==0) {
-					// they are in the same frame
-					if (previousATG==null || (atg<previousATG && previousATG>=stop));
-					  previousATG = atg;
-						// |-------------|-------------|-------------|<					  
- 					    //                  s     a    p              < this      (p =previous, s= current stop
-   			            //                                                        (a = atg being analyzed 
-					if ((previousATG > previousStop) || (previousATG<stop && previousStop>=stop)) {
-						// |-------------|-------------|-------------|<					  
- 					    //     ps  pa       s                         < this      (pa =previousAtg, s= current stop
- 					    //                  s      ps  pa             < this      (ps =previousStop
- 					    //          pa      s      ps                 < this      						
-   			            //                                                         
-						previousATG = atg;
-					}
-				}
-			}
-			// if no circular, the stop must do not be recovered.
-		}
-		return previousATG;
-	}
-
-	/**
-	 * Given a Stop mark position, retrieves the position of the previous one in the same frame.
-	 * If none is recovered, the result is null.
-	 * 
-	 * @param stop the current stop position 
-	 * @param STOPs an array with all the stop mark position in an sequence
-	 * @param circular is the sequence is the be considered circular, like a plasmid
-	 * @param seqLenght the length of the sequence
-	 * @return
-	 */
-	private static Integer getPreviousStop(int stop, int[] STOPs, boolean circular, int seqLenght) {
-		
-		Integer previous = null;
-
-		for (int i : STOPs) {
-
-			if (i<stop) {
-				// This Stop mark is before the current stop mark.
-				if (i%3 == stop%3) {
-					// both stops mark are in the same frame
-					if (previous==null || (i>previous || stop<=previous)) {
-						// |-------------|-------------|-------------|
-						//             p    i    s                    < this      (p =previous, s= current stop
-//			            //                  i    s          p         < or this   (i = stop being analyzed 
-						previous = i;
-					}
-				}
-			} else {
-				// This stop mark is after the current stop mark.
-				if (circular) {
-					// if circular may be useful
-					if ((stop + seqLenght - i)%3 ==0) {
-						// they are in the same frame
-						if (previous==null || (i>previous && previous>=stop));
-						previous = i;
-						//                 s     p    i               < this      (p =previous, s= current stop
-//			            //                                                        (i = stop being analyzed 
-						
-					}
-				}
-				// if no circular, the stop must do not be recovered.
-			}
-			
-		}
-		
-		return previous;
-		
-	}
-
+	@Deprecated
 	public static Object[] nextORF(String sequence, int largerThan) {
 		
 		int maxATG=0;
@@ -301,6 +224,7 @@ public class OrfFinder {
 		return result;
 	}
 	
+	@Deprecated
 	public static Object[] firstORF(String sequence, int largerThan) {
 		
 		int maxATG=0;
@@ -331,51 +255,19 @@ public class OrfFinder {
 		return result;
 	}
 	
+	@Deprecated
 	public static Object[] nextComplementatyOrfFromEnd(String sequence, int largerThan) {
-		return nextORF(reverseComplementary(sequence),largerThan);
+		return nextORF(Complementary.reverseComplementary(sequence),largerThan);
 	}
 	
+	@Deprecated
 	public static Object[] firstComplementatyOrfFromEnd(String sequence, int largerThan) {
-		return firstORF(reverseComplementary(sequence),largerThan);
+		return firstORF(Complementary.reverseComplementary(sequence),largerThan);
 	}
 
 	
 	//////////////////
 	// Private Methods
-
-	private static String reverseComplementary(String sequence) {
-		
-		StringBuilder result = new StringBuilder(sequence.length());
-		for (int i = sequence.length()-1; i>=0; i--) {
-			result.append(getComplementaryBase(Character.toUpperCase(sequence.charAt(i))));
-		}
-		
-		return result.toString();
-	}
-	
-	private static char getComplementaryBase(char charAt) {
-		char result;
-		switch (charAt) {
-			case 'A': result ='T' ; break;
-			case 'C': result ='G' ; break;
-			case 'T': result ='A' ; break;
-			case 'G': result ='C' ; break;
-			case 'W': result ='W' ; break;
-			case 'S': result ='S' ; break;
-			case 'R': result ='Y' ; break;
-			case 'Y': result ='R' ; break;
-			case 'K': result ='M' ; break;
-			case 'M': result ='K' ; break;
-			case 'B': result ='V' ; break;
-			case 'D': result ='H' ; break;
-			case 'H': result ='D' ; break;
-			case 'V': result ='B' ; break;
-			case 'N': result ='N' ; break;
-			case '-': result ='-' ; break;
-			default:  result ='N' ; break;
-		};
-		return result;
-	}
 
 	private static int[] scanATG(String sequence) {
 		return extractMatches(sequence.toUpperCase(), "ATG");
@@ -404,4 +296,188 @@ public class OrfFinder {
 		}
 		return arrayResult;
 	}
+	
+	/**
+	 * Retrieve the ORFs from a sequence, given a list of ATGs and STOPs mark position.
+	 * There is expected that there are not two ATGs or two STOPs adjacent in the list.
+	 * Usually the method <code>excludeAdjacentATGorSTOP</code> is called before this.
+	 *   
+	 * @param sequence the sequence from which the ORFs will be extracted.  
+	 * @param unitLength is the Sequence minimun unit length.
+	 * @param ATGsAnsSTOPsByFrame an <code>array</code> containing the ATGs and STOPs mark positions.
+	 * @param ATGorStop is a list of boolean values that is a reference of which elements in ATGsAnsSTOPsByFrame list are ATG o STOP.
+	 *        When ATGorSTOP[index] is true, then ATGsAnsSTOPsByFrame[index] is the position of an ATG.
+	 *        When ATGorSTOP[index] is false, then ATGsAnsSTOPsByFrame[index] is the position of a STOP.  
+	 * @param result is the array in which the results will be stored.
+	 */
+	protected static void retriveORFs(String sequence, int unitLength,
+			List<Integer>[] ATGsAnsSTOPsByFrame, List<Boolean>[] ATGorStop,
+			List<String> result, int minSize) {
+		for (int cframe = 0; cframe<3;cframe++ ) {
+			
+			for (int i=0; i<ATGsAnsSTOPsByFrame[cframe].size();i++) {
+
+				if (ATGorStop[cframe].get(i) && (i+1)<ATGsAnsSTOPsByFrame[cframe].size()) {
+					
+					int atgpos = ATGsAnsSTOPsByFrame[cframe].get(i);
+					
+					int endIndex = ATGsAnsSTOPsByFrame[cframe].get(i+1);
+					
+					if (atgpos<unitLength && (endIndex - atgpos) >= minSize ) {
+						
+						result.add(sequence.substring(atgpos, endIndex+3));
+						
+					}
+					
+				}
+			
+			}
+			
+		}
+	}
+	
+	/**
+	 * Detect, in a list of ATG and STOP, two adjacent ATG or two adjacent STOP and keeps the lower one, removing the other.
+	 * 
+	 * @param ATGsAnsSTOPsByFrame is a list of ATG and STOP mark positions
+	 * @param ATGorStop is a list of boolean values that is a reference of which elements in ATGsAnsSTOPsByFrame list are ATG o STOP.
+	 *        When ATGorSTOP[index] is true, then ATGsAnsSTOPsByFrame[index] is the position of an ATG.
+	 *        When ATGorSTOP[index] is false, then ATGsAnsSTOPsByFrame[index] is the position of a STOP.    
+	 */
+	protected static void excludeAdjacentATGorSTOP(
+			List<Integer>[] ATGsAnsSTOPsByFrame, List<Boolean>[] ATGorStop) {
+		for (int cframe=0;cframe<3;cframe++) {
+			
+			if (ATGsAnsSTOPsByFrame[cframe].size()>1) {
+				
+				int lastIndex = 0;
+				
+				boolean lastWasATG = ATGorStop[cframe].get(lastIndex);
+				
+				for (int i = 1; i<ATGsAnsSTOPsByFrame[cframe].size(); i++) {
+					
+					if (ATGorStop[cframe].get(i)==lastWasATG) {
+						
+						ATGsAnsSTOPsByFrame[cframe].remove(i);
+						
+						ATGorStop[cframe].remove(i);
+						
+						i--;
+						
+					} else {
+					
+					lastWasATG = ATGorStop[cframe].get(i);
+					
+					}
+					
+				}
+				
+			}
+			
+		}
+	}
+
+	/**
+	 * Replicate the elements of and <code>int</code> array a given number of times.
+	 * The replicated elements are put at the end of the array and its value is modified 
+	 * too add the length of the sequence.
+	 * 
+	 * <pre>
+	 * Example:
+	 *         Initial Array = [1, 4 , 6 , 9]
+	 *         sequence length = 10;
+	 *         Replicate 3 times;
+	 *         ...
+	 *         Result Array = [1, 4 , 6 , 9, 1 + (10*1), 4 + (10*1), 6 + (10*1), 9 + (10*1), 1 + (10*2), 4 + (10*2), 6 + (10*2), 9 + (10*2)]
+	 *         Result Array = [1, 4 , 6 , 9, 11, 14, 16, 19, 21, 24, 26, 29]
+	 * 
+	 * </pre>
+	 * @param sequence is the sequence for which the array positions belongs. The positions are ATG or STOPs mark positions.
+	 * @param array contain the positions of ATG and STOP marks from the sequence.
+	 * @param by is the number of times that the array will be replicated. 
+	 * @return a new array with elements of the first replicated
+	 */
+	protected static int[] replicateArray(String sequence, int[] array, int by) {
+		int[] nArray = new int[by*array.length];
+		for (int i=0 ; i < by*array.length  ; i++) nArray[i]  = array[i % array.length] + sequence.length() * ((int)(i / array.length));
+		return nArray; 
+	}
+
+	/**
+	 * Given a list of ATGs positions and a list of STOPs positions corresponding 
+	 * to a sequence, separates them by its frame. 
+	 * 
+	 * @param frame is the reading frame of the ATGs and STOPs positions to be retrieved. 
+	 *        frame can be 0,1,2 or 3. 1 to 3 for each reading frame and 0 for all.  
+	 * @param ATGs an array of ATG marks positions.
+	 * @param STOPs an array of STOP marks positions.
+	 * @param ATGsAnsSTOPsByFrame
+	 * @param ATGorStop
+	 */
+	protected static void separateByFrame(int frame, int[] ATGs, int[] STOPs,
+			List<Integer>[] ATGsAnsSTOPsByFrame, List<Boolean>[] ATGorStop) {
+		// Separate atg and stops by frame
+		
+		for(int cframe=0;cframe<3;cframe++) {
+		
+			if ((cframe+1)==frame || frame == 0) {
+			int atgIndex = 0;
+			int StopIndex = 0;
+			int currentATG=0;
+			if (atgIndex<ATGs.length) currentATG = ATGs[atgIndex];
+			int currentSTOP=0;
+			if (StopIndex<STOPs.length) currentSTOP = STOPs[StopIndex];
+			while(atgIndex<ATGs.length || StopIndex<STOPs.length) {
+			
+					while(atgIndex<ATGs.length && currentATG%3 != cframe) {
+						// tries to get the next atg in the current frame
+						atgIndex++;
+						if (atgIndex<ATGs.length) currentATG = ATGs[atgIndex];
+					}
+					
+					while(StopIndex<STOPs.length && currentSTOP%3 != cframe ){
+						// tries to get the next atg in the current frame				
+						StopIndex++;
+						if (StopIndex<STOPs.length) currentSTOP = STOPs[StopIndex];
+					}
+					
+					if ( atgIndex==ATGs.length && StopIndex==STOPs.length)  {
+						// both STops and ATG reach the end
+						// do nothing. The next loop will exit.
+						continue;
+					} else 
+					if ( StopIndex==STOPs.length && atgIndex<ATGs.length)  {
+						//Stop reach the end and ATGs do not.
+						ATGsAnsSTOPsByFrame[cframe].add(currentATG);
+						ATGorStop[cframe].add(true);
+						atgIndex++;
+						if (atgIndex<ATGs.length) currentATG = ATGs[atgIndex];
+					} else
+					if ( atgIndex==ATGs.length && StopIndex<STOPs.length)  {
+						//Stop reach the end and ATGs do not.				
+						ATGsAnsSTOPsByFrame[cframe].add(currentSTOP);
+						ATGorStop[cframe].add(false);
+						StopIndex++;
+						if (StopIndex<STOPs.length) currentSTOP = STOPs[StopIndex];
+					} else
+					// Stops nor ATGs reach the end.				
+					if (currentATG<currentSTOP) {
+						// current atg is lower and atg is in frame
+						ATGsAnsSTOPsByFrame[cframe].add(currentATG);
+						atgIndex++;
+						ATGorStop[cframe].add(true);
+						if (atgIndex<ATGs.length) currentATG = ATGs[atgIndex];
+						
+					} else {
+						// current stop is lower and stop is in frame
+						ATGsAnsSTOPsByFrame[cframe].add(currentSTOP);
+						ATGorStop[cframe].add(false);
+						StopIndex++;				
+						if (StopIndex<STOPs.length) currentSTOP = STOPs[StopIndex];				
+					}
+				}
+			}
+		}
+	}
+
 }

@@ -24,7 +24,7 @@ public class Complementary {
 		
 	}
 
-	public static String reverseComplenentary(String sequence) {
+	public static String reverseComplementary(String sequence) {
 		
 		StringBuilder result = new StringBuilder(sequence.length());
 		for (int i = sequence.length()-1; i>=0; i--) {
