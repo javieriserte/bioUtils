@@ -167,7 +167,7 @@ public class TextConsumer {
 	protected boolean transfer() {
 	
 		StringBuilder transfered = new StringBuilder();
-		@SuppressWarnings("unused")
+
 		int i=0;
 		char l = 0;
 		int c=0;
