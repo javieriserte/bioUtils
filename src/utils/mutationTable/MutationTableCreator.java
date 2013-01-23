@@ -1,9 +1,17 @@
 package utils.mutationTable;
-import java.io.File;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.util.List;
 import java.util.Vector;
+
+import cmdGA.Parser;
+import cmdGA.SingleOption;
+import cmdGA.exceptions.IncorrectParameterTypeException;
+import cmdGA.parameterType.InputStreamParameter;
+import cmdGA.parameterType.PrintStreamParameter;
 
 import fileformats.fastaIO.*;
 
@@ -22,28 +30,35 @@ public class MutationTableCreator {
 	 */
 	public static void main(String[] args) throws IOException {
 	
-		String inPath = "B:\\Javier\\Dropbox\\Investigacion\\Tesis\\Figuras\\#CepaVacunal\\L.fas";
-		String outPath = "B:\\Javier\\Dropbox\\Investigacion\\Tesis\\Figuras\\#CepaVacunal";
+		// Step One : Create the parser
+		Parser parser = new Parser();
 		
-		@SuppressWarnings("unused")
-		File pathFile = new File(inPath);
+		// Step Two : Create the options
+		
+		SingleOption infile = new SingleOption(parser, System.in, "-infile", InputStreamParameter.getParameter());
+		SingleOption outfile = new SingleOption(parser, System.out, "-out", PrintStreamParameter.getParameter());
+		
+		// Step Three : Parse the command line
+		
+		try {
+			parser.parseEx(args);
+		} catch (IncorrectParameterTypeException e) {
+			System.err.println("There was an error parsing the command line");
+			System.exit(1);
+		}
+		
+		BufferedReader in = new BufferedReader(new InputStreamReader( (InputStream) infile.getValue() ));
+		
 		FastaMultipleReader fmr;
 		MutationTableCreator mtc = new MutationTableCreator();
 				
-//		for (File file : pathFile.listFiles()) {
-//			if (file.isFile()) {
-				File file = new File(inPath);
+		fmr = new FastaMultipleReader();
 				
-				fmr = new FastaMultipleReader();
+		mtc.setMySeqs(fmr.readBuffer(in));
 				
-				mtc.setMySeqs(fmr.readFile(file.getAbsolutePath()));
-				
-				PrintStream outfile = new PrintStream(outPath + "\\" + file.getName() + ".table.txt");
+		PrintStream out = new PrintStream((PrintStream)outfile.getValue());
 
-				outfile.print(mtc.getTable('\t'));
-				
-//			}
-//		}
+		out.print(mtc.getTable('\t'));
 		
 	}
 	
@@ -115,7 +130,7 @@ public class MutationTableCreator {
 			linea = linea + separatorChar + this.getDescOfSequence(j);
 		}
 		
-		result = linea + "\r\n";
+		result = linea + System.getProperty("line.separator");;
 		
 		// From Second Line. with Sequences Descriptions.
 		for (int i=0;i<data.getPos().length;i++) {
@@ -125,7 +140,7 @@ public class MutationTableCreator {
 			for (int j=0;j<this.getNumberOfSequences();j++) {
 				linea= linea + separatorChar + data.getSeqDiff()[j][i];
 			}
-			result = result + linea + "\r\n";
+			result = result + linea + System.getProperty("line.separator");
 			
 		}
 		
