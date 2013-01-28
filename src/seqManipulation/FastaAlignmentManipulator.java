@@ -1,6 +1,8 @@
 package seqManipulation;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
@@ -13,6 +15,7 @@ import cmdGA.Option;
 import cmdGA.Parser;
 import cmdGA.SingleOption;
 import cmdGA.exceptions.IncorrectParameterTypeException;
+import cmdGA.parameterType.InFileParameter;
 import cmdGA.parameterType.InputStreamParameter;
 import cmdGA.parameterType.IntegerParameter;
 import cmdGA.parameterType.PrintStreamParameter;
@@ -55,6 +58,10 @@ public class FastaAlignmentManipulator {
 		
 		NoOption versionOpt = new NoOption(parser, "-ver");
 		uniques.add(versionOpt);
+		
+		SingleOption appendOpt = new SingleOption(parser, null, "-append", InFileParameter.getParameter());
+		uniques.add(appendOpt);
+
 		
 		// Step Three : Try to parse the command line
 		
@@ -130,6 +137,31 @@ public class FastaAlignmentManipulator {
 			}
 			System.exit(0);
 		}
+		
+		if (appendOpt.isPresent()) {
+			File otherfile = (File) appendOpt.getValue();
+			if (otherfile!=null) {
+				try {
+					List<Pair<String,String>> other = fmr.readFile(otherfile);
+					
+					if (other.size()==seqs.size()) {
+						
+						for (int i =0; i<seqs.size();i++) {
+						
+							out.println(">" + seqs.get(i).getFirst());
+						
+							out.println(seqs.get(i).getSecond() + other.get(i).getSecond());
+
+						}
+						
+					}
+					
+				} catch (FileNotFoundException e) {
+					System.err.println("The file to be appended can't ve read.\n");
+				}
+					
+			}
+		}
 	}
 
 	/**
@@ -144,7 +176,8 @@ public class FastaAlignmentManipulator {
 		       "\n                     a list of the order numbers of the sequence to be retrieved is needed."+
 		       "\n                     the number 1 is the first sequence."+
 			   "\n         -count    : counts the number of sequences in a fasta file."+
-			   "\n         -def      : shows and numerates the definitions."+			   
+			   "\n         -def      : shows and numerates the definitions."+
+			   "\n         -append   : creates one alignment from two. The sequences of the new alignment are the combination from the other two.."+			   
 			   "\n         -ver      : prints the number of the version in stdout."+
 			   "\n         -help     : shows this help.";
 			   
