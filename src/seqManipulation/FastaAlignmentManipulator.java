@@ -102,7 +102,7 @@ public class FastaAlignmentManipulator {
 			System.exit(0);
 		} 
 		if (parametersUsed>1) {
-			System.err.println("Only one option is expected\n");
+			System.err.println("Only one option is expected");
 			System.exit(0);			
 		}
 		
@@ -163,33 +163,43 @@ public class FastaAlignmentManipulator {
 		
 		if (sliceOpt.isPresent()) {
 			
-			if (sliceOpt.count()==2) {
-				
-				// This option requires exactly two parameters
+			sliceCommand(sliceOpt, out, seqs);
+		}
+		
 
-				int from = (Integer) sliceOpt.getValue(0)-1;
 
-				int to = (Integer) sliceOpt.getValue(1);
+	}
+
+	private static void sliceCommand(MultipleOption sliceOpt, PrintStream out,
+			List<Pair<String, String>> seqs) {
+		if (sliceOpt.count()==2) {
+			
+			// This option requires exactly two parameters
+
+			int from = (Integer) sliceOpt.getValue(0)-1;
+
+			int to = (Integer) sliceOpt.getValue(1);
+			
+			int len = seqs.get(0).getSecond().length();
+			
+			if (to <= len && from < to && from >=0) {
 				
-				int len = seqs.get(0).getSecond().length();
-				
-				if (to <= len && from < to && from >=0) {
+				for (Pair<String, String> pair : seqs) {
 					
-					for (Pair<String, String> pair : seqs) {
-						
-						out.println(pair.getFirst());
-						
-						out.println(pair.getSecond().substring(from, to));
-						
-					}
+					out.println(pair.getFirst());
+					
+					out.println(pair.getSecond().substring(from, to));
 					
 				}
 				
-				
 			}
+			
 			
 		}
 		
+		out.close();
+
+		System.exit(0);
 	}
 
 	private static void concatenateCommand(MultipleOption concatOpt,
@@ -234,6 +244,10 @@ public class FastaAlignmentManipulator {
 			out.println(pair.getSecond().length());
  
 		}
+		out.close();
+		
+		System.exit(0);
+		
 	}
 
 	private static void lengthCommand(PrintStream out,
@@ -263,8 +277,11 @@ public class FastaAlignmentManipulator {
 		if (allEqual) out.println(lens[0]);
 		
 			else out.println(0);
+	
+		out.close();
 		
 		System.exit(0);
+
 	}
 
 	private static void appendCommand(SingleOption appendOpt, PrintStream out,
@@ -294,7 +311,10 @@ public class FastaAlignmentManipulator {
 				
 		}
 		
+		out.close();
+		
 		System.exit(0);
+
 	}
 
 	private static void extractCommand(MultipleOption extractOpt,
@@ -310,7 +330,10 @@ public class FastaAlignmentManipulator {
 				out.println(seqs.get(integer-1).getSecond());
 			}
 		}
+		out.close();
+		
 		System.exit(0);
+
 	}
 
 	private static void definitionsCommand(PrintStream out,
@@ -320,7 +343,10 @@ public class FastaAlignmentManipulator {
 			i++;
 			out.println(i + ": " + pair.getFirst());
 		}
+		out.close();
+		
 		System.exit(0);
+
 	}
 
 	private static void countCommand(PrintStream out,
@@ -328,7 +354,10 @@ public class FastaAlignmentManipulator {
 		// Counts the number of sequences in the alignment
 		out.println(seqs.size());
 		
+		out.close();
+		
 		System.exit(0);
+
 	}
 
 	/**
