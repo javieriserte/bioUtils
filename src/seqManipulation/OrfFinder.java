@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
+import java.text.Format;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -59,9 +60,16 @@ public class OrfFinder {
 			String line;
 			while ((line = in.readLine()) != null ) {
 				List<String> r = OrfFinder.allOrfs(line, (Integer) minsize.getValue(), (Boolean) cir.getValue(), (Integer) frame.getValue());
-			
+				int counter =1;
+				int w = r.size()%10 +1;
+				
+				
+
 				for (String string : r) {
-					out.println("ORF Found: " + string);
+					out.print(">ORF");
+					out.format("%0"+ w +"d%n", counter);
+					out.println("");
+					out.println(string);
 				}
 			}
 			
