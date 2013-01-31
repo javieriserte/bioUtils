@@ -40,8 +40,9 @@ public class OrfFinder {
 		SingleOption minsize = new SingleOption(parser, 100, "-min", IntegerParameter.getParameter());
 		SingleOption outfile = new SingleOption(parser, System.out, "-outfile", PrintStreamParameter.getParameter());
 		SingleOption frame = new SingleOption(parser, 0, "-frame", IntegerParameter.getParameter());
+		NoOption helpOpt = new NoOption(parser, "-help");
 		
-
+		
 		// STEP THREE
 		// PARSE THE COMMAND LINE
 		try {
@@ -55,19 +56,24 @@ public class OrfFinder {
 		BufferedReader in = new BufferedReader(new InputStreamReader( (InputStream) input.getValue()));
 		PrintStream out = (PrintStream) outfile.getValue();
 		
+		if (helpOpt.isPresent()) {
+			
+			printHelp(out);			
+			
+		}
+		
 		try {
 			String line;
 			while ((line = in.readLine()) != null ) {
 				List<String> r = OrfFinder.allOrfs(line, (Integer) minsize.getValue(), (Boolean) cir.getValue(), (Integer) frame.getValue());
 				int counter =1;
-				int w = r.size()%10 +1;
+				int w = r.size()/10 +1;
 				
 				
 
 				for (String string : r) {
 					out.print(">ORF");
 					out.format("%0"+ w +"d%n", counter);
-					out.println("");
 					out.println(string);
 				}
 			}
@@ -76,6 +82,21 @@ public class OrfFinder {
 			System.err.println("There was an IO error reading the input data.");
 		}
 
+	}
+
+	protected static void printHelp(PrintStream out) {
+		out.println("OrfFinder ver 0.0.1");
+		out.println("");
+		out.println("   Options:");
+		out.println("   -in         : Is the path to the input fasta file to be readed. ");
+		out.println("               :   If no present, standard input is assumed.");
+		out.println("   -out        : Is the path to the output file. ");
+		out.println("               :   If no present, standard output is assumed.");
+		out.println("   -min        : Is the minimum size for and ORF to be informed. (Default is 100)");
+		out.println("   -circular   : Assumes that the sequence is from a circular molecule. ");			
+		out.println("   -frame      : Looks ORFs in a specific frame: 1, 2 o 3.");			
+		out.println("               :   If frame is 0, then all frames are analyzed.");
+		out.println("   -help       : Show this information.");
 	}
 
 	///////////////////
