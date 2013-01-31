@@ -73,6 +73,10 @@ public class FastaAlignmentManipulator {
 		
 		MultipleOption sliceOpt = new MultipleOption(parser, null, "-slice", ',', IntegerParameter.getParameter());
 		uniques.add(sliceOpt);
+		
+		NoOption degapOPt = new NoOption(parser, "-degap");
+		uniques.add(degapOPt);
+		
 
 		
 		// Step Three : Try to parse the command line
@@ -166,8 +170,25 @@ public class FastaAlignmentManipulator {
 			sliceCommand(sliceOpt, out, seqs);
 		}
 		
+		if (degapOPt.isPresent()) {
+			
+			degapCommand(out, seqs);
+		}
 
+	}
 
+	private static void degapCommand(PrintStream out,
+			List<Pair<String, String>> seqs) {
+		for (Pair<String, String> pair : seqs) {
+			String newSeq = pair.getSecond().replaceAll("-", "");
+			out.println(pair.getFirst());
+			out.println(newSeq);
+			
+		}
+		
+		out.close();
+
+		System.exit(0);
 	}
 
 	private static void sliceCommand(MultipleOption sliceOpt, PrintStream out,
@@ -380,6 +401,7 @@ public class FastaAlignmentManipulator {
 			   "\n         -slice        : cuts a segment of the alignment and keeps it. The rest is removed. " +
 			   "\n                          you need to give the starting position and the last position. " +
 			   "\n                          Example:  -slice=1,20  | keeps the 20 first characters of the alignment." +
+			   "\n         -degap        : removes \"-\" symbols from each sequence." +
 			   "\n         -ver          : prints the number of the version in stdout."+
 			   "\n         -help         : shows this help.";
 			   
