@@ -168,7 +168,7 @@ public class TextConsumer {
 	
 		StringBuilder transfered = new StringBuilder();
 
-		int i=0;
+//		int i=0;
 		char l = 0;
 		int c=0;
 		boolean exit = true;
@@ -179,7 +179,7 @@ public class TextConsumer {
 				if (c>=0) transfered.append((char) c);
 				if(c==-1) exit = false;
 			} catch (IOException e) {}
-			i++; 
+//			i++; 
 		} while(c>=0 && (l !='\r' && l !='\n') );
 		this.prebuffer = this.prebuffer + transfered;
 		return exit;

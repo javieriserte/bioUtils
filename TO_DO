@@ -5,8 +5,7 @@ Bioutils - Tools for molecular biology
 TO DO List:
 
 1) seqManipulation.OrfFinder class.
-   - Add more search options: first ORF, last ORF, search by frame, search all ORF given a condition.
-   - Create a Class for search conditions.
-   - Decouple complementarity of sequences in other Class.
+   - Add more search options: first ORF, last ORF, search by frame, search all ORF given a condition. - Done
+   - Decouple complementarity of sequences in other Class. - Done
    - Document!!!!
  

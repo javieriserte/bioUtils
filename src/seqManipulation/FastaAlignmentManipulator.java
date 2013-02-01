@@ -8,6 +8,7 @@ import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import cmdGA.MultipleOption;
 import cmdGA.NoOption;
@@ -42,6 +43,7 @@ public class FastaAlignmentManipulator {
 		// Step Two : Add Command Line Options
 		
 		SingleOption inputStreamOpt = new SingleOption(parser, System.in, "-infile", InputStreamParameter.getParameter());
+		
 		SingleOption printStreamOpt = new SingleOption(parser, System.out, "-outfile", PrintStreamParameter.getParameter());
 		
 		MultipleOption extractOpt = new MultipleOption(parser, 0, "-extract", ' ', IntegerParameter.getParameter());
@@ -77,7 +79,16 @@ public class FastaAlignmentManipulator {
 		NoOption degapOPt = new NoOption(parser, "-degap");
 		uniques.add(degapOPt);
 		
+		NoOption translateOPt = new NoOption(parser, "-translate");
+		uniques.add(translateOPt);
+		
+		SingleOption translateWithOPt = new SingleOption(parser, null,"-translateWith",InFileParameter.getParameter());
+		uniques.add(translateWithOPt);
 
+		NoOption geneticCodeHelpOPt = new NoOption(parser, "-genCodeHelp");
+		uniques.add(geneticCodeHelpOPt);
+
+		
 		
 		// Step Three : Try to parse the command line
 		
@@ -174,7 +185,92 @@ public class FastaAlignmentManipulator {
 			
 			degapCommand(out, seqs);
 		}
+		
+		if (translateOPt.isPresent()) {
+			
+			translateCommand(out, seqs);
+			
+		}
+		
+		if (translateWithOPt.isPresent()) {
+			
+			translateWithCommand(translateWithOPt, out, seqs);
+			
+		}
+		
+		if (geneticCodeHelpOPt.isPresent()) {
+			
+			out.println("The File Format for the genetic code is like:");
+			out.println("");
+			out.println("A, GCT, GCC, GCA, GCG");
+			out.println("C, TGT, TGC");
+			out.println("D, GAT, GAC");
+			out.println("E, GAA, GAG");
+			out.println("F, TTT, TTC");
+			out.println("G, GGT, GGC, GGA, GGG");
+			out.println("H, CAT, CAC");
+			out.println("I, ATT, ATC, ATA");
+			out.println("K, AAA, AAG");
+			out.println("L, TTA, TTG, CTT, CTC, CTA, CTG");
+			out.println("M, ATG");
+			out.println("N, AAT, AAC");
+			out.println("P, CCT, CCC, CCA, CCG");
+			out.println("Q, CAA, CAG");
+			out.println("R, CGT, CGC, CGA, CGG, AGA, AGG");
+			out.println("S, TCT, TCC, TCA, TCG, AGT, AGC");
+			out.println("T, ACT, ACC, ACA, ACG");
+			out.println("V, GTT, GTC, GTA, GTG");
+			out.println("W, TGG");
+			out.println("Y, TAT, TAC");
+			out.println("*, TAA, TGA, TAG");
+			
+		}
 
+	}
+	
+	// private and protected methods
+
+	protected static void translateWithCommand(SingleOption translateWithOPt, PrintStream out, List<Pair<String, String>> seqs) {
+		Map<String, String> geneticCode=null;
+		
+		InputStreamReader gcISR = (InputStreamReader) translateWithOPt.getValue();
+		
+		BufferedReader infile = new BufferedReader(gcISR);
+		
+		geneticCode = Translate.readGeneticCode(infile);
+
+		Translate translator = Translate.getInstance();
+		
+		for (Pair<String, String> pair : seqs) {
+			
+			out.println(">"+ pair.getFirst());
+			
+			out.println(translator.translateSeq(pair.getFirst(),geneticCode));
+			
+		}
+		
+		out.close();
+		
+		System.exit(0);
+	}
+
+
+	
+	protected static void translateCommand(PrintStream out,	List<Pair<String, String>> seqs) {
+
+		Translate translator = Translate.getInstance();
+		
+		for (Pair<String, String> pair : seqs) {
+			
+			out.println(">"+ pair.getFirst());
+			
+			out.println(translator.translateSeq(pair.getFirst()));
+			
+		}
+		
+		out.close();
+		
+		System.exit(0);
 	}
 
 	private static void degapCommand(PrintStream out,
@@ -387,23 +483,27 @@ public class FastaAlignmentManipulator {
 	 */
 	private static String Help() {
 		return "Fasta Alignment Manipulator - Version " + FastaAlignmentManipulator.VERSION + 
-		       "\nOptions: -infile       : is the input fasta file (or stdin if no present)" +
-		       "\n         -outfile      : is the path to the output file (or stdout if no present)" +
-		       "\n         -extract      : extracts some of the sequences of the alignment."+
-		       "\n                          a list of the order numbers of the sequence to be retrieved is needed."+
-		       "\n                          the number 1 is the first sequence."+
-			   "\n         -count        : counts the number of sequences in a fasta file."+
-			   "\n         -length       : counts the number of columns in the alignment. If all of them haven't the same size return 0."+
-			   "\n         -lengths      : counts the number of columns in each row of the alignment."+
-			   "\n         -concatenate  : joins many alignments into one."+
-			   "\n         -def          : shows and numerates the definitions."+
-			   "\n         -append       : creates one alignment from two. The sequences of the new alignment are the combination from the other two."+
-			   "\n         -slice        : cuts a segment of the alignment and keeps it. The rest is removed. " +
-			   "\n                          you need to give the starting position and the last position. " +
-			   "\n                          Example:  -slice=1,20  | keeps the 20 first characters of the alignment." +
-			   "\n         -degap        : removes \"-\" symbols from each sequence." +
-			   "\n         -ver          : prints the number of the version in stdout."+
-			   "\n         -help         : shows this help.";
+		       "\nOptions: -infile        : is the input fasta file (or stdin if no present)" +
+		       "\n         -outfile       : is the path to the output file (or stdout if no present)" +
+		       "\n         -extract       : extracts some of the sequences of the alignment."+
+		       "\n                           a list of the order numbers of the sequence to be retrieved is needed."+
+		       "\n                           the number 1 is the first sequence."+
+			   "\n         -count         : counts the number of sequences in a fasta file."+
+			   "\n         -length        : counts the number of columns in the alignment. If all of them haven't the same size return 0."+
+			   "\n         -lengths       : counts the number of columns in each row of the alignment."+
+			   "\n         -concatenate   : joins many alignments into one."+
+			   "\n         -def           : shows and numerates the definitions."+
+			   "\n         -append        : creates one alignment from two. The sequences of the new alignment are the combination from the other two."+
+			   "\n         -slice         : cuts a segment of the alignment and keeps it. The rest is removed. " +
+			   "\n                           you need to give the starting position and the last position. " +
+			   "\n                           Example:  -slice=1,20  | keeps the 20 first characters of the alignment." +
+			   "\n         -degap         : removes \"-\" symbols from each sequence." +
+			   "\n         -translate     : translate DNA sequences into aminoacid." +
+			   "\n         -translateWith : translate DNA sequences into aminoacid using the given file containing" +
+			   "\n                            a genetic code" +
+			   "\n         -genCodeHelp   : shows help about the genetic code format" +
+			   "\n         -ver           : prints the number of the version in stdout."+
+			   "\n         -help          : shows this help.";
 			   
 		
 	}
