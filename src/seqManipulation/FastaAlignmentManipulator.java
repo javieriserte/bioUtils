@@ -130,6 +130,11 @@ public class FastaAlignmentManipulator {
 			System.exit(0);
 		}
 		
+		if (geneticCodeHelpOPt.isPresent()) {
+			
+			genCodeHelpCommand(out);
+			
+		}
 		
 		FastaMultipleReader fmr = new FastaMultipleReader();
 		
@@ -198,34 +203,40 @@ public class FastaAlignmentManipulator {
 			
 		}
 		
-		if (geneticCodeHelpOPt.isPresent()) {
-			
-			out.println("The File Format for the genetic code is like:");
-			out.println("");
-			out.println("A, GCT, GCC, GCA, GCG");
-			out.println("C, TGT, TGC");
-			out.println("D, GAT, GAC");
-			out.println("E, GAA, GAG");
-			out.println("F, TTT, TTC");
-			out.println("G, GGT, GGC, GGA, GGG");
-			out.println("H, CAT, CAC");
-			out.println("I, ATT, ATC, ATA");
-			out.println("K, AAA, AAG");
-			out.println("L, TTA, TTG, CTT, CTC, CTA, CTG");
-			out.println("M, ATG");
-			out.println("N, AAT, AAC");
-			out.println("P, CCT, CCC, CCA, CCG");
-			out.println("Q, CAA, CAG");
-			out.println("R, CGT, CGC, CGA, CGG, AGA, AGG");
-			out.println("S, TCT, TCC, TCA, TCG, AGT, AGC");
-			out.println("T, ACT, ACC, ACA, ACG");
-			out.println("V, GTT, GTC, GTA, GTG");
-			out.println("W, TGG");
-			out.println("Y, TAT, TAC");
-			out.println("*, TAA, TGA, TAG");
-			
-		}
 
+
+	}
+
+	protected static void genCodeHelpCommand(PrintStream out) {
+		
+		out.println("The File Format for the genetic code is like:");
+		out.println("");
+		out.println("A, GCT, GCC, GCA, GCG");
+		out.println("C, TGT, TGC");
+		out.println("D, GAT, GAC");
+		out.println("E, GAA, GAG");
+		out.println("F, TTT, TTC");
+		out.println("G, GGT, GGC, GGA, GGG");
+		out.println("H, CAT, CAC");
+		out.println("I, ATT, ATC, ATA");
+		out.println("K, AAA, AAG");
+		out.println("L, TTA, TTG, CTT, CTC, CTA, CTG");
+		out.println("M, ATG");
+		out.println("N, AAT, AAC");
+		out.println("P, CCT, CCC, CCA, CCG");
+		out.println("Q, CAA, CAG");
+		out.println("R, CGT, CGC, CGA, CGG, AGA, AGG");
+		out.println("S, TCT, TCC, TCA, TCG, AGT, AGC");
+		out.println("T, ACT, ACC, ACA, ACG");
+		out.println("V, GTT, GTC, GTA, GTG");
+		out.println("W, TGG");
+		out.println("Y, TAT, TAC");
+		out.println("*, TAA, TGA, TAG");
+		
+		out.close();
+		
+		System.exit(0);
+		
 	}
 	
 	// private and protected methods
@@ -273,11 +284,14 @@ public class FastaAlignmentManipulator {
 		System.exit(0);
 	}
 
-	private static void degapCommand(PrintStream out,
-			List<Pair<String, String>> seqs) {
+	private static void degapCommand(PrintStream out, List<Pair<String, String>> seqs) {
+
 		for (Pair<String, String> pair : seqs) {
+
 			String newSeq = pair.getSecond().replaceAll("-", "");
+			
 			out.println(pair.getFirst());
+
 			out.println(newSeq);
 			
 		}
