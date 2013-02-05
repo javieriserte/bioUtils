@@ -1,13 +1,8 @@
 package utils.ConservationImage;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -18,7 +13,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.Vector;
 
-import javax.swing.JOptionPane;
 import cmdGA.NoOption;
 import cmdGA.Parser;
 import cmdGA.SingleOption;
@@ -57,11 +51,11 @@ public class ConservationImageGenerator {
 	// Public Interface
 	
 	@SuppressWarnings("restriction")
-	public void 				printImage							(File outfile, ColoringStrategy color, int windowSize ) throws ImageFormatException, IOException {
+	public void 				printImage							(File outfile, ColoringStrategy color, int windowSize, Renderer renderer ) throws ImageFormatException, IOException {
 		
 		// notice that createGraphics returns a g2d object directly, no cast!
-
-		BufferedImage bi = this.render(color,this.data,windowSize);
+		
+		BufferedImage bi = renderer.render(color,this.data,windowSize);
 		
 //		 save the image
 
@@ -78,176 +72,176 @@ public class ConservationImageGenerator {
 		encoder.encode(bi);
 	}
 	
-	public BufferedImage 		render								(ColoringStrategy color, double[] data, int windowLen) {
-		
-		
-//	    PaddingH                                    PaddingH
-//      /--/				                            /--/
-//		---------------------------------------------------- /
-//		|                   (   BODY   )                   | | PaddingV
-//		|  ||||||||||||||||||||||||||||||||||||||||||||||  | /            /
-//		|                                                  |              |  Space_1
-//		|  |----|----|----|----|----|----|----|----|----|  |  Ruler       /            /
-//		|                                                  |                           |  Space_2
-//		|  ||||||||||||||||||||||||||||||||||||||||||||||  |                           /
-//		|                                                  |
-//		|  |----|----|----|----|----|----|----|----|----|  |
-//		|                                                  |
-//		|  ||||||||||||||||||||||||||||||||||||||||||||||  |
-//		|                                                  |
-//		|  |----|----|----|----|----|----|----|----|----|  |
-//		|                                                  |
-//		|  ||||||||||||||||||||||||||||||||||||||||||||||  |
-//		|                                                  |
-//		|  |----|----|----|----|----|----|----|----|----|  |
-//		|                                                  |
-//		|  ||||||||||||||||||||||||||||||||||||||||||||||  |
-//		|                                                  |
-//		|  |----|----|----|----|----|----|----|----|----|  |		
-//		|                                                  |
-//		|  ||||||||||||||||||||||||||||||||||||||||||||||  |
-//		|                                                  |
-//		|  |----|----|----|----|----|----|----|----|----|  | /
-//		|                                                  | | PaddingV
-//		---------------------------------------------------- / 
-		
-
-		int paddingV = 30;
-		int paddingW = 50;
-		int barsToPrint = data.length-windowLen+1;
-		int lineHeight = 50;
-		int space_1 = 10;
-		int space_2 = 30;
-		int rulerHeight = 35;
-		int rulerLinesVspace = 20;
-		int rulerNumbersVspace = 15;
-		int barsPerLine = 500;
-		
-		int numberOfLines = ((barsToPrint-1) /  barsPerLine)+1;
-		
-		int imageW = 2 * paddingW + barsPerLine;
-		int imageH = 2 * paddingV + numberOfLines * (lineHeight + space_1 +space_2 + rulerHeight) - space_2;
-		
-		
-		BufferedImage bi = new BufferedImage(imageW, imageH, BufferedImage.TYPE_INT_RGB);
-		Graphics2D g = bi.createGraphics();
-
-		
-		g.setColor(Color.white);
-		g.fillRect(0, 0, bi.getWidth(), bi.getHeight());
-
-
-		// process first element
-		double windowValue =0;
-		for (int i =0; i<windowLen;i++) {
-			windowValue = windowValue + data[i];
-		}
-		
-		int xPos=0;
-		windowValue = windowValue/ windowLen; 
-		setColorOnGraphic(g,xPos ,color.getColor(windowValue),0,lineHeight, paddingV, paddingW);
-		
-		// Process the rest of the elements
-		for (int x=windowLen;x<data.length;x++,xPos++) {
-			windowValue = windowValue + (data[x] - data[xPos]) / windowLen;
-			int yPos = ((xPos) / barsPerLine) * ( lineHeight + space_1 + space_2 + rulerHeight ); 
-			setColorOnGraphic(g,xPos % barsPerLine,color.getColor(windowValue),yPos,lineHeight, paddingV, paddingW);
-			
-		}
-		
-		
-		g.setColor(Color.BLACK);
-		
-		int minRuleDiv = 10;
-		int maxRuleDiv = 100;
-		int midRuleDiv = 50;
-		
-		
-		g.setStroke(new BasicStroke(2));
-		
-		// Draw Ruler
-		
-		// Draw Ruler Base Lines
-		
-		for (int l = 0; l<numberOfLines;l++) {
-
-			int bFrom = l * barsPerLine;
-			int bTo = Math.min((l+1) * barsPerLine, barsToPrint);
-			
-			int xto = bTo - bFrom;
-			
-			g.drawLine(  paddingW , 
-					     paddingV + (lineHeight + space_1 + rulerHeight+ space_2) * (l) + space_1 + lineHeight + rulerLinesVspace, 
-					     paddingW + xto, 
-					     paddingV + (lineHeight + space_1 + rulerHeight+ space_2) * (l) + space_1 + lineHeight + rulerLinesVspace);
-
-		}
-		
-		
-		g.setStroke(new BasicStroke(1));
-		for (int i=0;i<barsToPrint;i=i+minRuleDiv) {
-			int xPosR = (i % barsPerLine);
-			int l = ( i / barsPerLine);
-			int yPosR = (lineHeight + space_1 + rulerHeight+ space_2) * l + space_1 + lineHeight + rulerLinesVspace; 
-			
-			g.drawLine(paddingW + xPosR, paddingV + yPosR - 5, paddingW + xPosR, paddingV + yPosR);
-		}
-
-		for (int i=0;i<barsToPrint;i=i+midRuleDiv) {
-			int xPosR = (i % barsPerLine);
-			int l = ( i / barsPerLine);
-			int yPosR = (lineHeight + space_1 + rulerHeight+ space_2) * l + space_1 + lineHeight + rulerLinesVspace; 
-			
-			g.drawLine(paddingW + xPosR, paddingV + yPosR - 10, paddingW + xPosR, paddingV + yPosR);
-		}
-
-		
-
-		
-		
-		g.setFont(new Font("Verdana", Font.BOLD, 18));
-		g.setStroke(new BasicStroke(2));
-		
-
-		for (int l = 0; l<numberOfLines;l++) {
-
-			int bFrom = l * barsPerLine;
-			int bTo = Math.min((l+1) * barsPerLine, barsToPrint);
-			
-			int xto = bTo - bFrom;
-			
-			g.drawLine(  paddingW + xto, 
-					     paddingV + (lineHeight + space_1 + rulerHeight+ space_2) * l + space_1 + lineHeight + rulerLinesVspace - 20, 
-					     paddingW + xto, 
-					     paddingV + (lineHeight + space_1 + rulerHeight+ space_2) * l + space_1 + lineHeight + rulerLinesVspace);
-
-		}
-		
-		
-		for (int i=0;i<barsToPrint;i=i+maxRuleDiv) {
-			int xPosR = (i % barsPerLine);
-			int l = ( i / barsPerLine);
-			int yPosR = (lineHeight + space_1 + rulerHeight+ space_2) * l + space_1 + lineHeight + rulerLinesVspace; 
-			
-			g.drawLine(paddingW + xPosR, paddingV + yPosR - 20, paddingW + xPosR, paddingV + yPosR);
-			
-			String numberString = String.valueOf(i); 
-			int h= g.getFontMetrics().bytesWidth(numberString.getBytes(), 0, numberString.length());
-			g.drawString( numberString, paddingW + xPosR - (h/2) , paddingV + yPosR + rulerNumbersVspace);
-			
-		}
-		
-		return bi;
-	}
+//	public BufferedImage 		render								(ColoringStrategy color, double[] data, int windowLen) {
+//		
+//		
+////	    PaddingH                                    PaddingH
+////      /--/				                            /--/
+////		---------------------------------------------------- /
+////		|                   (   BODY   )                   | | PaddingV
+////		|  ||||||||||||||||||||||||||||||||||||||||||||||  | /            /
+////		|                                                  |              |  Space_1
+////		|  |----|----|----|----|----|----|----|----|----|  |  Ruler       /            /
+////		|                                                  |                           |  Space_2
+////		|  ||||||||||||||||||||||||||||||||||||||||||||||  |                           /
+////		|                                                  |
+////		|  |----|----|----|----|----|----|----|----|----|  |
+////		|                                                  |
+////		|  ||||||||||||||||||||||||||||||||||||||||||||||  |
+////		|                                                  |
+////		|  |----|----|----|----|----|----|----|----|----|  |
+////		|                                                  |
+////		|  ||||||||||||||||||||||||||||||||||||||||||||||  |
+////		|                                                  |
+////		|  |----|----|----|----|----|----|----|----|----|  |
+////		|                                                  |
+////		|  ||||||||||||||||||||||||||||||||||||||||||||||  |
+////		|                                                  |
+////		|  |----|----|----|----|----|----|----|----|----|  |		
+////		|                                                  |
+////		|  ||||||||||||||||||||||||||||||||||||||||||||||  |
+////		|                                                  |
+////		|  |----|----|----|----|----|----|----|----|----|  | /
+////		|                                                  | | PaddingV
+////		---------------------------------------------------- / 
+//		
+//
+//		int paddingV = 30;
+//		int paddingW = 50;
+//		int barsToPrint = data.length-windowLen+1;
+//		int lineHeight = 50;
+//		int space_1 = 10;
+//		int space_2 = 30;
+//		int rulerHeight = 35;
+//		int rulerLinesVspace = 20;
+//		int rulerNumbersVspace = 15;
+//		int barsPerLine = 500;
+//		
+//		int numberOfLines = ((barsToPrint-1) /  barsPerLine)+1;
+//		
+//		int imageW = 2 * paddingW + barsPerLine;
+//		int imageH = 2 * paddingV + numberOfLines * (lineHeight + space_1 +space_2 + rulerHeight) - space_2;
+//		
+//		
+//		BufferedImage bi = new BufferedImage(imageW, imageH, BufferedImage.TYPE_INT_RGB);
+//		Graphics2D g = bi.createGraphics();
+//
+//		
+//		g.setColor(Color.white);
+//		g.fillRect(0, 0, bi.getWidth(), bi.getHeight());
+//
+//
+//		// process first element
+//		double windowValue =0;
+//		for (int i =0; i<windowLen;i++) {
+//			windowValue = windowValue + data[i];
+//		}
+//		
+//		int xPos=0;
+//		windowValue = windowValue/ windowLen; 
+//		setColorOnGraphic(g,xPos ,color.getColor(windowValue),0,lineHeight, paddingV, paddingW);
+//		
+//		// Process the rest of the elements
+//		for (int x=windowLen;x<data.length;x++,xPos++) {
+//			windowValue = windowValue + (data[x] - data[xPos]) / windowLen;
+//			int yPos = ((xPos) / barsPerLine) * ( lineHeight + space_1 + space_2 + rulerHeight ); 
+//			setColorOnGraphic(g,xPos % barsPerLine,color.getColor(windowValue),yPos,lineHeight, paddingV, paddingW);
+//			
+//		}
+//		
+//		
+//		g.setColor(Color.BLACK);
+//		
+//		int minRuleDiv = 10;
+//		int maxRuleDiv = 100;
+//		int midRuleDiv = 50;
+//		
+//		
+//		g.setStroke(new BasicStroke(2));
+//		
+//		// Draw Ruler
+//		
+//		// Draw Ruler Base Lines
+//		
+//		for (int l = 0; l<numberOfLines;l++) {
+//
+//			int bFrom = l * barsPerLine;
+//			int bTo = Math.min((l+1) * barsPerLine, barsToPrint);
+//			
+//			int xto = bTo - bFrom;
+//			
+//			g.drawLine(  paddingW , 
+//					     paddingV + (lineHeight + space_1 + rulerHeight+ space_2) * (l) + space_1 + lineHeight + rulerLinesVspace, 
+//					     paddingW + xto, 
+//					     paddingV + (lineHeight + space_1 + rulerHeight+ space_2) * (l) + space_1 + lineHeight + rulerLinesVspace);
+//
+//		}
+//		
+//		
+//		g.setStroke(new BasicStroke(1));
+//		for (int i=0;i<barsToPrint;i=i+minRuleDiv) {
+//			int xPosR = (i % barsPerLine);
+//			int l = ( i / barsPerLine);
+//			int yPosR = (lineHeight + space_1 + rulerHeight+ space_2) * l + space_1 + lineHeight + rulerLinesVspace; 
+//			
+//			g.drawLine(paddingW + xPosR, paddingV + yPosR - 5, paddingW + xPosR, paddingV + yPosR);
+//		}
+//
+//		for (int i=0;i<barsToPrint;i=i+midRuleDiv) {
+//			int xPosR = (i % barsPerLine);
+//			int l = ( i / barsPerLine);
+//			int yPosR = (lineHeight + space_1 + rulerHeight+ space_2) * l + space_1 + lineHeight + rulerLinesVspace; 
+//			
+//			g.drawLine(paddingW + xPosR, paddingV + yPosR - 10, paddingW + xPosR, paddingV + yPosR);
+//		}
+//
+//		
+//
+//		
+//		
+//		g.setFont(new Font("Verdana", Font.BOLD, 18));
+//		g.setStroke(new BasicStroke(2));
+//		
+//
+//		for (int l = 0; l<numberOfLines;l++) {
+//
+//			int bFrom = l * barsPerLine;
+//			int bTo = Math.min((l+1) * barsPerLine, barsToPrint);
+//			
+//			int xto = bTo - bFrom;
+//			
+//			g.drawLine(  paddingW + xto, 
+//					     paddingV + (lineHeight + space_1 + rulerHeight+ space_2) * l + space_1 + lineHeight + rulerLinesVspace - 20, 
+//					     paddingW + xto, 
+//					     paddingV + (lineHeight + space_1 + rulerHeight+ space_2) * l + space_1 + lineHeight + rulerLinesVspace);
+//
+//		}
+//		
+//		
+//		for (int i=0;i<barsToPrint;i=i+maxRuleDiv) {
+//			int xPosR = (i % barsPerLine);
+//			int l = ( i / barsPerLine);
+//			int yPosR = (lineHeight + space_1 + rulerHeight+ space_2) * l + space_1 + lineHeight + rulerLinesVspace; 
+//			
+//			g.drawLine(paddingW + xPosR, paddingV + yPosR - 20, paddingW + xPosR, paddingV + yPosR);
+//			
+//			String numberString = String.valueOf(i); 
+//			int h= g.getFontMetrics().bytesWidth(numberString.getBytes(), 0, numberString.length());
+//			g.drawString( numberString, paddingW + xPosR - (h/2) , paddingV + yPosR + rulerNumbersVspace);
+//			
+//		}
+//		
+//		return bi;
+//	}
 	
 	
 	//////////////////
 	// Private Methods
 	
-	private void 				setColorOnGraphic					(Graphics2D g, int xPos, Color color, int yPos, int lineHeight, int paddingV, int paddingW) {
-		g.setColor(color);
-		g.drawLine(paddingW+xPos,paddingV+ yPos, paddingW+xPos, paddingV+ yPos + lineHeight);
-	}
+//	private void 				setColorOnGraphic					(Graphics2D g, int xPos, Color color, int yPos, int lineHeight, int paddingV, int paddingW) {
+//		g.setColor(color);
+//		g.drawLine(paddingW+xPos,paddingV+ yPos, paddingW+xPos, paddingV+ yPos + lineHeight);
+//	}
 
 	/**
 	 * A line above the alignment is used to mark strongly conserved positions. Three characters ('*', ':' and '.') are used:<br>
@@ -560,64 +554,64 @@ public class ConservationImageGenerator {
 //	}
 
 
-	@SuppressWarnings("restriction")
-	public static void loopWindow(double[] data, ConservationImageGenerator cig, String outFilePrefix) {
-		for (int w=1; w<=26;w=w+5) {
-			cig.setData( data );
-		
-			try {
-				cig.printImage(new File(outFilePrefix + "."+String.valueOf(w)+".jpg"), new RedBlueColorringStrategy(),w );
-			} catch (ImageFormatException e) {
-				System.out.println("Hubo Un error con el formato de la imagen");
-				e.printStackTrace();
-			} catch (IOException e) {
-				System.out.println("Hubo Un error con el archivo de salida");
-				e.printStackTrace();
-			}
-			
-		}
-		
-	}
+//	@SuppressWarnings("restriction")
+//	public static void loopWindow(double[] data, ConservationImageGenerator cig, String outFilePrefix) {
+//		for (int w=1; w<=26;w=w+5) {
+//			cig.setData( data );
+//		
+//			try {
+//				cig.printImage(new File(outFilePrefix + "."+String.valueOf(w)+".jpg"), new RedBlueColorringStrategy(),w );
+//			} catch (ImageFormatException e) {
+//				System.out.println("Hubo Un error con el formato de la imagen");
+//				e.printStackTrace();
+//			} catch (IOException e) {
+//				System.out.println("Hubo Un error con el archivo de salida");
+//				e.printStackTrace();
+//			}
+//			
+//		}
+//		
+//	}
 
 
-	@SuppressWarnings("restriction")
-	public static void dialogMain() throws FileNotFoundException {
-		ConservationImageGenerator cig = new ConservationImageGenerator();
-
-		int responseInt=0;
-		String response= null; 
-		responseInt = JOptionPane.showOptionDialog(null, "Crear Imagen desde Clustal? Elegir 'No' implica crear la imagen a pritr del alineamiento usando el contenido informativo", "Elegir método", JOptionPane.YES_NO_OPTION ,JOptionPane.QUESTION_MESSAGE, null, null, null);
-		
-		if (responseInt== JOptionPane.YES_NO_OPTION) {
-			response = JOptionPane.showInputDialog(null, "Escribir ruta del alineamiento",  "Clustal", JOptionPane.QUESTION_MESSAGE);
-			int responseDNA = JOptionPane.showOptionDialog(null, "Es DNA ? Elegir No implica que son proteinas", "DNA O PROTEINA", JOptionPane.YES_NO_OPTION ,JOptionPane.QUESTION_MESSAGE, null, null, null);
-			cig.setData( cig.getDataFromClustalConservationProfile(new FileInputStream(new File(response)), responseDNA == JOptionPane.YES_OPTION) );	
-			
-		} else {
-			response = JOptionPane.showInputDialog(null, "Escribir la ruta del alineamiento", "Buscar Archivo",   JOptionPane.QUESTION_MESSAGE);
-			
-			responseInt = JOptionPane.showOptionDialog(null, "Es DNA ? Elegir No implica que son proteinas", "DNA O PROTEINA", JOptionPane.YES_NO_OPTION ,JOptionPane.QUESTION_MESSAGE, null, null, null);
-			
-			cig.setData( cig.getDataFromInformationContent(new FileInputStream(new File(response)), responseInt == JOptionPane.YES_OPTION) );
-		}
-		
-		response = JOptionPane.showInputDialog(null, "Escriba el tamaño de la ventana que quiere usar", "Elegir Ventana", JOptionPane.QUESTION_MESSAGE);
-		
-		int windowSize = Integer.parseInt(response);
-		
-		response = JOptionPane.showInputDialog(null, "Escribir la ruta del archivo de salida",  "Archivo de Salida", JOptionPane.QUESTION_MESSAGE);
-		
-		
-		try {
-			cig.printImage(new File(response), new RedBlueColorringStrategy(),windowSize );
-		} catch (ImageFormatException e) {
-			System.out.println("Hubo Un error con el formato de la imagen");
-			e.printStackTrace();
-		} catch (IOException e) {
-			System.out.println("Hubo Un error con el archivo de salida");
-			e.printStackTrace();
-		}
-	}
+//	@SuppressWarnings("restriction")
+//	public static void dialogMain() throws FileNotFoundException {
+//		ConservationImageGenerator cig = new ConservationImageGenerator();
+//
+//		int responseInt=0;
+//		String response= null; 
+//		responseInt = JOptionPane.showOptionDialog(null, "Crear Imagen desde Clustal? Elegir 'No' implica crear la imagen a pritr del alineamiento usando el contenido informativo", "Elegir método", JOptionPane.YES_NO_OPTION ,JOptionPane.QUESTION_MESSAGE, null, null, null);
+//		
+//		if (responseInt== JOptionPane.YES_NO_OPTION) {
+//			response = JOptionPane.showInputDialog(null, "Escribir ruta del alineamiento",  "Clustal", JOptionPane.QUESTION_MESSAGE);
+//			int responseDNA = JOptionPane.showOptionDialog(null, "Es DNA ? Elegir No implica que son proteinas", "DNA O PROTEINA", JOptionPane.YES_NO_OPTION ,JOptionPane.QUESTION_MESSAGE, null, null, null);
+//			cig.setData( cig.getDataFromClustalConservationProfile(new FileInputStream(new File(response)), responseDNA == JOptionPane.YES_OPTION) );	
+//			
+//		} else {
+//			response = JOptionPane.showInputDialog(null, "Escribir la ruta del alineamiento", "Buscar Archivo",   JOptionPane.QUESTION_MESSAGE);
+//			
+//			responseInt = JOptionPane.showOptionDialog(null, "Es DNA ? Elegir No implica que son proteinas", "DNA O PROTEINA", JOptionPane.YES_NO_OPTION ,JOptionPane.QUESTION_MESSAGE, null, null, null);
+//			
+//			cig.setData( cig.getDataFromInformationContent(new FileInputStream(new File(response)), responseInt == JOptionPane.YES_OPTION) );
+//		}
+//		
+//		response = JOptionPane.showInputDialog(null, "Escriba el tamaño de la ventana que quiere usar", "Elegir Ventana", JOptionPane.QUESTION_MESSAGE);
+//		
+//		int windowSize = Integer.parseInt(response);
+//		
+//		response = JOptionPane.showInputDialog(null, "Escribir la ruta del archivo de salida",  "Archivo de Salida", JOptionPane.QUESTION_MESSAGE);
+//		
+//		
+//		try {
+//			cig.printImage(new File(response), new RedBlueColorringStrategy(),windowSize );
+//		} catch (ImageFormatException e) {
+//			System.out.println("Hubo Un error con el formato de la imagen");
+//			e.printStackTrace();
+//		} catch (IOException e) {
+//			System.out.println("Hubo Un error con el archivo de salida");
+//			e.printStackTrace();
+//		}
+//	}
 	
 	@SuppressWarnings("restriction")
 	public static void commandlineMain(String[] args) {
@@ -639,6 +633,7 @@ public class ConservationImageGenerator {
 		SingleOption windowSize = new SingleOption(parser, 11, "-window", IntegerParameter.getParameter());
 		NoOption isProtein = new NoOption(parser, "-protein");
 		NoOption isInformationContent = new NoOption(parser, "-ic");
+		SingleOption renderOpt = new SingleOption(parser, new XYPlotRenderer(),"-renderer",RendererParameter.getParameter());
 		
 		
 		// STEP THREE
@@ -662,14 +657,15 @@ public class ConservationImageGenerator {
 		InputStream invalue = (InputStream) in.getValue();
 		
 		
-		if (isInformationContent.getValue()) {
+		if (isInformationContent.isPresent()) {
 			cig.setData(cig.getDataFromInformationContent(invalue, !isProtein.getValue()));
 		} else {
 			cig.setData(cig.getDataFromClustalConservationProfile(invalue, !isProtein.getValue()));
 		}
 		
 		try {   
-			cig.printImage((File)outfile.getValue(), new RedBlueColorringStrategy(),(Integer) windowSize.getValue() );   		
+			Renderer renderer = (Renderer) renderOpt.getValue();
+			cig.printImage((File)outfile.getValue(), new RedBlueColorringStrategy(),(Integer) windowSize.getValue(),renderer );   		
 			} catch (ImageFormatException e) { System.out.println("Hubo Un error con el formato de la imagen"); 
 				e.printStackTrace();  
 			} catch (IOException e) {          System.out.println("Hubo Un error con el archivo de salida");

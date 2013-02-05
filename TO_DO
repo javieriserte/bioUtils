@@ -8,4 +8,8 @@ TO DO List:
    - Add more search options: first ORF, last ORF, search by frame, search all ORF given a condition. - Done
    - Decouple complementarity of sequences in other Class. - Done
    - Document!!!!
+
+2) Improve ConservationImage package
+   - Find a way to make more flexible the drawing
+   - Improve Ruler Drawing
  

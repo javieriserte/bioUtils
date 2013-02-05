@@ -4,3 +4,11 @@ CHANGE LOG
 
 #Feb 4th, 2013.
 	Ver 1.1.1 : First Versioned Release.
+	
+#Feb 5th, 2013.
+	Ver 1.1.2 : Modifications on ConservationImage package.
+	            Added a BlackColoringStrategy class
+	            Added a Renderer Interface to explicit how to draw the graphics
+	            Added a XYPlotRendeder
+	            The deafult way to draw the conservation images was refactored to ColoredLinesRenderer 
+	
