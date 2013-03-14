@@ -10,5 +10,10 @@ CHANGE LOG
 	            Added a BlackColoringStrategy class
 	            Added a Renderer Interface to explicit how to draw the graphics
 	            Added a XYPlotRendeder
-	            The deafult way to draw the conservation images was refactored to ColoredLinesRenderer 
+	            The deafult way to draw the conservation images was refactored to ColoredLinesRenderer
+
+#Mar 14th, 2013.
+	Ver 1.1.3 : FastaMunipulator Ver 0.0.2
+	            Corrected a bug in FastaMunipulator. "-lengths" option did nothing.   
+	            Corrected a bug in FastaMunipulator. Fasta results descriptions din't show ">" symbol. 
 	

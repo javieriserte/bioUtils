@@ -25,7 +25,7 @@ import fileformats.fastaIO.Pair;
 
 public class FastaAlignmentManipulator {
 	 
-	private static final String VERSION = "0.0.1";
+	private static final String VERSION = "0.0.2";
 
 	/**
 	 * A simple program to manipulate Alignments given in fasta format.
@@ -169,7 +169,7 @@ public class FastaAlignmentManipulator {
 			
 		}
 		
-		if (lenOpt.isPresent()) {
+		if (lensOpt.isPresent()) {
 
 			lengthsCommand(out, seqs);
 			
@@ -275,7 +275,7 @@ public class FastaAlignmentManipulator {
 			
 			out.println(">"+ pair.getFirst());
 			
-			out.println(translator.translateSeq(pair.getFirst()));
+			out.println(translator.translateSeq(pair.getSecond()));
 			
 		}
 		
@@ -290,7 +290,7 @@ public class FastaAlignmentManipulator {
 
 			String newSeq = pair.getSecond().replaceAll("-", "");
 			
-			out.println(pair.getFirst());
+			out.println(">" + pair.getFirst());
 
 			out.println(newSeq);
 			
@@ -317,7 +317,7 @@ public class FastaAlignmentManipulator {
 				
 				for (Pair<String, String> pair : seqs) {
 					
-					out.println(pair.getFirst());
+					out.println(">" + pair.getFirst());
 					
 					out.println(pair.getSecond().substring(from, to));
 					
@@ -347,7 +347,7 @@ public class FastaAlignmentManipulator {
 					
 					for (Pair<String, String> pair : pairs) {
 						
-						out.println(pair.getFirst());
+						out.println(">" + pair.getFirst());
 						
 						out.println(pair.getSecond());
 						
