@@ -658,9 +658,9 @@ public class ConservationImageGenerator {
 		
 		
 		if (isInformationContent.isPresent()) {
-			cig.setData(cig.getDataFromInformationContent(invalue, !isProtein.getValue()));
+			cig.setData(cig.getDataFromInformationContent(invalue, !isProtein.isPresent()));
 		} else {
-			cig.setData(cig.getDataFromClustalConservationProfile(invalue, !isProtein.getValue()));
+			cig.setData(cig.getDataFromClustalConservationProfile(invalue, !isProtein.isPresent()));
 		}
 		
 		try {   
