@@ -87,9 +87,17 @@ public class FastaAlignmentManipulator {
 
 		NoOption geneticCodeHelpOPt = new NoOption(parser, "-genCodeHelp");
 		uniques.add(geneticCodeHelpOPt);
+		
+		NoOption stripGappedColumnsOpt = new NoOption(parser, "-stripGappedColumns");
+		uniques.add(stripGappedColumnsOpt);
+		
+		NoOption flushEndsOpt = new NoOption(parser, "-flush");
+		uniques.add(flushEndsOpt);
+		
+		NoOption consensusOpt = new NoOption(parser, "-consensus");
+		uniques.add(consensusOpt);
+		
 
-		
-		
 		// Step Three : Try to parse the command line
 		
 		try {
@@ -203,9 +211,27 @@ public class FastaAlignmentManipulator {
 			
 		}
 		
+		if (stripGappedColumnsOpt.isPresent()) {
+			
+			stripGappedColumnsCommand(out, seqs);
+			
+		}
+		
+		if (flushEndsOpt.isPresent()) {
+			
+			flushEndsCommand(out, seqs);
+			
+		}
+		
+		if (consensusOpt.isPresent()) {
+			
+			consensusCommand(out, seqs);
+			
+		}
 
 
 	}
+
 
 	protected static void genCodeHelpCommand(PrintStream out) {
 		
@@ -436,7 +462,7 @@ public class FastaAlignmentManipulator {
 				
 			} catch (FileNotFoundException e) {
 				
-				System.err.println("The file to be appended can't ve read.");
+				System.err.println("The file to be appended can't be read.");
 				
 			}
 				
@@ -490,6 +516,108 @@ public class FastaAlignmentManipulator {
 		System.exit(0);
 
 	}
+	
+	private static void stripGappedColumnsCommand(PrintStream out,
+			List<Pair<String, String>> seqs) {
+		// removes the columns of the alignment that contain a gap
+		boolean[] keeper = new boolean[seqs.get(0).getSecond().length()];
+		
+		for (int i=0; i<keeper.length; i++) {
+			keeper[i] = true;
+		}
+		
+		for (Pair<String, String> seq : seqs) {
+			
+			for (int j = 0; j< seq.getSecond().length();j++) {
+				
+				keeper[j] = keeper[j] && !(seq.getSecond().charAt(j) == '-');
+				
+			}
+			
+		}
+		
+		for (Pair<String, String> seq : seqs) {
+			
+			StringBuilder nseq = new StringBuilder();
+			
+			String oldSeq = seq.getSecond();
+			
+			for (int j = 0; j< oldSeq.length();j++) {
+				
+				if (keeper[j]) nseq.append(oldSeq.charAt(j)); 
+				
+			}
+			
+			out.println(">" + seq.getFirst());
+			
+			out.println(nseq.toString());
+			
+		}
+		
+		out.close();
+		
+		System.exit(0);
+
+	}
+	
+	private static void flushEndsCommand(PrintStream out,
+			List<Pair<String, String>> seqs) {
+		// Removes columns from the ends while the beginning of at least one sequence hadn't started 
+
+		int min=0;
+		
+		int max = seqs.get(0).getSecond().length();
+		
+		for (Pair<String, String> pair : seqs) {
+			
+			String currentSeq = pair.getSecond();
+			
+			int currentMin = 0;
+			
+			int currentMax = 0;
+			
+			for (int i = 0; i < currentSeq.length();i++) {
+				
+				if (currentSeq.charAt(i)!='-') {
+					
+					currentMin = i;
+					
+					break;
+					
+				}
+				
+			}
+			
+			for (int i = currentSeq.length()-1; 1>= 0;i--) {
+				
+				if (currentSeq.charAt(i)!='-') {
+					
+					currentMax = i;
+					
+					break;
+					
+				}
+				
+			}
+			
+			min = Math.max(min, currentMin);
+			
+			max = Math.min(max, currentMax);
+			
+		}
+		
+		for (Pair<String, String> pair : seqs) {
+			
+			out.println(">" + pair.getFirst());
+			
+			out.println(pair.getSecond().substring(min, max));
+			
+		}
+
+	}
+	
+
+
 
 	/**
 	 * Retrieves the help of the program.
