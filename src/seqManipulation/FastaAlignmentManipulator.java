@@ -225,7 +225,8 @@ public class FastaAlignmentManipulator {
 		
 		if (consensusOpt.isPresent()) {
 			
-			consensusCommand(out, seqs);
+//			consensusCommand(out, seqs);
+			// TODO
 			
 		}
 
