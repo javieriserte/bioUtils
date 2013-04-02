@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -97,6 +98,9 @@ public class FastaAlignmentManipulator {
 		NoOption consensusOpt = new NoOption(parser, "-consensus");
 		uniques.add(consensusOpt);
 		
+		NoOption randomBackTranslateOpt = new NoOption(parser, "-randomRT");
+		uniques.add(randomBackTranslateOpt);
+
 
 		// Step Three : Try to parse the command line
 		
@@ -229,8 +233,73 @@ public class FastaAlignmentManipulator {
 			// TODO
 			
 		}
+		
+		if (randomBackTranslateOpt.isPresent()) {
+			
+			randomBackTranslate(out,seqs);
+			
+		}
 
 
+	}
+
+
+	private static void randomBackTranslate(PrintStream out, List<Pair<String, String>> seqs) {
+
+		Map<String,String> geneticCode = Translate.getInstance().getStandardGeneticCode();
+		
+		Map<String,List<String>> geneticCodeRev = new HashMap<String, List<String>>();
+		
+		for (String codon : geneticCode.keySet()) {
+			
+			String aa = geneticCode.get(codon);
+			
+			if (geneticCodeRev.containsKey(aa)) {
+				
+				geneticCodeRev.get(aa).add(codon);
+				
+			} else {
+				
+				List<String> codons = new ArrayList<String>();
+				
+				codons.add(codon);
+				
+				geneticCodeRev.put(aa, codons);
+				
+			}
+			
+		}
+		
+		for (Pair<String, String> pair : seqs) {
+			
+			out.println(">" + pair.getFirst());
+			
+			StringBuilder newSeq = new StringBuilder();
+			
+			for (int i=0;i<pair.getSecond().length();i++) {
+				
+				String current = pair.getSecond().substring(i, i+1);
+				
+				if (geneticCodeRev.containsKey(current)) {
+				
+					List<String> list = geneticCodeRev.get(current); 
+				
+					int randomIndex = ((Double)(Math.random()*list.size())).intValue();
+					
+					newSeq.append(list.get(randomIndex));
+				
+				}
+				
+			}
+			
+			out.println(newSeq.toString());
+			
+		}
+		
+		out.close();
+		
+		System.exit(0);
+		
 	}
 
 
@@ -645,6 +714,7 @@ public class FastaAlignmentManipulator {
 			   "\n         -translateWith : translate DNA sequences into aminoacid using the given file containing" +
 			   "\n                            a genetic code" +
 			   "\n         -genCodeHelp   : shows help about the genetic code format" +
+			   "\n         -randomRT      : back-translate a protein sequence into a DNA sequence, choosing one the posible codons randomly" +
 			   "\n         -ver           : prints the number of the version in stdout."+
 			   "\n         -help          : shows this help.";
 			   

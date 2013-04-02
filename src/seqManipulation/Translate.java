@@ -87,72 +87,72 @@ public class Translate {
 	 * 
 	 * @return a Map
 	 */
-	private Map<String,String> getStandardGeneticCode() {
+	public Map<String,String> getStandardGeneticCode() {
 		Map<String,String> standardGeneticCode = new HashMap<String, String>(); 
-		standardGeneticCode.put("A", "GCT");
-		standardGeneticCode.put("A", "GCC");
-		standardGeneticCode.put("A", "GCA");
-		standardGeneticCode.put("A", "GCG");
-		standardGeneticCode.put("L", "TTA");
-		standardGeneticCode.put("L", "TTG");
-		standardGeneticCode.put("L", "CTT");
-		standardGeneticCode.put("L", "CTC");
-		standardGeneticCode.put("L", "CTA");
-		standardGeneticCode.put("L", "CTG");
-		standardGeneticCode.put("R", "CGT");
-		standardGeneticCode.put("R", "CGC");
-		standardGeneticCode.put("R", "CGA");
-		standardGeneticCode.put("R", "CGG");
-		standardGeneticCode.put("R", "AGA");
-		standardGeneticCode.put("R", "AGG");
-		standardGeneticCode.put("K", "AAA");
-		standardGeneticCode.put("K", "AAG");
-		standardGeneticCode.put("N", "AAT");
-		standardGeneticCode.put("N", "AAC");
-		standardGeneticCode.put("M", "ATG");
-		standardGeneticCode.put("D", "GAT");
-		standardGeneticCode.put("D", "GAC");
-		standardGeneticCode.put("F", "TTT");
-		standardGeneticCode.put("F", "TTC");
-		standardGeneticCode.put("C", "TGT");
-		standardGeneticCode.put("C", "TGC");
-		standardGeneticCode.put("P", "CCT");
-		standardGeneticCode.put("P", "CCC");
-		standardGeneticCode.put("P", "CCA");
-		standardGeneticCode.put("P", "CCG");
-		standardGeneticCode.put("Q", "CAA");
-		standardGeneticCode.put("Q", "CAG");
-		standardGeneticCode.put("S", "TCT");
-		standardGeneticCode.put("S", "TCC");
-		standardGeneticCode.put("S", "TCA");
-		standardGeneticCode.put("S", "TCG");
-		standardGeneticCode.put("S", "AGT");
-		standardGeneticCode.put("S", "AGC");
-		standardGeneticCode.put("E", "GAA");
-		standardGeneticCode.put("E", "GAG");
-		standardGeneticCode.put("T", "ACT");
-		standardGeneticCode.put("T", "ACC");
-		standardGeneticCode.put("T", "ACA");
-		standardGeneticCode.put("T", "ACG");
-		standardGeneticCode.put("G", "GGT");
-		standardGeneticCode.put("G", "GGC");
-		standardGeneticCode.put("G", "GGA");
-		standardGeneticCode.put("G", "GGG");
-		standardGeneticCode.put("W", "TGG");
-		standardGeneticCode.put("H", "CAT");
-		standardGeneticCode.put("H", "CAC");
-		standardGeneticCode.put("Y", "TAT");
-		standardGeneticCode.put("Y", "TAC");
-		standardGeneticCode.put("I", "ATT");
-		standardGeneticCode.put("I", "ATC");
-		standardGeneticCode.put("I", "ATA");
-		standardGeneticCode.put("V", "GTT");
-		standardGeneticCode.put("V", "GTC");
-		standardGeneticCode.put("V", "GTA");
-		standardGeneticCode.put("V", "GTG");
-		standardGeneticCode.put("*", "TAA");
-		standardGeneticCode.put("*", "TGA");
-		standardGeneticCode.put("*", "TAG");
+		standardGeneticCode.put("GCT", "A");
+		standardGeneticCode.put("GCC", "A");
+		standardGeneticCode.put("GCA", "A");
+		standardGeneticCode.put("GCG", "A");
+		standardGeneticCode.put("TTA", "L");
+		standardGeneticCode.put("TTG", "L");
+		standardGeneticCode.put("CTT", "L");
+		standardGeneticCode.put("CTC", "L");
+		standardGeneticCode.put("CTA", "L");
+		standardGeneticCode.put("CTG", "L");
+		standardGeneticCode.put("CGT", "R");
+		standardGeneticCode.put("CGC", "R");
+		standardGeneticCode.put("CGA", "R");
+		standardGeneticCode.put("CGG", "R");
+		standardGeneticCode.put("AGA", "R");
+		standardGeneticCode.put("AGG", "R");
+		standardGeneticCode.put("AAA", "K");
+		standardGeneticCode.put("AAG", "K");
+		standardGeneticCode.put("AAT", "N");
+		standardGeneticCode.put("AAC", "N");
+		standardGeneticCode.put("ATG", "M");
+		standardGeneticCode.put("GAT", "D");
+		standardGeneticCode.put("GAC", "D");
+		standardGeneticCode.put("TTT", "F");
+		standardGeneticCode.put("TTC", "F");
+		standardGeneticCode.put("TGT", "C");
+		standardGeneticCode.put("TGC", "C");
+		standardGeneticCode.put("CCT", "P");
+		standardGeneticCode.put("CCC", "P");
+		standardGeneticCode.put("CCA", "P");
+		standardGeneticCode.put("CCG", "P");
+		standardGeneticCode.put("CAA", "Q");
+		standardGeneticCode.put("CAG", "Q");
+		standardGeneticCode.put("TCT", "S");
+		standardGeneticCode.put("TCC", "S");
+		standardGeneticCode.put("TCA", "S");
+		standardGeneticCode.put("TCG", "S");
+		standardGeneticCode.put("AGT", "S");
+		standardGeneticCode.put("AGC", "S");
+		standardGeneticCode.put("GAA", "E");
+		standardGeneticCode.put("GAG", "E");
+		standardGeneticCode.put("ACT", "T");
+		standardGeneticCode.put("ACC", "T");
+		standardGeneticCode.put("ACA", "T");
+		standardGeneticCode.put("ACG", "T");
+		standardGeneticCode.put("GGT", "G");
+		standardGeneticCode.put("GGC", "G");
+		standardGeneticCode.put("GGA", "G");
+		standardGeneticCode.put("GGG", "G");
+		standardGeneticCode.put("TGG", "W");
+		standardGeneticCode.put("CAT", "H");
+		standardGeneticCode.put("CAC", "H");
+		standardGeneticCode.put("TAT", "Y");
+		standardGeneticCode.put("TAC", "Y");
+		standardGeneticCode.put("ATT", "I");
+		standardGeneticCode.put("ATC", "I");
+		standardGeneticCode.put("ATA", "I");
+		standardGeneticCode.put("GTT", "V");
+		standardGeneticCode.put("GTC", "V");
+		standardGeneticCode.put("GTA", "V");
+		standardGeneticCode.put("GTG", "V");
+		standardGeneticCode.put("TAA", "*");
+		standardGeneticCode.put("TGA", "*");
+		standardGeneticCode.put("TAG", "*");
 		return standardGeneticCode;
 		
 	}
@@ -204,7 +204,7 @@ public class Translate {
 					
 					for (int i =1 ; i< codons.length; i++) {
 					
-						geneticCode.put(codons[0], codons[i]);
+						geneticCode.put(codons[i], codons[0]);
 					
 					}
 					
