@@ -18,7 +18,7 @@ import cmdGA.exceptions.IncorrectParameterTypeException;
 import cmdGA.parameterType.InputStreamParameter;
 import cmdGA.parameterType.IntegerParameter;
 import cmdGA.parameterType.PrintStreamParameter;
-import fileformats.fastaIO.Pair;
+
 
 public class BlastResultManipulator {
 

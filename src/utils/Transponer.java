@@ -21,6 +21,8 @@ public class Transponer {
 			linea = br.readLine();
 			if (linea != null) this.datos.add(linea.split("\t"));
 		} while (linea!="" && (linea != null));
+		
+		br.close();
 	}
 	
 	public void writeFile(String filePath) throws IOException {

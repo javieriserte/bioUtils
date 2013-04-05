@@ -59,10 +59,13 @@ public class ReadFileWriteHisto {
 				result.add(Float.valueOf(br.readLine()));
 			}
 			
+			br.close();
 						
 		} catch (FileNotFoundException e) { e.printStackTrace(); 
 		} catch (NumberFormatException e) {	e.printStackTrace();
 		} catch (IOException e) { e.printStackTrace();}
+		
+		
 		
 		return result;
 		
