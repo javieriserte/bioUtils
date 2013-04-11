@@ -68,7 +68,7 @@ public class AlignmentSequenceEditor {
 		
 		if (!this.alignment.isEmpty()) {
 		
-			return this.alignment.get(0).getFirst().length();
+			return this.alignment.get(0).getSecond().length();
 		
 		}
 		

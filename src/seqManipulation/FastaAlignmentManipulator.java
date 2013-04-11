@@ -257,19 +257,15 @@ public class FastaAlignmentManipulator {
 
 	private static void calculateMICommand(PrintStream out, List<Pair<String, String>> seqs) {
 		
+		AlignmentSequenceEditor ase = new AlignmentSequenceEditor(seqs);
+
+		int length = ase.getRowsSize();
 		
 		Map<Pair<Integer, Integer>, Double> MI = MICalculator.calculateProteinMIMatrix(seqs);
-		
-		AlignmentSequenceEditor ase = new AlignmentSequenceEditor(seqs);
-		
-		
-		int length = ase.getColumnsSize();
-		
+			
 		for (int i = 0; i <length;i++ ) {
 			
 			StringBuilder currentLine = new StringBuilder();
-			
-			
 
 			for (int j = 0; j <length;j++ ) {
 				
