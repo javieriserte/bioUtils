@@ -12,30 +12,65 @@ import java.util.Map;
  *
  */
 public class EntropyCalculator {
+	
+	private static char gapChar = '-' ;
 
 	public static double calculateEntropy(Character[] characters, int alphabetSize, boolean countGaps) {
 		
 		// a Map to store the frequencies
-		Map<Character,Integer> freq = new HashMap<Character, Integer>();
+		Map<Character,Integer> freq = EntropyCalculator.countCharacters(characters);
 		
 		// The total number of non-gapped characters in the data
+		int numberOfElements = characters.length;
 		
-		int numberOfElements = countCharacters(characters, countGaps, freq);
+		if (countGaps) {numberOfElements -= freq.get(gapChar)		;};
+	
+		// Converts the counts to frequencies
+		EntropyCalculator.convertToFrequencies(freq, numberOfElements);
 		
+		// The entropy sum
+		double entropy = EntropyCalculator.calculateEntropy(freq, alphabetSize) ;
+		
+		return 0;
+		
+		
+	}
+
+	
+	private static double calculateEntropy(Map<Character, Integer> freq, 	int alphabetSize) {
+		// The entropy
+		double entropy = 0;
 		
 		for (Character character : freq.keySet()) {
 			
-			freq.put(character, freq.get(character)/numberOfElements);
-			
+			if (character != gapChar) {
+				
+				entropy -= freq.get(character) * Math.log10(freq.get(character));
+				
+			}
 			
 		}
 		
 		
 		
+		return entropy;
+	}
+
+
+	/**
+	 * Given a Map of Characters to Integers that counts the number of repetitions repetitions 
+	 * for a character, converts it to frequencies dividing each value for the total number of elements.
+	 * 
+	 * @param freq
+	 * @param numberOfElements
+	 */
+	private static void convertToFrequencies(Map<Character, Integer> freq, int numberOfElements) {
 		
-		
-		return 0;
-		
+		for (Character character : freq.keySet()) {
+			
+			freq.put(character, freq.get(character)/numberOfElements);
+			
+		}
 		
 	}
 
@@ -48,30 +83,26 @@ public class EntropyCalculator {
 	 * @param freq
 	 * @return
 	 */
-	private static int countCharacters(Character[] characters, boolean countGaps, Map<Character, Integer> freq) {
+	public static Map<Character, Integer> countCharacters(Character[] characters) {
 		
-		int numberOfElements = 0;
+		Map<Character, Integer> counter = new HashMap<Character, Integer>();
 		
 		for (Character c : characters) {
 			
-			if (!c.equals('-') && !countGaps) {
+			if (counter.containsKey(c)) {
+				
+				counter.put(c, 1+counter.get(c));
 			
-				numberOfElements =+ 1;
-				
-				if (freq.containsKey(c)) {
-					
-					freq.put(c, 1+freq.get(c));
-				
-				} else {
-				
-					freq.put(c, 1);
-				
-				}
+			} else {
+			
+				counter.put(c, 1);
 			
 			}
+
 			
 		}
-		return numberOfElements;
+		
+		return counter;
 	}
 	
 }
