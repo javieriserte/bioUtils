@@ -9,6 +9,7 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import utils.mutualinformation.MICalculator;
@@ -276,10 +277,15 @@ public class FastaAlignmentManipulator {
 				if (pa==pb) {
 					currentLine.append(0);
 				} else {
-					currentLine.append(MI.get(new Pair<Integer,Integer>(pa,pb)));
+					
+					double value = MI.get(new Pair<Integer,Integer>(pa,pb));
+					
+					Locale defLocale = Locale.getDefault();
+					
+					currentLine.append(String.format(defLocale, "%.4f",value));
 				}
 				
-				if (j<length-1)currentLine.append(", ");
+				if (j<length-1)currentLine.append("; ");
 				
 			}
 

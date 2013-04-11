@@ -44,7 +44,7 @@ public class MICalculator {
 		}
 		
 		
-		Map<Pair<Integer,Integer>,Double> diColumnEntropies = new HashMap<Pair<Integer,Integer>, Double>();
+		Map<Pair<Integer,Integer>,Double> mutualInfoMatrix = new HashMap<Pair<Integer,Integer>, Double>();
 		
 		
 		// Iterate Entropy for each pair of columns
@@ -56,7 +56,12 @@ public class MICalculator {
 				
 				try {
 					
-					diColumnEntropies.put(new Pair<Integer,Integer>(i,j) , EntropyCalculator.calculateEntropy(columns.get(i), columns.get(j), 2, false));
+					double dicolumnEntropy = EntropyCalculator.calculateEntropy(columns.get(i), columns.get(j), 20, false);
+//					double mutualInfo = columnEntropies[i] + columnEntropies[j];
+					double mutualInfo = columnEntropies[i] + columnEntropies[j] - dicolumnEntropy;
+					
+					mutualInfoMatrix.put(new Pair<Integer,Integer>(i,j) , mutualInfo);
+					
 					
 				} catch (CharGroupSizeException e) {
 					e.printStackTrace();
@@ -67,7 +72,7 @@ public class MICalculator {
 		}
 		
 		
-		return diColumnEntropies;
+		return mutualInfoMatrix;
 		
 	}
 	
