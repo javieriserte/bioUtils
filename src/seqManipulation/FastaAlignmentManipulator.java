@@ -11,6 +11,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import utils.mutualinformation.MICalculator;
+
 import cmdGA.MultipleOption;
 import cmdGA.NoOption;
 import cmdGA.Option;
@@ -100,6 +102,9 @@ public class FastaAlignmentManipulator {
 		
 		NoOption randomBackTranslateOpt = new NoOption(parser, "-randomRT");
 		uniques.add(randomBackTranslateOpt);
+		
+		NoOption calculateMIOpt = new NoOption(parser, "-MI");
+		uniques.add(calculateMIOpt);
 
 
 		// Step Three : Try to parse the command line
@@ -239,8 +244,53 @@ public class FastaAlignmentManipulator {
 			randomBackTranslate(out,seqs);
 			
 		}
+		
+		if (calculateMIOpt.isPresent()) {
+			
+			calculateMICommand(out,seqs);
+			
+		}
 
 
+	}
+
+
+	private static void calculateMICommand(PrintStream out, List<Pair<String, String>> seqs) {
+		
+		
+		Map<Pair<Integer, Integer>, Double> MI = MICalculator.calculateProteinMIMatrix(seqs);
+		
+		AlignmentSequenceEditor ase = new AlignmentSequenceEditor(seqs);
+		
+		
+		int length = ase.getColumnsSize();
+		
+		for (int i = 0; i <length;i++ ) {
+			
+			StringBuilder currentLine = new StringBuilder();
+			
+			
+
+			for (int j = 0; j <length;j++ ) {
+				
+				
+				int pa = Math.min(i, j);
+				int pb = Math.max(i, j);
+				
+				if (pa==pb) {
+					currentLine.append(0);
+				} else {
+					currentLine.append(MI.get(new Pair<Integer,Integer>(pa,pb)));
+				}
+				
+				if (j<length-1)currentLine.append(", ");
+				
+			}
+
+			out.println(currentLine);
+			
+		}
+		
 	}
 
 
