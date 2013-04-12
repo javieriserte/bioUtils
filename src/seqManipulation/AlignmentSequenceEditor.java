@@ -1,5 +1,6 @@
 package seqManipulation;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import fileformats.fastaIO.Pair;
@@ -73,6 +74,32 @@ public class AlignmentSequenceEditor {
 		}
 		
 		return 0;
+		
+	}
+	
+	/**
+	 * Retrieves a list with the characters for each column in an array.
+	 * 
+	 * @param nAlign
+	 * @return
+	 */
+	public List<Character[]> getColumns() {
+		
+		List<Character[]> columns;
+		
+		columns = new ArrayList<Character[]>();
+		
+		for (int i=0; i<this.getRowsSize(); i++) {
+			
+			// Get the characters for the current column
+			
+			Character[] currentColumn = this.getColumnAt(i);
+			
+			columns.add(currentColumn);
+			
+		}
+		
+		return columns;
 		
 	}
 	

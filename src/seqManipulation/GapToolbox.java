@@ -19,7 +19,7 @@ public class GapToolbox {
 		
 		boolean[] keepers = getKeepers(alignment);
 		
-		return this.removeGapedColumns(alignment, keepers);
+		return this.removeGappedColumns(alignment, keepers);
 		
 	}
 	
@@ -32,7 +32,7 @@ public class GapToolbox {
 	 * @return
 	 */
 	
-	public List<Pair<String,String>> removeGapedColumns(List<Pair<String,String>> alignment, boolean[] keepers) {
+	public List<Pair<String,String>> removeGappedColumns(List<Pair<String,String>> alignment, boolean[] keepers) {
 		
 		// removes the columns of the alignment that contain a gap
 		
