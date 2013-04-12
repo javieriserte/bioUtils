@@ -47,9 +47,9 @@ public class EntropyCalculatorTest extends EntropyCalculator {
 		double ent_dichars_equals;
 		
 		try {
-			ent_dichars_a1_a2 = EntropyCalculator.calculateEntropy(dichars_a1,dichars_a2, 4, true);
-			ent_dichars_a1_a1 = EntropyCalculator.calculateEntropy(dichars_a1,dichars_a1, 4, true);
-			ent_dichars_equals = EntropyCalculator.calculateEntropy(chars_equals,chars_equals, 4, true);
+			ent_dichars_a1_a2 = EntropyCalculator.calculateEntropy(dichars_a1,dichars_a2, 4, true, (new SimpleFrecuencyConverter()));
+			ent_dichars_a1_a1 = EntropyCalculator.calculateEntropy(dichars_a1,dichars_a1, 4, true, (new SimpleFrecuencyConverter()));
+			ent_dichars_equals = EntropyCalculator.calculateEntropy(chars_equals,chars_equals, 4, true, (new SimpleFrecuencyConverter()));
 			
 			assertEquals(2d, ent_dichars_a1_a2,0.001);
 			assertEquals(1d, ent_dichars_a1_a1,0.001);
@@ -66,11 +66,11 @@ public class EntropyCalculatorTest extends EntropyCalculator {
 	@Test
 	public void testCalculateEntropyCharacterArrayIntBoolean() {
 		
-		double ent_equals = EntropyCalculator.calculateEntropy(chars_equals,4, true);
-		double ent_equals_gappedOn = EntropyCalculator.calculateEntropy(chars_equals_gapped,4, true);
-		double ent_equals_gappedOff = EntropyCalculator.calculateEntropy(chars_equals_gapped,4, false);
-		double ent_different = EntropyCalculator.calculateEntropy(chars_differents, 8,true);
-		double ent_tuples = EntropyCalculator.calculateEntropy(chars_tuples, 4,true);
+		double ent_equals = EntropyCalculator.calculateEntropy(chars_equals,4, true,(new SimpleFrecuencyConverter()));
+		double ent_equals_gappedOn = EntropyCalculator.calculateEntropy(chars_equals_gapped,4, true, (new SimpleFrecuencyConverter()));
+		double ent_equals_gappedOff = EntropyCalculator.calculateEntropy(chars_equals_gapped,4, false, (new SimpleFrecuencyConverter()));
+		double ent_different = EntropyCalculator.calculateEntropy(chars_differents, 8,true, (new SimpleFrecuencyConverter()));
+		double ent_tuples = EntropyCalculator.calculateEntropy(chars_tuples, 4,true, (new SimpleFrecuencyConverter()));
 		
 		
 		assertEquals(0d, ent_equals,0.001);
@@ -87,10 +87,10 @@ public class EntropyCalculatorTest extends EntropyCalculator {
 		Map<Object, Double> freq_tuples = EntropyCalculator.countCharacters(chars_tuples);
 		Map<Object, Double> freq_different = EntropyCalculator.countCharacters(chars_differents);
 		
-		EntropyCalculator.convertToFrequencies(freq_equals, 8);
-		EntropyCalculator.convertToFrequencies(freq_equals_gapped, 4);		
-		EntropyCalculator.convertToFrequencies(freq_tuples, 8);
-		EntropyCalculator.convertToFrequencies(freq_different, 8);
+		(new SimpleFrecuencyConverter()).convertToFrequencies(freq_equals, 8);
+		(new SimpleFrecuencyConverter()).convertToFrequencies(freq_equals_gapped, 4);		
+		(new SimpleFrecuencyConverter()).convertToFrequencies(freq_tuples, 8);
+		(new SimpleFrecuencyConverter()).convertToFrequencies(freq_different, 8);
 		
 		double ent_equals = EntropyCalculator.calculateEntropy(freq_equals, 4);
 		double ent_equals_gapped = EntropyCalculator.calculateEntropy(freq_equals_gapped, 4);		
@@ -111,10 +111,10 @@ public class EntropyCalculatorTest extends EntropyCalculator {
 		Map<Object, Double> freq_tuples = EntropyCalculator.countCharacters(chars_tuples);
 		Map<Object, Double> freq_different = EntropyCalculator.countCharacters(chars_differents);
 		
-		EntropyCalculator.convertToFrequencies(freq_equals, 8);
-		EntropyCalculator.convertToFrequencies(freq_equals_gapped, 4);
-		EntropyCalculator.convertToFrequencies(freq_tuples, 8);
-		EntropyCalculator.convertToFrequencies(freq_different, 8);
+		(new SimpleFrecuencyConverter()).convertToFrequencies(freq_equals, 8);
+		(new SimpleFrecuencyConverter()).convertToFrequencies(freq_equals_gapped, 4);
+		(new SimpleFrecuencyConverter()).convertToFrequencies(freq_tuples, 8);
+		(new SimpleFrecuencyConverter()).convertToFrequencies(freq_different, 8);
 
 		
 		assertEquals(1, freq_equals.size(),0.001);

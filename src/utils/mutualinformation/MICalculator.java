@@ -7,11 +7,36 @@ import java.util.Map;
 import seqManipulation.AlignmentSequenceEditor;
 import seqManipulation.GapToolbox;
 import fileformats.fastaIO.Pair;
+import utils.mutualinformation.MICorrections;
 
 public class MICalculator {
 	
 	///////////////////
 	// Public Interface
+	
+	public static Map<Pair<Integer, Integer>, Double> calculateGenericMIMatrix(List<Pair<String,String>> alignment, MICorrections correction, FrequencyConverter converter, MolType molecule ) {
+		
+		int alphabetSize = getAlphabetSize(molecule);
+		
+		switch (correction) {
+		
+		case Uncorrected:
+			
+			return calculateMIMatrix(alignment, alphabetSize, converter);
+			
+		case MIr:
+			
+			return calculateMIrMatrix(alignment, alphabetSize, converter);
+			
+		case MIp:
+			
+			return calculateMIpMatrix(alignment, alphabetSize, converter);
+			
+		}
+		
+		return null;
+		
+	}
 	
 	/**
 	 * Calculate the Mutual information matrix for a protein alignment.
@@ -21,7 +46,7 @@ public class MICalculator {
 	 */
 	public static Map<Pair<Integer, Integer>, Double> calculateProteinMIMatrix(List<Pair<String,String>> alignment) {
 		
-		return MICalculator.calculateMIMatrix(alignment,20);
+		return MICalculator.calculateMIMatrix(alignment,20, new SimpleFrecuencyConverter());
 		
 	}
 	
@@ -33,7 +58,7 @@ public class MICalculator {
 	 */
 	public static Map<Pair<Integer, Integer>, Double> calculateNucleicMIMatrix(List<Pair<String,String>> alignment) {
 		
-		return MICalculator.calculateMIMatrix(alignment,4);
+		return MICalculator.calculateMIMatrix(alignment,4, new SimpleFrecuencyConverter());
 		
 	}
 	
@@ -45,7 +70,7 @@ public class MICalculator {
 	 */
 	public static Map<Pair<Integer, Integer>, Double> calculateProteinMIrMatrix(List<Pair<String,String>> alignment) {
 		
-		return MICalculator.calculateMIrMatrix(alignment,20);
+		return MICalculator.calculateMIrMatrix(alignment,20, new SimpleFrecuencyConverter());
 		
 	}
 	
@@ -57,7 +82,7 @@ public class MICalculator {
 	 */
 	public static Map<Pair<Integer, Integer>, Double> calculateNucleicMIrMatrix(List<Pair<String,String>> alignment) {
 		
-		return MICalculator.calculateMIrMatrix(alignment,4);
+		return MICalculator.calculateMIrMatrix(alignment,4, new SimpleFrecuencyConverter());
 		
 	}
 	
@@ -69,7 +94,7 @@ public class MICalculator {
 	 */
 	public static Map<Pair<Integer, Integer>, Double> calculateProteinMIpMatrix(List<Pair<String,String>> alignment) {
 		
-		return MICalculator.calculateMIpMatrix(alignment,20);
+		return MICalculator.calculateMIpMatrix(alignment,20, new SimpleFrecuencyConverter());
 		
 	}
 	
@@ -81,7 +106,7 @@ public class MICalculator {
 	 */
 	public static Map<Pair<Integer, Integer>, Double> calculateNucleicMIpMatrix(List<Pair<String,String>> alignment) {
 		
-		return MICalculator.calculateMIpMatrix(alignment,4);
+		return MICalculator.calculateMIpMatrix(alignment,4, new SimpleFrecuencyConverter());
 		
 	}
 	
@@ -102,7 +127,7 @@ public class MICalculator {
 	 * @param alphabetsize
 	 * @return
 	 */
-	public static Map<Pair<Integer, Integer>, Double> calculateMIMatrix(List<Pair<String,String>> alignment, int alphabetsize) {
+	public static Map<Pair<Integer, Integer>, Double> calculateMIMatrix(List<Pair<String,String>> alignment, int alphabetsize, FrequencyConverter converter) {
 		
 		// Creates a new alignment without gapped columns
 		List<Pair<String, String>> nAlign = removeGaps(alignment);
@@ -113,10 +138,10 @@ public class MICalculator {
 		// get the columns of the alignment
 		List<Character[]> columns = nAlignASE.getColumns();
 		
-		double[] columnEntropies = MICalculator.getColumnsEntropies(alphabetsize, nAlign, columns);
+		double[] columnEntropies = MICalculator.getColumnsEntropies(alphabetsize, nAlign, columns, converter);
 	
 		// Calculate Entropy for each column pair
-		Map<Pair<Integer,Integer>,Double> dicolumnEntropyMatrix = MICalculator.getDicolumnsEntropies(alphabetsize, columns, columnEntropies);
+		Map<Pair<Integer,Integer>,Double> dicolumnEntropyMatrix = MICalculator.getDicolumnsEntropies(alphabetsize, columns, columnEntropies, converter);
 
 		// Calculate Mutual Info
 		Map<Pair<Integer,Integer>,Double> mutualInfoMatrix = MICalculator.getMutualInfoMatrix(columnEntropies, dicolumnEntropyMatrix);
@@ -125,7 +150,9 @@ public class MICalculator {
 		
 	}
 
+
 	/**
+
 	 * Correction of Mutual Info by Dunn et al (Dunn:2008)
 	 * 
 	 * <pre>
@@ -139,7 +166,7 @@ public class MICalculator {
 	 * Bioinformatics. 2008.
 	 * 
 	 */
-	public static Map<Pair<Integer, Integer>, Double> calculateMIpMatrix(List<Pair<String,String>> alignment, int alphabetsize) {
+	public static Map<Pair<Integer, Integer>, Double> calculateMIpMatrix(List<Pair<String,String>> alignment, int alphabetsize, FrequencyConverter converter) {
 		
 		// Creates a new alignment without gapped columns
 		List<Pair<String, String>> nAlign = removeGaps(alignment);
@@ -150,10 +177,10 @@ public class MICalculator {
 		// get the columns of the alignment
 		List<Character[]> columns = nAlignASE.getColumns();
 		
-		double[] columnEntropies = MICalculator.getColumnsEntropies(alphabetsize, nAlign, columns);
+		double[] columnEntropies = MICalculator.getColumnsEntropies(alphabetsize, nAlign, columns, converter);
 	
 		// Calculate Entropy for each column pair
-		Map<Pair<Integer,Integer>,Double> dicolumnEntropyMatrix = MICalculator.getDicolumnsEntropies(alphabetsize, columns, columnEntropies);
+		Map<Pair<Integer,Integer>,Double> dicolumnEntropyMatrix = MICalculator.getDicolumnsEntropies(alphabetsize, columns, columnEntropies, converter);
 
 		// Calculate Mutual Info
 		Map<Pair<Integer,Integer>,Double> mutualInfoMatrix = MICalculator.getMutualInfoMatrix(columnEntropies, dicolumnEntropyMatrix);
@@ -169,7 +196,9 @@ public class MICalculator {
 		
 	}
 
+
 	/**
+
 	 * Correction of Mutual Info by Martin et al (2005)
 	 * 
 	 * <pre>
@@ -182,7 +211,7 @@ public class MICalculator {
 	 * Using information theory to search for co-evolving residues in proteins}}.
 	 * Bioinformatics. 2005.
 	 */
-	public static Map<Pair<Integer, Integer>, Double> calculateMIrMatrix(List<Pair<String,String>> alignment, int alphabetsize) {
+	public static Map<Pair<Integer, Integer>, Double> calculateMIrMatrix(List<Pair<String,String>> alignment, int alphabetsize, FrequencyConverter converter) {
 		
 		// Creates a new alignment without gapped columns
 		List<Pair<String, String>> nAlign = removeGaps(alignment);
@@ -193,10 +222,10 @@ public class MICalculator {
 		// get the columns of the alignment
 		List<Character[]> columns = nAlignASE.getColumns();
 		
-		double[] columnEntropies = MICalculator.getColumnsEntropies(alphabetsize, nAlign, columns);
+		double[] columnEntropies = MICalculator.getColumnsEntropies(alphabetsize, nAlign, columns, converter);
 	
 		// Calculate Entropy for each column pair
-		Map<Pair<Integer,Integer>,Double> dicolumnEntropyMatrix = MICalculator.getDicolumnsEntropies(alphabetsize, columns, columnEntropies);
+		Map<Pair<Integer,Integer>,Double> dicolumnEntropyMatrix = MICalculator.getDicolumnsEntropies(alphabetsize, columns, columnEntropies, converter);
 
 		// Calculate Mutual Info
 		Map<Pair<Integer,Integer>,Double> mutualInfoMatrix = MICalculator.getMutualInfoMatrix(columnEntropies, dicolumnEntropyMatrix);
@@ -208,6 +237,9 @@ public class MICalculator {
 		
 		
 	}
+	
+	////////////////////
+	// Private Methods 
 	
 	//////////////////
 	// private methods
@@ -232,6 +264,7 @@ public class MICalculator {
 		
 	}
 	
+
 	private static Map<Pair<Integer,Integer>,Double> APCCorrectionMatrix(Map<Pair<Integer,Integer>,Double> mutualInfoMatrix, int matrixSize) {
 		
 		double[] meansColumsMIArray = MICalculator.getMeansColumsMIArray(mutualInfoMatrix, matrixSize);
@@ -254,6 +287,7 @@ public class MICalculator {
 		
 	}
 	
+
 	private static double[] getMeansColumsMIArray(Map<Pair<Integer,Integer>,Double> mutualInfoMatrix, int matrixSize) {
 		
 		double[] meansColumsMIArray = new double[matrixSize];
@@ -262,11 +296,13 @@ public class MICalculator {
 		
 			meansColumsMIArray[i] = MICalculator.getMeanColumnMI(mutualInfoMatrix, i, matrixSize);
 			
+
 		}
 		
 		return meansColumsMIArray;
 		
 	}
+	
 	
 	private static double getMeanColumnMI(Map<Pair<Integer,Integer>,Double> mutualInfoMatrix, int columnPos, int matrixSize) {
 		
@@ -290,6 +326,7 @@ public class MICalculator {
 		
 	}
 	
+
 	private static double getMeanMI(Map<Pair<Integer,Integer>,Double> mutualInfoMatrix, int matrixSize) {
 		
 		double sumMI=0;
@@ -312,6 +349,7 @@ public class MICalculator {
 		
 	}
 
+
 	private static Map<Pair<Integer, Integer>, Double> performMartin2005Correction (Map<Pair<Integer, Integer>, Double> mutualInfoMatrix, 	Map<Pair<Integer, Integer>, Double> dicolumnEntropyMatrix, int matrixSize) {
 		
 		Map<Pair<Integer, Integer>, Double> corrected;
@@ -331,6 +369,7 @@ public class MICalculator {
 		return corrected;
 
 	}
+
 
 	private static Map<Pair<Integer, Integer>, Double> getMutualInfoMatrix(double[] columnEntropies, 	Map<Pair<Integer, Integer>, Double> dicolumnEntropyMatrix) { 
 
@@ -354,7 +393,8 @@ public class MICalculator {
 		return mutualInfoMatrix;
 	}
 
-	private static Map<Pair<Integer, Integer>, Double> getDicolumnsEntropies(int alphabetsize, List<Character[]> columns, double[] columnEntropies) {
+
+	private static Map<Pair<Integer, Integer>, Double> getDicolumnsEntropies(int alphabetsize, List<Character[]> columns, double[] columnEntropies, FrequencyConverter converter) {
 		
 		Map<Pair<Integer, Integer>, Double> dicolumnEntropyMatrix;
 		
@@ -367,7 +407,7 @@ public class MICalculator {
 				
 				try {
 					
-					double dicolumnEntropy = EntropyCalculator.calculateEntropy(columns.get(i), columns.get(j), alphabetsize, false);
+					double dicolumnEntropy = EntropyCalculator.calculateEntropy(columns.get(i), columns.get(j), alphabetsize, false, converter);
 					
 					dicolumnEntropyMatrix.put(new Pair<Integer,Integer>(i,j) , dicolumnEntropy);
 					
@@ -386,6 +426,7 @@ public class MICalculator {
 		
 	}
 
+
 	private static List<Pair<String, String>> removeGaps(	List<Pair<String, String>> alignment) {
 
 		GapToolbox gtb = new GapToolbox();
@@ -400,7 +441,8 @@ public class MICalculator {
 		
 	}
 
-	private static double[] getColumnsEntropies(int alphabetsize, List<Pair<String, String>> nAlign, List<Character[]> columns) {
+
+	private static double[] getColumnsEntropies(int alphabetsize, List<Pair<String, String>> nAlign, List<Character[]> columns, FrequencyConverter converter) {
 		
 		double[] columnEntropies;
 		
@@ -408,7 +450,7 @@ public class MICalculator {
 		
 		for (int i=0; i<columnEntropies.length; i++) {
 			
-			columnEntropies[i] = EntropyCalculator.calculateEntropy(columns.get(i), alphabetsize, false);
+			columnEntropies[i] = EntropyCalculator.calculateEntropy(columns.get(i), alphabetsize, false, converter);
 			
 		}
 		
@@ -417,7 +459,23 @@ public class MICalculator {
 	}
 
 
+	private static int getAlphabetSize(MolType molecule) {
+		int alphabetSize = 0;
+		
+		switch (molecule) {
+		case Protein:	
+			alphabetSize = 20;
+			break;
 
+		case Nucleic:
+			alphabetSize = 4;
+			break;
+			
+		default:
+			break;
+		}
+		return alphabetSize;
+	}
 	
 	
 }

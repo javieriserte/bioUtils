@@ -2,6 +2,7 @@ package utils.mutualinformation;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Calculates the Shannon Information Entropy for a list of data character.
@@ -27,7 +28,7 @@ public class EntropyCalculator {
 	 *         frequency calculus.
 	 * @return the Shannon informative entropy for this group of chars.
 	 */
-	public static double calculateEntropy(Character[] characters, int alphabetSize, boolean countGaps) {
+	public static double calculateEntropy(Character[] characters, int alphabetSize, boolean countGaps, FrequencyConverter converter) {
 		
 		// a Map to store the frequencies
 		Map<Object, Double> freq = EntropyCalculator.countCharacters(characters);
@@ -40,7 +41,8 @@ public class EntropyCalculator {
 			};
 	
 		// Converts the counts to frequencies
-		EntropyCalculator.convertToFrequencies(freq, numberOfElements);
+		
+		converter.convertToFrequencies(freq, numberOfElements);
 		
 		// The entropy sum
 		double entropy = EntropyCalculator.calculateEntropy(freq, alphabetSize) ;
@@ -92,7 +94,7 @@ public class EntropyCalculator {
 	 * @return the Shannon informative entropy for this group of chars.
 	 * @throws CharGroupSizeException 
 	 */
-	public static double calculateEntropy(Character[] characters_a, Character[] characters_b, int alphabetSize, boolean countGaps) throws CharGroupSizeException {
+	public static double calculateEntropy(Character[] characters_a, Character[] characters_b, int alphabetSize, boolean countGaps, FrequencyConverter converter) throws CharGroupSizeException {
 		
 		if (characters_a.length != characters_b.length) {throw new CharGroupSizeException();}
 		
@@ -107,7 +109,7 @@ public class EntropyCalculator {
 			};
 	
 		// Converts the counts to frequencies
-		EntropyCalculator.convertToFrequencies(freq, numberOfElements);
+		converter.convertToFrequencies(freq, numberOfElements);
 		
 		// The entropy sum
 		double entropy = EntropyCalculator.calculateEntropy(freq, alphabetSize) ;
@@ -119,18 +121,35 @@ public class EntropyCalculator {
 
 
 
+
+	
 	/**
 	 * Given a Map of Characters to Integers that counts the number of repetitions repetitions 
-	 * for a character, converts it to frequencies dividing each value for the total number of elements.
+	 * for a character, converts it to frequencies with a low count correction by Buslje:2009.
+	 * 
+	 * <pre>
+	 * fr(a,b) = (lambda + N(a,b)) / Sum [(lambda + N(x,y))]
+	 * </pre>
 	 * 
 	 * @param freq
 	 * @param numberOfElements
 	 */
-	public static void convertToFrequencies(Map<Object, Double> freq, int numberOfElements) {
+	public static void convertToLowCountFrequencies(Map<Object, Double> freq, int numberOfElements, double lambda, Object[] alphabet, int numberOfColumns) {
 		
-		for (Object element : freq.keySet()) {
+		Set<Object> keys = freq.keySet();
+		
+		for (Object element : alphabet) {
 			
-			freq.put(element, Double.valueOf(freq.get(element)/numberOfElements));
+			if (keys.contains(element)) {
+
+				freq.put(element, Double.valueOf( ( Math.pow(alphabet.length, 1 / numberOfColumns) * lambda + freq.get(element)) / (numberOfElements + alphabet.length * lambda)));
+				
+			} else {
+				
+				freq.put(element, Double.valueOf(  Math.pow(alphabet.length, 2 / numberOfColumns) * lambda / (numberOfElements + alphabet.length * lambda)));
+				
+			}
+			
 			
 		}
 		
