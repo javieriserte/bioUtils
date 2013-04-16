@@ -1,10 +1,16 @@
 package fileformats.genBankIO;
 
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
@@ -22,7 +28,7 @@ final public class GenBankReader {
 	
 	// Public Interface
 	/**
-	 * Reads de file containing one or more GenBank records.<br>
+	 * Reads a file containing one or more GenBank records.<br>
 	 * 
 	 * @param filein is the input file.
 	 * @throws FileNotFoundException if the file doesn't exists.
@@ -48,6 +54,19 @@ final public class GenBankReader {
 	 * @return a <code>List&lt;GenBankRecord></code>.
 	 */
 	static private List<GenBankRecord> readGenBank(BufferedReader in) throws GenBankFormatException {
+
+		PipedOutputStream po = new PipedOutputStream();
+		
+		PipedInputStream pi = new PipedInputStream();
+		
+		
+		
+		try {
+			ObjectInputStream a = new ObjectInputStream(pi);
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		
 		List<GenBankRecord> result = new ArrayList<GenBankRecord>();
 		StringBuilder headerpart = null;
@@ -129,7 +148,7 @@ final public class GenBankReader {
 							headerpart.append(currentline.toUpperCase().trim());
 							headerpart.append("\n");
 						} else {
-							if (currentline.toUpperCase().trim() != "") {
+							if (!currentline.toUpperCase().trim().equals("") ){
 								throw(new GenBankFormatException("Error Reading: " + currentline + "\nThe KeyWord 'LOCUS' was expected"));
 							}
 						}
@@ -153,38 +172,277 @@ final public class GenBankReader {
 		
 	}
 	
+	static public ObjectInputStream getObjectInputStream(final BufferedReader in) {
+		
+		try {
+			
+			final PipedOutputStream out = new PipedOutputStream();
+			
+
+			final PipedInputStream inp = new PipedInputStream(out);
+
+			
+			
+			
+
+			Thread ti = new Thread(new Runnable() {
+				
+				@Override
+				public void run() {
+					ObjectInputStream ois = null;
+					try {
+						ois = new ObjectInputStream(inp);
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					};
+					
+
+					GenBankRecord readObject;
+					try {
+						while( (readObject = (GenBankRecord) ois.readObject()) != null){
+							System.out.println(readObject);
+							try {
+								Thread.sleep(1000);
+							} catch (InterruptedException e) {
+								e.printStackTrace();
+							}
+						}
+						
+					} catch (IOException e) {
+						e.printStackTrace();
+					} catch (ClassNotFoundException e) {
+						e.printStackTrace();
+					}
+				}
+			});
+
+			
+			
+			Thread to = new Thread(new Runnable() {
+				
+				@Override
+				public void run() {
+					
+					try {
+						GenBankReader.bufferedReadGenBank(in, out);
+					} catch (GenBankFormatException e) {
+						e.printStackTrace();
+					}
+					
+				}
+			});
+			
+
+			System.out.println("beforeRun");
+
+			to.start();
+			
+			ti.start();
+			
+
+			
+			
+			System.out.println("afterRun");
+			
+			return null;			
+			
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		return null;
+		
+	}
+	
+	static private void bufferedReadGenBank(BufferedReader in, PipedOutputStream po) throws GenBankFormatException {
+
+		ObjectOutputStream oout = null;
+		
+		try {
+			oout = new ObjectOutputStream(po);
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+		
+		StringBuilder headerpart = null;
+		StringBuilder featurespart = null;
+		StringBuilder originpart = null;
+		int partCounter = 0;
+
+		try {
+			while(in.ready()) {
+				
+				String currentline = in.readLine();
+				
+				switch (partCounter) {
+					case 3: {
+					// Reading origin
+						if (currentline.toUpperCase().trim().startsWith("//")) {
+							// Change to part zero
+							partCounter=0;
+							
+							GenBankHeader gbh = new GenBankHeader();
+							List<Feature> feat = new ArrayList<Feature>();
+							Origin ori = new Origin();
+							
+							gbh = (new GenBankHeaderParser()).parse(headerpart.toString());
+							feat = (new FeaturesParser()).parse(featurespart.toString());
+							ori = (new OriginParser()).parse(originpart.toString());
+
+//							result.add(new GenBankRecord(gbh, feat, ori));
+							
+							oout.writeObject(new GenBankRecord(gbh, feat, ori));
+							Thread.sleep(1000);
+							
+						} else {
+							if (currentline.toUpperCase().trim() != "") {
+								originpart.append(currentline);
+								originpart.append("\n");
+							}
+						}
+
+					}
+					break;
+					case 2: {
+					// reading features
+						if (currentline.toUpperCase().trim().startsWith("ORIGIN")) {
+							// Change to part three
+							partCounter=3;
+						} else {
+							if (currentline.toUpperCase().trim() != "") {
+								featurespart.append(currentline);
+								featurespart.append("\n");
+							}
+						}
+					}
+					break;
+					case 1: {
+					// Reading header
+						if (currentline.toUpperCase().trim().startsWith("FEATURES")) {
+							// Change to part two
+							partCounter=2;
+							featurespart.append(currentline.toUpperCase().trim());
+							featurespart.append("\n");
+						} else {
+							if (currentline.toUpperCase().trim() != "") {
+								headerpart.append(currentline);
+								headerpart.append("\n");
+							}
+						}
+						
+					}
+					break;
+					case 0: {
+					// before start
+						
+						if (currentline.toUpperCase().trim().startsWith("LOCUS")) {
+							// Change to part one
+							partCounter = 1;
+							
+							headerpart = new StringBuilder();
+							featurespart = new StringBuilder();
+							originpart = new StringBuilder();
+							
+							headerpart.append(currentline.toUpperCase().trim());
+							headerpart.append("\n");
+						} else {
+							if (!currentline.toUpperCase().trim().equals("") ){
+								throw(new GenBankFormatException("Error Reading: " + currentline + "\nThe KeyWord 'LOCUS' was expected"));
+							}
+						}
+				
+					}
+					break;
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (GenBankFormatException e) {
+			
+            System.err.println("Error Parsing GenBank Record. " + e.getMessage());
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		if (partCounter != 0) {
+			throw (new GenBankFormatException("An Incomplete GenBank Record Was Found."));
+		}
+		
+		
+		try {
+			po.close();
+			oout.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	
+		
+	}
+	
 	// Main Executable Example
 	/**
 	 * Example of use of the GenBankIO package.
 	 */
 	public static void main(String[] args) {
-		List<GenBankRecord> gbrd = null;
+//		List<GenBankRecord> gbrd = null;
+//		
+//		try {
+//			gbrd = GenBankReader.readGenBank(new BufferedReader(new FileReader("test.gb")));
+//		} catch (FileNotFoundException e) {
+//			e.printStackTrace();
+//		} catch (GenBankFormatException e) {
+//			
+//		}
+//		
+//		
+//		for (GenBankRecord record : gbrd) {		
+//			List<Feature> cds = new Vector<Feature>();
+//		
+//			for (Feature f : record.getFeatures()) {
+//				if (f.name().toUpperCase().equals("CDS")) {
+//					cds.add(f);
+//				}
+//			}
+//		
+//			for(Feature f : cds) {
+//				System.out.println(f.getQualifierNames());
+//				if (f.getQualifierNames().contains("TRANSLATION")) {
+//					System.out.println(f.getQualifierValue("TRANSLATION"));
+//				}
+//			}
+//		}
+		
+		ObjectInputStream gbrd = null;
 		
 		try {
-			gbrd = GenBankReader.readGenBank(new BufferedReader(new FileReader("test.gb")));
+			
+			BufferedReader in = new BufferedReader(new FileReader("test.gb"));
+			gbrd = GenBankReader.getObjectInputStream(in);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
-		} catch (GenBankFormatException e) {
-			
+		} 
+
+		GenBankRecord gbr;
+		
+		try {
+			while ( (gbr = ((GenBankRecord) gbrd.readObject())) != null) {
+				System.out.println(gbr.getOrigin());
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		
 		
-		for (GenBankRecord record : gbrd) {		
-			List<Feature> cds = new Vector<Feature>();
-		
-			for (Feature f : record.getFeatures()) {
-				if (f.name().toUpperCase().equals("CDS")) {
-					cds.add(f);
-				}
-			}
-		
-			for(Feature f : cds) {
-				System.out.println(f.getQualifierNames());
-				if (f.getQualifierNames().contains("TRANSLATION")) {
-					System.out.println(f.getQualifierValue("TRANSLATION"));
-				}
-			}
-		}
 		
 	}
 	

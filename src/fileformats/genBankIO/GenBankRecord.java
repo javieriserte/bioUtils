@@ -4,6 +4,7 @@ import fileformats.genBankIO.elements.Feature;
 import fileformats.genBankIO.elements.GenBankHeader;
 import fileformats.genBankIO.elements.Origin;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -24,7 +25,11 @@ import java.util.List;
  * 
  * @author Javier Iserte (jiserte@unq.edu.ar)
  */
-public class GenBankRecord {
+public class GenBankRecord implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8284380031577259687L;
 	private GenBankHeader header;
 	private List<Feature> features;
 	private Origin origin;
