@@ -107,7 +107,10 @@ public class FastaAlignmentManipulator {
 		NoOption calculateMIOpt = new NoOption(parser, "-MI");
 		uniques.add(calculateMIOpt);
 
+		SingleOption reconstructOpt = new SingleOption(parser, 0 ,"-recFromCon", IntegerParameter.getParameter());
+		uniques.add(reconstructOpt);
 
+		
 		// Step Three : Try to parse the command line
 		
 		try {
@@ -251,9 +254,37 @@ public class FastaAlignmentManipulator {
 			calculateMICommand(out,seqs);
 			
 		}
-
+		
+		if (reconstructOpt.isPresent()) {
+			
+			reconstructConsensusCommand(out,seqs,(Integer)reconstructOpt.getValue());
+			
+		}
 
 	}
+
+
+	private static void reconstructConsensusCommand(PrintStream out, 	List<Pair<String, String>> seqs, Integer reference) {
+	
+		
+		List<Pair<String,String>> rec = ReconstructDottedAlignment.reconstruct(seqs, reference); 
+		
+		for (Pair<String, String> pair : rec) {
+			
+			out.println(">" + pair.getFirst());
+			
+			out.println(pair.getSecond());
+			
+		}
+		
+		out.flush();
+		
+		out.close();
+		
+		System.exit(0);
+		
+	}
+	
 
 
 	private static void calculateMICommand(PrintStream out, List<Pair<String, String>> seqs) {
