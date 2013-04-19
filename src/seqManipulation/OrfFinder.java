@@ -17,6 +17,9 @@ import cmdGA.exceptions.IncorrectParameterTypeException;
 import cmdGA.parameterType.InputStreamParameter;
 import cmdGA.parameterType.IntegerParameter;
 import cmdGA.parameterType.PrintStreamParameter;
+import fileformats.fastaIO.FastaMultipleReader;
+import fileformats.fastaIO.FastaReader;
+import fileformats.fastaIO.Pair;
 
 public class OrfFinder {
 
@@ -39,7 +42,8 @@ public class OrfFinder {
 		NoOption cir = new NoOption(parser, "-circular");
 		SingleOption minsize = new SingleOption(parser, 100, "-min", IntegerParameter.getParameter());
 		SingleOption outfile = new SingleOption(parser, System.out, "-outfile", PrintStreamParameter.getParameter());
-		SingleOption frame = new SingleOption(parser, 0, "-frame", IntegerParameter.getParameter());
+		SingleOption frameOpt = new SingleOption(parser, 0, "-frame", IntegerParameter.getParameter());
+		NoOption inFastaOpt = new NoOption(parser, "-fasta");
 		NoOption helpOpt = new NoOption(parser, "-help");
 		
 		
@@ -62,26 +66,61 @@ public class OrfFinder {
 			
 		}
 		
-		try {
-			String line;
-			while ((line = in.readLine()) != null ) {
-				List<String> r = OrfFinder.allOrfs(line, (Integer) minsize.getValue(), (Boolean) cir.getValue(), (Integer) frame.getValue());
-				int counter =1;
-				int w = r.size()/10 +1;
-				
-				
+		boolean inFasta = (Boolean) inFastaOpt.isPresent();
+		
+		if (inFasta) {
+			
+			FastaMultipleReader mrf; 
 
-				for (String string : r) {
-					out.print(">ORF");
-					out.format("%0"+ w +"d%n", counter);
-					out.println(string);
-				}
+			mrf = new FastaMultipleReader();
+			
+			List<Pair<String,String>> seqs = mrf.readBuffer(in);
+
+			for (Pair<String, String> pair : seqs) {
+				
+				exportFasta(out, pair.getSecond(), (Integer) minsize.getValue(), pair.getFirst(),(Boolean) cir.getValue(), (Integer) frameOpt.getValue());
+				
+			}
+			
+		} else {
+
+		
+		try {
+			
+			String line;
+			
+			while ((line = in.readLine()) != null ) {
+				
+				exportFasta(out, line, (Integer) minsize.getValue(), "",(Boolean) cir.getValue(), (Integer) frameOpt.getValue());
+				
 			}
 			
 		} catch (IOException e1) {
+			
 			System.err.println("There was an IO error reading the input data.");
+			
+		}
+		
 		}
 
+	}
+
+	private static void exportFasta(PrintStream out,String sequence, int minSize, String baseDescription, boolean isCircular, int frame) {
+		
+		List<String> r = OrfFinder.allOrfs(sequence, minSize , frame==0, isCircular , frame);
+		
+		int counter =0;
+		
+		int w = r.size()/10 +1;
+
+		if(!baseDescription.trim().equals("")) baseDescription = baseDescription + "|"; 
+
+		for (String string : r) {
+			counter++;
+			out.print(">"+baseDescription+"ORF:");
+			out.format("%0"+ w +"d%n", counter);
+			out.println(string);
+		}
 	}
 
 	protected static void printHelp(PrintStream out) {
@@ -172,10 +211,10 @@ public class OrfFinder {
 		int unitLength = sequence.length();
 		
 		@SuppressWarnings("unchecked")
-		List<Integer>[] ATGsAnsSTOPsByFrame = (List<Integer>[]) new List[3];
-		ATGsAnsSTOPsByFrame[0] = new ArrayList<Integer>();
-		ATGsAnsSTOPsByFrame[1] = new ArrayList<Integer>();
-		ATGsAnsSTOPsByFrame[2] = new ArrayList<Integer>();
+		List<Integer>[] ATGsAndSTOPsByFrame = (List<Integer>[]) new List[3];
+		ATGsAndSTOPsByFrame[0] = new ArrayList<Integer>();
+		ATGsAndSTOPsByFrame[1] = new ArrayList<Integer>();
+		ATGsAndSTOPsByFrame[2] = new ArrayList<Integer>();
 
 		@SuppressWarnings("unchecked")
 		List<Boolean>[] ATGorStop = (List<Boolean>[]) new List[3];
@@ -213,11 +252,11 @@ public class OrfFinder {
 		
 		}
 		
-		separateByFrame(frame, ATGs, STOPs, ATGsAnsSTOPsByFrame, ATGorStop);
+		separateByFrame(frame, ATGs, STOPs, ATGsAndSTOPsByFrame, ATGorStop);
 		
-		excludeAdjacentATGorSTOP(ATGsAnsSTOPsByFrame, ATGorStop);
+		excludeAdjacentATGorSTOP(ATGsAndSTOPsByFrame, ATGorStop);
 		
-		retriveORFs(sequence, unitLength, ATGsAnsSTOPsByFrame, ATGorStop, result, minSize);
+		retriveORFs(sequence, unitLength, ATGsAndSTOPsByFrame, ATGorStop, result, minSize);
 		
 		return result;
 		

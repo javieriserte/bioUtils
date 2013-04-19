@@ -12,6 +12,11 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import seqManipulation.filtersequences.FilterSequence;
+import seqManipulation.filtersequences.FilterSequenceBooleanNOT;
+import seqManipulation.filtersequences.FilterSequenceGreaterThan;
+import seqManipulation.filtersequences.FilterSequenceSmallerThan;
+import seqManipulation.filtersequences.FilterSequenceStartingWith;
 import utils.mutualinformation.MICalculator;
 
 import cmdGA.MultipleOption;
@@ -24,6 +29,7 @@ import cmdGA.parameterType.InFileParameter;
 import cmdGA.parameterType.InputStreamParameter;
 import cmdGA.parameterType.IntegerParameter;
 import cmdGA.parameterType.PrintStreamParameter;
+import cmdGA.parameterType.StringParameter;
 import fileformats.fastaIO.FastaMultipleReader;
 import fileformats.fastaIO.Pair;
 
@@ -110,7 +116,21 @@ public class FastaAlignmentManipulator {
 		SingleOption reconstructOpt = new SingleOption(parser, 0 ,"-recFromCon", IntegerParameter.getParameter());
 		uniques.add(reconstructOpt);
 
+		SingleOption filterSizeGreaterOpt = new SingleOption(parser, null, "-fGrTh", IntegerParameter.getParameter());
+		uniques.add(filterSizeGreaterOpt);
 		
+		SingleOption filterSizeSmallerOpt = new SingleOption(parser, null, "-fSmTh", IntegerParameter.getParameter());
+		uniques.add(filterSizeSmallerOpt);
+		
+		NoOption complementaryOpt = new NoOption(parser, "-comp");
+		uniques.add(complementaryOpt);
+		
+		SingleOption startsWithOpt = new SingleOption(parser, null, "-fStartWith", StringParameter.getParameter());
+		uniques.add(startsWithOpt);
+		
+		SingleOption invertFilterOpt = new SingleOption(parser, null, "-inverseFilter", StringParameter.getParameter());
+
+
 		// Step Three : Try to parse the command line
 		
 		try {
@@ -260,7 +280,90 @@ public class FastaAlignmentManipulator {
 			reconstructConsensusCommand(out,seqs,(Integer)reconstructOpt.getValue());
 			
 		}
+		
+		if (filterSizeGreaterOpt.isPresent()) {
+			
+			Integer value = (Integer) filterSizeGreaterOpt.getValue();
+			
+			if (value!=null) {
+				
+				FilterSequence filter = new FilterSequenceGreaterThan(value);
+				
+				filterCommand(filter,out,seqs, invertFilterOpt.isPresent());
 
+			}
+			
+		}
+		
+		if (filterSizeSmallerOpt.isPresent()) {
+			
+			Integer value = (Integer) filterSizeSmallerOpt.getValue();
+			
+			if (value!=null) {
+				
+				FilterSequence filter = new FilterSequenceSmallerThan(value);
+				
+				filterCommand(filter,out,seqs, invertFilterOpt.isPresent());
+
+			}
+			
+		}
+		
+		if (complementaryOpt.isPresent()) {
+			
+			complementaryCommand(out,seqs);
+			
+		}
+		
+		if (startsWithOpt.isPresent())  {
+
+			
+			String value = (String) startsWithOpt.getValue();
+			
+			if (value!=null) {
+				
+				FilterSequence filter = new FilterSequenceStartingWith(value);
+				
+				filterCommand(filter,out,seqs, invertFilterOpt.isPresent());
+
+			}
+			
+			
+			
+		}
+
+	}
+
+
+	private static void complementaryCommand(PrintStream out, List<Pair<String, String>> seqs) {
+
+		for (Pair<String, String> pair : seqs) {
+			
+			out.println(">" + pair.getFirst());
+			
+			out.println(Complementary.reverseComplementary(pair.getSecond()));
+			
+		}
+		
+	}
+
+
+	private static void filterCommand(FilterSequence filter, PrintStream out, List<Pair<String, String>> seqs, boolean invertFilter) {
+
+		if (invertFilter) filter = new FilterSequenceBooleanNOT(filter);
+		
+		for (Pair<String, String> pair : seqs) {
+			
+			if (filter.filter(pair) ) {
+				
+				out.println(">" + pair.getFirst());
+				
+				out.println(pair.getSecond());
+				
+			}
+			
+		}
+		
 	}
 
 
@@ -512,9 +615,16 @@ public class FastaAlignmentManipulator {
 		System.exit(0);
 	}
 
-	private static void concatenateCommand(MultipleOption concatOpt,
-			PrintStream out, FastaMultipleReader fmr) {
-		File[] files = (File[]) concatOpt.getValues();
+	private static void concatenateCommand(MultipleOption concatOpt, PrintStream out, FastaMultipleReader fmr) {
+		
+		Object[] filesAsObjectArray = concatOpt.getValues();
+		File[] files = new File[filesAsObjectArray.length];
+		
+		for (int i =0; i<filesAsObjectArray.length; i++) {
+			
+			files[i] = (File) filesAsObjectArray[i];
+			
+		}
 		
 		if (files != null) {
 			
@@ -780,6 +890,7 @@ public class FastaAlignmentManipulator {
 		return "Fasta Alignment Manipulator - Version " + FastaAlignmentManipulator.VERSION + 
 		       "\nOptions: -infile        : is the input fasta file (or stdin if no present)" +
 		       "\n         -outfile       : is the path to the output file (or stdout if no present)" +
+		       "\n         -revcomp       : gets the reverse complementary sequence"+
 		       "\n         -extract       : extracts some of the sequences of the alignment."+
 		       "\n                           a list of the order numbers of the sequence to be retrieved is needed."+
 		       "\n                           the number 1 is the first sequence."+
@@ -787,6 +898,7 @@ public class FastaAlignmentManipulator {
 			   "\n         -length        : counts the number of columns in the alignment. If all of them haven't the same size return 0."+
 			   "\n         -lengths       : counts the number of columns in each row of the alignment."+
 			   "\n         -concatenate   : joins many alignments into one."+
+			   "\n                           the names of files to be concatenated must be separated by a comma (',') chaarcter."+
 			   "\n         -def           : shows and numerates the definitions."+
 			   "\n         -append        : creates one alignment from two. The sequences of the new alignment are the combination from the other two."+
 			   "\n         -slice         : cuts a segment of the alignment and keeps it. The rest is removed. " +
@@ -798,10 +910,15 @@ public class FastaAlignmentManipulator {
 			   "\n                            a genetic code" +
 			   "\n         -genCodeHelp   : shows help about the genetic code format" +
 			   "\n         -randomRT      : back-translate a protein sequence into a DNA sequence, choosing one the posible codons randomly" +
+			   "\n         -recFromCon    : reconstruct an alignment from a dotted alignment with reference consensus sequence" +
+			   "\n                           Example: -recFromCon=1  | uses the first sequence as reference" +
+			   "\n         -fGrTh         : looks through the alignment and removes all the sequences, except the ones that are greater than a given size" +
+			   "\n                           Example: -fGrTh=7000    | removes sequences with lenghts lower or equal to 7000" +
+			   "\n         -fSmTh         : looks through the alignment and removes all the sequences, except the ones that are smaller than a given size" +
+			   "\n                           Example: -fSmTh=7000    | removes sequences with lenghts greater or equal to 7000" +
 			   "\n         -ver           : prints the number of the version in stdout."+
-			   "\n         -help          : shows this help.";
-			   
-		
+			   "\n         -help          : shows this help." +
+			   "\n";
 	}
 
 }

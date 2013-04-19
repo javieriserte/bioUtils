@@ -1,8 +1,7 @@
 package fileformats.clustal;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -12,14 +11,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import cmdGA.MultipleOption;
-import cmdGA.NoOption;
+
 import cmdGA.Parser;
 import cmdGA.SingleOption;
 import cmdGA.exceptions.IncorrectParameterTypeException;
-import cmdGA.parameterType.InFileParameter;
+
 import cmdGA.parameterType.InputStreamParameter;
-import cmdGA.parameterType.IntegerParameter;
+
 import cmdGA.parameterType.PrintStreamParameter;
 
 import fileformats.fastaIO.Pair;
