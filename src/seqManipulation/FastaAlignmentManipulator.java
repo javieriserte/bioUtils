@@ -14,6 +14,7 @@ import java.util.Map;
 
 import seqManipulation.filtersequences.FilterSequence;
 import seqManipulation.filtersequences.FilterSequenceBooleanNOT;
+import seqManipulation.filtersequences.FilterSequenceContaining;
 import seqManipulation.filtersequences.FilterSequenceGreaterThan;
 import seqManipulation.filtersequences.FilterSequenceSmallerThan;
 import seqManipulation.filtersequences.FilterSequenceStartingWith;
@@ -122,13 +123,23 @@ public class FastaAlignmentManipulator {
 		SingleOption filterSizeSmallerOpt = new SingleOption(parser, null, "-fSmTh", IntegerParameter.getParameter());
 		uniques.add(filterSizeSmallerOpt);
 		
-		NoOption complementaryOpt = new NoOption(parser, "-comp");
-		uniques.add(complementaryOpt);
-		
 		SingleOption startsWithOpt = new SingleOption(parser, null, "-fStartWith", StringParameter.getParameter());
 		uniques.add(startsWithOpt);
 		
+		SingleOption containsOpt = new SingleOption(parser, null, "-contains", StringParameter.getParameter());
+		uniques.add(containsOpt);
+		
 		SingleOption invertFilterOpt = new SingleOption(parser, null, "-inverseFilter", StringParameter.getParameter());
+		
+		NoOption complementaryOpt = new NoOption(parser, "-comp");
+		uniques.add(complementaryOpt);
+		
+		NoOption identityValuesOpt = new NoOption(parser, "-idValues");
+		uniques.add(identityValuesOpt);
+		
+		NoOption deinterLeaveOpt = new NoOption(parser, "-deInter");
+		uniques.add(deinterLeaveOpt);
+		
 
 
 		// Step Three : Try to parse the command line
@@ -328,10 +339,60 @@ public class FastaAlignmentManipulator {
 
 			}
 			
+		}
+		
+		if (identityValuesOpt.isPresent()) {
 			
+			identityValuesCommand(out,seqs);
+			
+		}
+		
+		if (deinterLeaveOpt.isPresent()) {
+			
+			deinterleaveCommand(out,seqs);
+			
+		}
+		
+		if (containsOpt.isPresent()) {
+			
+			String value = (String) containsOpt.getValue();
+			
+			if (value!=null) {
+				
+				FilterSequence filter = new FilterSequenceContaining(value);
+				
+				filterCommand(filter,out,seqs, invertFilterOpt.isPresent());
+
+			}
 			
 		}
 
+	}
+
+
+	private static void deinterleaveCommand(PrintStream out, 	List<Pair<String, String>> seqs) {
+		
+		for (Pair<String, String> pair : seqs) {
+			
+			out.println(">" + pair.getFirst());
+			out.println(pair.getSecond());
+
+			
+		}
+		
+	}
+
+
+	private static void identityValuesCommand(PrintStream out, List<Pair<String, String>> seqs) {
+		
+		List<Double> values = IndentityMatrixCalculator.listOfIdentityValues(seqs);
+		
+		for (Double value : values) {
+
+			out.println(value);
+			
+		} 
+		
 	}
 
 
@@ -916,6 +977,7 @@ public class FastaAlignmentManipulator {
 			   "\n                           Example: -fGrTh=7000    | removes sequences with lenghts lower or equal to 7000" +
 			   "\n         -fSmTh         : looks through the alignment and removes all the sequences, except the ones that are smaller than a given size" +
 			   "\n                           Example: -fSmTh=7000    | removes sequences with lenghts greater or equal to 7000" +
+			   "\n         -idValues      : gets list of identity percent values between all the sequences in the alignment" +
 			   "\n         -ver           : prints the number of the version in stdout."+
 			   "\n         -help          : shows this help." +
 			   "\n";

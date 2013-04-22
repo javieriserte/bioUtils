@@ -18,7 +18,6 @@ import cmdGA.parameterType.InputStreamParameter;
 import cmdGA.parameterType.IntegerParameter;
 import cmdGA.parameterType.PrintStreamParameter;
 import fileformats.fastaIO.FastaMultipleReader;
-import fileformats.fastaIO.FastaReader;
 import fileformats.fastaIO.Pair;
 
 public class OrfFinder {
