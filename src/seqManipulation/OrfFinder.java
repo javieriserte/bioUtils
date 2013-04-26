@@ -128,12 +128,13 @@ public class OrfFinder {
 		out.println("   Options:");
 		out.println("   -in         : Is the path to the input fasta file to be readed. ");
 		out.println("               :   If no present, standard input is assumed.");
-		out.println("   -out        : Is the path to the output file. ");
+		out.println("   -outfile    : Is the path to the output file. ");
 		out.println("               :   If no present, standard output is assumed.");
 		out.println("   -min        : Is the minimum size for and ORF to be informed. (Default is 100)");
 		out.println("   -circular   : Assumes that the sequence is from a circular molecule. ");			
 		out.println("   -frame      : Looks ORFs in a specific frame: 1, 2 o 3.");			
 		out.println("               :   If frame is 0, then all frames are analyzed.");
+		out.println("   -fasta      : the input is a fasta file.");			
 		out.println("   -help       : Show this information.");
 	}
 

@@ -12,6 +12,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import math.random.FischerYatesShuffle;
+import mdsj.ClassicalScaling;
+
 import seqManipulation.filtersequences.FilterSequence;
 import seqManipulation.filtersequences.FilterSequenceBooleanNOT;
 import seqManipulation.filtersequences.FilterSequenceContaining;
@@ -140,7 +143,11 @@ public class FastaAlignmentManipulator {
 		NoOption deinterLeaveOpt = new NoOption(parser, "-deInter");
 		uniques.add(deinterLeaveOpt);
 		
-
+		SingleOption MDSopt = new SingleOption(parser,2, "-mds", IntegerParameter.getParameter());
+		uniques.add(MDSopt);
+		
+		SingleOption pickRandomly = new SingleOption(parser, 1, "-pick", IntegerParameter.getParameter());
+		uniques.add(pickRandomly);
 
 		// Step Three : Try to parse the command line
 		
@@ -333,6 +340,7 @@ public class FastaAlignmentManipulator {
 			
 			if (value!=null) {
 				
+				
 				FilterSequence filter = new FilterSequenceStartingWith(value);
 				
 				filterCommand(filter,out,seqs, invertFilterOpt.isPresent());
@@ -366,7 +374,133 @@ public class FastaAlignmentManipulator {
 			}
 			
 		}
+		
+		if (MDSopt.isPresent()) {
+			
+			MDScommand(out,seqs, (Integer) MDSopt.getValue()); 
+			
+		}
+		
+		if (pickRandomly.isPresent()) {
+			
+			pickCommand(out,seqs, (Integer) pickRandomly.getValue()); 
+			
+			
+		}
 
+	}
+
+	
+	///////////////////////////
+	// Private Methods
+
+	private static void pickCommand(PrintStream out, List<Pair<String, String>> seqs, Integer value) {
+
+		List<Object> s = new ArrayList<Object>();
+		
+		for (Pair<String, String> pair : seqs) {
+			
+			s.add(pair);
+			
+		}
+		
+		if (seqs.size()>0) {
+				
+			FischerYatesShuffle.shuffle(value, s);
+				
+		}
+			
+		
+		for (int i = 0; i<value; i++) {
+			
+			@SuppressWarnings("unchecked")
+			Pair<String, String> pair = (Pair<String,String>)s.get(i);
+			
+			out.println(">"+ pair.getFirst());
+			out.println(pair.getSecond());
+			
+		}
+		
+		
+	}
+
+
+	private static void MDScommand(PrintStream out, List<Pair<String, String>> seqs, int dim) {
+
+		Map<Pair<Integer, Integer>, Double> a = IndentityMatrixCalculator.calculateIdentityMatrix(seqs);
+		double[][] input = new  double[seqs.size()][seqs.size()]; 
+		
+		for (int i=0; i<seqs.size();i++) {
+			
+			for (int j=0; j<seqs.size();j++) {
+				
+				input[i][j] = 0;
+				
+			}
+			
+		}
+		
+//		double[][] input = {
+//				{0.0 , 0.7 , 1.0, 0.7},
+//				{0.7 , 0.0 , 0.7, 1.0},
+//				{1.0 , 0.7 , 0.0, 0.7},
+//				{0.7 , 1.0 , 0.7, 0.0},
+//				}; 
+
+		for (Pair<Integer, Integer> pair: a.keySet()) {
+			
+			input[pair.getFirst()][pair.getSecond()] = 1d - a.get(pair);
+			input[pair.getSecond()][pair.getFirst()] = 1d - a.get(pair);
+			
+		}
+//		
+		int n=input[0].length;    // number of data objects
+		
+		
+//		double[][] output=MDSJ.classicalScaling(input); // apply MDS
+
+		double[][] evecs = new double[dim][n];
+		double[] evals = new double[dim];
+		
+		ClassicalScaling.eigen(input, evecs, evals); 
+
+	    StringBuilder headersb = new StringBuilder();
+	    
+		for(int i = 0 ; i< dim; i++) {
+
+			headersb.append("d"+i+",");
+			
+		}
+		
+		String header = headersb.toString();
+		
+		header = header.substring(0, header.length()-1);
+		
+		out.println(header);
+	    
+		for (int i = 0; i < n; i++) {
+			StringBuilder line = new StringBuilder();
+			
+			for (int j=0; j<dim; j++) {
+				
+				line.append(evecs[j][i]);
+				line.append(",");				
+				
+			}
+			
+			String printline = line.toString();
+			
+			out.println(printline.substring(0,printline.length()-1));
+			
+		}
+		
+		for(int i = 0 ; i< dim; i++) {
+
+			System.err.println("eigenvalue["+i+"]: " + evals[i]);
+			
+		}
+		
+		
 	}
 
 
@@ -978,6 +1112,10 @@ public class FastaAlignmentManipulator {
 			   "\n         -fSmTh         : looks through the alignment and removes all the sequences, except the ones that are smaller than a given size" +
 			   "\n                           Example: -fSmTh=7000    | removes sequences with lenghts greater or equal to 7000" +
 			   "\n         -idValues      : gets list of identity percent values between all the sequences in the alignment" +
+			   "\n         -mds           : performs a Multidimensional Scaling analysis (using MDSJ package developed by Christian Pich (University of Konstanz))" +
+			   "\n                           a number that indicantes the number of output dimensions"+
+			   "\n         -pick          : pick a random number set of the sequences" +
+			   "\n                           Example: -pick 5        | pick 5 random sequences"+
 			   "\n         -ver           : prints the number of the version in stdout."+
 			   "\n         -help          : shows this help." +
 			   "\n";
