@@ -24,7 +24,7 @@ public class RendererParameter extends ParameterType  {
 	 */
 	protected Object parse(String parameter) {
 		parameter = parameter.trim().toUpperCase();
-		System.err.println("parameter: "+parameter + " - XY: "+ XY);
+
 		if (parameter.equals(XY)) {
 			return (Object) new XYPlotRenderer();
 		} else 

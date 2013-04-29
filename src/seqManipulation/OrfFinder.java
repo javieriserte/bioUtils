@@ -42,6 +42,8 @@ public class OrfFinder {
 		SingleOption minsize = new SingleOption(parser, 100, "-min", IntegerParameter.getParameter());
 		SingleOption outfile = new SingleOption(parser, System.out, "-outfile", PrintStreamParameter.getParameter());
 		SingleOption frameOpt = new SingleOption(parser, 0, "-frame", IntegerParameter.getParameter());
+		NoOption largestOpt = new NoOption(parser, "-largest");
+		NoOption marksOpt = new NoOption(parser, "-marks");
 		NoOption inFastaOpt = new NoOption(parser, "-fasta");
 		NoOption helpOpt = new NoOption(parser, "-help");
 		
@@ -66,7 +68,7 @@ public class OrfFinder {
 		}
 		
 		boolean inFasta = (Boolean) inFastaOpt.isPresent();
-		
+
 		if (inFasta) {
 			
 			FastaMultipleReader mrf; 
@@ -74,12 +76,24 @@ public class OrfFinder {
 			mrf = new FastaMultipleReader();
 			
 			List<Pair<String,String>> seqs = mrf.readBuffer(in);
-
+			
 			for (Pair<String, String> pair : seqs) {
 				
-				exportFasta(out, pair.getSecond(), (Integer) minsize.getValue(), pair.getFirst(),(Boolean) cir.getValue(), (Integer) frameOpt.getValue());
+				if (!marksOpt.isPresent()) {
+
+					exportFasta(out, pair.getSecond(), (Integer) minsize.getValue(), pair.getFirst(),(Boolean) cir.getValue(), (Integer) frameOpt.getValue(), largestOpt.isPresent());
+					
+				} else {
+					
+					List<List<Integer>> marks = getMarks(pair.getSecond()); 
+					
+					exportMarks(out,pair.getFirst(),marks);
+					
+				}
 				
 			}
+			
+			System.exit(0);
 			
 		} else {
 
@@ -90,9 +104,25 @@ public class OrfFinder {
 			
 			while ((line = in.readLine()) != null ) {
 				
-				exportFasta(out, line, (Integer) minsize.getValue(), "",(Boolean) cir.getValue(), (Integer) frameOpt.getValue());
+				int counter =0;
+				
+				if (!marksOpt.isPresent()) {
+
+					exportFasta(out, line, (Integer) minsize.getValue(), "",(Boolean) cir.getValue(), (Integer) frameOpt.getValue(), largestOpt.isPresent());
+					
+				} else {
+					
+					List<List<Integer>> marks = getMarks(line); 
+					
+					exportMarks(out,"Sequence "+counter,marks);
+					
+					counter++;
+					
+				}
 				
 			}
+			
+			System.exit(0);
 			
 		} catch (IOException e1) {
 			
@@ -104,9 +134,72 @@ public class OrfFinder {
 
 	}
 
-	private static void exportFasta(PrintStream out,String sequence, int minSize, String baseDescription, boolean isCircular, int frame) {
+	private static void exportMarks(PrintStream out, String first, List<List<Integer>> marks) {
+		
+		out.println(first); 
+		
+		int counter =0;
+
+		
+		for (List<Integer> list : marks) {
+
+			StringBuilder sb = new StringBuilder();
+
+			if(counter%2==0) {
+				sb.append("ATGs  ");
+			} else {
+				sb.append("Stops ");
+			}
+			
+			sb.append("frame("+counter+")");
+			
+			for(int j=0 ; j<list.size() ;j++) {
+				
+				if (j!=0) sb.append(" ,");
+				
+				sb.append("[" + list.get(j) + "]");
+				
+			}
+			
+			out.println(sb.toString());
+			
+			counter++;
+			
+		}
+		
+		out.flush();
+		
+		out.close();
+		
+	}
+
+	private static void exportFasta(PrintStream out,String sequence, int minSize, String baseDescription, boolean isCircular, int frame, boolean keepLargest) {
 		
 		List<String> r = OrfFinder.allOrfs(sequence, minSize , frame==0, isCircular , frame);
+		
+		if (keepLargest) {
+			
+			String largestString = "";
+			
+			int largetsSize =0;
+			
+			for (String string : r) {
+				
+				if (string.length() > largetsSize) {
+					
+					largestString = string;
+					
+					largetsSize = string.length(); 
+					
+				}
+				
+			}
+			
+			r.clear();
+			
+			r.add(largestString);
+			
+		}
 		
 		int counter =0;
 		
@@ -132,7 +225,8 @@ public class OrfFinder {
 		out.println("               :   If no present, standard output is assumed.");
 		out.println("   -min        : Is the minimum size for and ORF to be informed. (Default is 100)");
 		out.println("   -circular   : Assumes that the sequence is from a circular molecule. ");			
-		out.println("   -frame      : Looks ORFs in a specific frame: 1, 2 o 3.");			
+		out.println("   -frame      : Looks ORFs in a specific frame: 1, 2 o 3.");
+		out.println("   -largest    : keep the largest ORF found and discard the others.");
 		out.println("               :   If frame is 0, then all frames are analyzed.");
 		out.println("   -fasta      : the input is a fasta file.");			
 		out.println("   -help       : Show this information.");
@@ -261,6 +355,51 @@ public class OrfFinder {
 		return result;
 		
 	}
+	
+	/**
+	 * Extracts the ATGs and Stop positions from a sequence.
+	 * 
+	 * @param sequence a nucleotide sequence
+	 * @return a List of twelve List. Each one of these list contains info of ATG and STOP by frame.
+	 * 			<ol>
+	 *          <li>List index 0  = ATG at frame 0.</li>
+	 *          <li>List index 1  = stop at frame 0.</li>
+	 *          <li>List index 2  = ATG at frame 1.</li>
+	 *          <li>List index 3  = stop at frame 1.</li>
+	 *          <li>List index 4  = ATG at frame 2.</li>
+	 *          <li>List index 5  = stop at frame 2.</li>
+	 *          <li>List index 6  = ATG at frame -0.</li>
+	 *          <li>List index 7  = stop at frame -0.</li>
+	 *          <li>List index 8  = ATG at frame -1.</li>
+	 *          <li>List index 9  = stop at frame -1.</li>
+	 *          <li>List index 10 = ATG at frame -2.</li>
+	 *          <li>List index 11 = stop at frame -2.</li>
+	 *          </ol><br>
+	 *  Frames starting with '-', indicates that the ORF correspond to the reverse complementary sequence.
+	 */
+	public static List<List<Integer>> getMarks(String sequence) {
+
+		
+		
+		String[] seqs = new String[2];
+		
+		seqs[0] =sequence;
+		
+		seqs[1] = Complementary.reverseComplementary(sequence);
+		
+		List<List<Integer>> result = new ArrayList<List<Integer>>();
+		
+		for (int i =0 ;i<2;i++) {
+		
+			result.addAll(getStrandMarks(seqs[i]));
+			
+		}
+		
+		return result;
+		
+	}
+
+	
 
 	@Deprecated
 	public static Object[] nextORF(String sequence, int largerThan) {
@@ -362,6 +501,63 @@ public class OrfFinder {
 			arrayResult[i] = result.get(i);
 		}
 		return arrayResult;
+	}
+	
+	
+	/**
+	 * Extracts the ATGs and Stop positions from a sequence.
+	 * 
+	 * @param sequence a nucleotide sequence
+	 * @return a List of six List. Each one of these list contains info of ATG and STOP by frame.
+	 * 			<ol>
+	 *          <li>List index 0 = ATG at frame 0.</li>
+	 *          <li>List index 1 = stop at frame 0.</li>
+	 *          <li>List index 2 = ATG at frame 1.</li>
+	 *          <li>List index 3 = stop at frame 1.</li>
+	 *          <li>List index 4 = ATG at frame 2.</li>
+	 *          <li>List index 5 = stop at frame 2.</li>
+	 *          </ol>
+	 *          
+	 */
+	private static List<List<Integer>> getStrandMarks(String sequence) {
+		
+		List<List<Integer>> result = new ArrayList<List<Integer>>();
+		int[] ATGs = OrfFinder.scanATG(sequence);
+		int[] STOPs = OrfFinder.scanSTOP(sequence);
+		
+		@SuppressWarnings("unchecked")
+		List<Integer>[] ATGsAndSTOPsByFrame = (List<Integer>[]) new List[3];
+		ATGsAndSTOPsByFrame[0] = new ArrayList<Integer>();
+		ATGsAndSTOPsByFrame[1] = new ArrayList<Integer>();
+		ATGsAndSTOPsByFrame[2] = new ArrayList<Integer>();
+
+		@SuppressWarnings("unchecked")
+		List<Boolean>[] ATGorStop = (List<Boolean>[]) new List[3];
+		ATGorStop[0] = new ArrayList<Boolean>();
+		ATGorStop[1] = new ArrayList<Boolean>();
+		ATGorStop[2] = new ArrayList<Boolean>();
+
+
+		Arrays.sort(ATGs);
+		Arrays.sort(STOPs);
+		
+		separateByFrame(0, ATGs, STOPs, ATGsAndSTOPsByFrame, ATGorStop);
+		
+		excludeAdjacentATGorSTOP(ATGsAndSTOPsByFrame, ATGorStop);
+
+		for (int i=0; i<6;i++) result.add(new ArrayList<Integer>());
+		
+		for (int f=0; f<3;f++) {
+			
+			for (int i=0; i<ATGsAndSTOPsByFrame[f].size();i++) {
+				
+				result.get(2*f + ((ATGorStop[f].get(i))?0:1)).add(ATGsAndSTOPsByFrame[f].get(i));
+				
+			}
+			
+		}
+		
+		return result;
 	}
 	
 	/**

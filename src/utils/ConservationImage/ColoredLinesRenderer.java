@@ -53,7 +53,9 @@ public class ColoredLinesRenderer  implements Renderer {
 		int rulerHeight = 35;
 		int rulerLinesVspace = 20;
 		int rulerNumbersVspace = 15;
-		int barsPerLine = 500;
+		int barsPerLine = 3500;
+		// TODO permit that this values can be set by command line.
+		//       maybe customizing a config file.
 		
 		int numberOfLines = ((barsToPrint-1) /  barsPerLine)+1;
 		

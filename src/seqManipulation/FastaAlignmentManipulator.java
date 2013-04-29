@@ -18,6 +18,7 @@ import mdsj.ClassicalScaling;
 import seqManipulation.filtersequences.FilterSequence;
 import seqManipulation.filtersequences.FilterSequenceBooleanNOT;
 import seqManipulation.filtersequences.FilterSequenceContaining;
+import seqManipulation.filtersequences.FilterSequenceContainingInTitle;
 import seqManipulation.filtersequences.FilterSequenceGreaterThan;
 import seqManipulation.filtersequences.FilterSequenceSmallerThan;
 import seqManipulation.filtersequences.FilterSequenceStartingWith;
@@ -149,6 +150,9 @@ public class FastaAlignmentManipulator {
 		SingleOption pickRandomly = new SingleOption(parser, 1, "-pick", IntegerParameter.getParameter());
 		uniques.add(pickRandomly);
 
+		SingleOption titleConstainsOpt = new SingleOption(parser, 1, "-title", StringParameter.getParameter());
+		uniques.add(titleConstainsOpt);
+		
 		// Step Three : Try to parse the command line
 		
 		try {
@@ -349,6 +353,22 @@ public class FastaAlignmentManipulator {
 			
 		}
 		
+		if (titleConstainsOpt.isPresent()) {
+			
+			String value = (String) titleConstainsOpt.getValue();
+			
+			if (value!=null) {
+				
+				
+				FilterSequence filter = new FilterSequenceContainingInTitle(value);
+				
+				filterCommand(filter,out,seqs, invertFilterOpt.isPresent());
+
+			}
+			
+		}
+		
+		
 		if (identityValuesOpt.isPresent()) {
 			
 			identityValuesCommand(out,seqs);
@@ -387,6 +407,7 @@ public class FastaAlignmentManipulator {
 			
 			
 		}
+		
 
 	}
 
@@ -1111,6 +1132,8 @@ public class FastaAlignmentManipulator {
 			   "\n                           Example: -fGrTh=7000    | removes sequences with lenghts lower or equal to 7000" +
 			   "\n         -fSmTh         : looks through the alignment and removes all the sequences, except the ones that are smaller than a given size" +
 			   "\n                           Example: -fSmTh=7000    | removes sequences with lenghts greater or equal to 7000" +
+			   "\n         -title         : filter sequences that containg a given string in the title" +
+			   "\n                           Example: -title=gi00001 | keeps the sequences that contains the string gi00001 in the title" +
 			   "\n         -idValues      : gets list of identity percent values between all the sequences in the alignment" +
 			   "\n         -mds           : performs a Multidimensional Scaling analysis (using MDSJ package developed by Christian Pich (University of Konstanz))" +
 			   "\n                           a number that indicantes the number of output dimensions"+
