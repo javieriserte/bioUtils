@@ -141,6 +141,9 @@ public class FastaAlignmentManipulator {
 		NoOption identityValuesOpt = new NoOption(parser, "-idValues");
 		uniques.add(identityValuesOpt);
 		
+		NoOption identityMatrixOpt = new NoOption(parser, "-idMatrix");
+		uniques.add(identityMatrixOpt);
+		
 		NoOption deinterLeaveOpt = new NoOption(parser, "-deInter");
 		uniques.add(deinterLeaveOpt);
 		
@@ -408,12 +411,61 @@ public class FastaAlignmentManipulator {
 			
 		}
 		
+		if (identityMatrixOpt.isPresent()) {
+			
+			identityMatrixCommand(out,seqs);
+			
+		}
 
 	}
 
 	
 	///////////////////////////
 	// Private Methods
+
+	private static void identityMatrixCommand(PrintStream out, List<Pair<String, String>> seqs) {
+		
+		Map<Pair<Integer, Integer>, Double> matrix = IndentityMatrixCalculator.calculateIdentityMatrix(seqs);
+		
+		int len = seqs.size();
+		
+		for (int i=0;i<len;i++) {
+			
+			StringBuilder sb = new StringBuilder();
+			
+			for (int j=0;j<len;j++) {
+				
+				double value = 0;
+				
+				int pi = Math.min(i, j);
+				
+				int pj = Math.max(i, j);
+				
+				
+				Pair<Integer,Integer> pair = new Pair<Integer, Integer>(pi, pj);
+				
+				if (matrix.containsKey(pair)) {
+					
+					value = matrix.get(pair) ;
+					
+				}
+				
+				sb.append(value+ ";");
+				
+			}
+			
+			sb.deleteCharAt(sb.length()-1);
+
+			out.println(sb.toString());
+			
+		}
+		
+		out.close();
+		
+		System.exit(0);
+		
+	}
+
 
 	private static void pickCommand(PrintStream out, List<Pair<String, String>> seqs, Integer value) {
 
@@ -442,6 +494,11 @@ public class FastaAlignmentManipulator {
 			
 		}
 		
+		
+		out.close();
+		
+		System.exit(0);
+
 		
 	}
 
@@ -522,6 +579,11 @@ public class FastaAlignmentManipulator {
 		}
 		
 		
+		out.close();
+		
+		System.exit(0);
+
+		
 	}
 
 
@@ -534,6 +596,12 @@ public class FastaAlignmentManipulator {
 
 			
 		}
+		
+		
+		out.close();
+		
+		System.exit(0);
+
 		
 	}
 
@@ -548,6 +616,12 @@ public class FastaAlignmentManipulator {
 			
 		} 
 		
+		
+		out.close();
+		
+		System.exit(0);
+
+		
 	}
 
 
@@ -560,6 +634,12 @@ public class FastaAlignmentManipulator {
 			out.println(Complementary.reverseComplementary(pair.getSecond()));
 			
 		}
+		
+		
+		out.close();
+		
+		System.exit(0);
+
 		
 	}
 
@@ -579,6 +659,12 @@ public class FastaAlignmentManipulator {
 			}
 			
 		}
+		
+		
+		out.close();
+		
+		System.exit(0);
+
 		
 	}
 
@@ -1135,6 +1221,7 @@ public class FastaAlignmentManipulator {
 			   "\n         -title         : filter sequences that containg a given string in the title" +
 			   "\n                           Example: -title=gi00001 | keeps the sequences that contains the string gi00001 in the title" +
 			   "\n         -idValues      : gets list of identity percent values between all the sequences in the alignment" +
+			   "\n         -idMatrix      : exports an csv file with a symmetric matrix with identities values" +
 			   "\n         -mds           : performs a Multidimensional Scaling analysis (using MDSJ package developed by Christian Pich (University of Konstanz))" +
 			   "\n                           a number that indicantes the number of output dimensions"+
 			   "\n         -pick          : pick a random number set of the sequences" +
