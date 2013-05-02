@@ -435,7 +435,7 @@ public class FastaAlignmentManipulator {
 			
 			for (int j=0;j<len;j++) {
 				
-				double value = 0;
+				double value = 1;
 				
 				int pi = Math.min(i, j);
 				
@@ -506,9 +506,10 @@ public class FastaAlignmentManipulator {
 	private static void MDScommand(PrintStream out, List<Pair<String, String>> seqs, int dim) {
 
 		Map<Pair<Integer, Integer>, Double> a = IndentityMatrixCalculator.calculateIdentityMatrix(seqs);
+
 		double[][] input = new  double[seqs.size()][seqs.size()]; 
 		
-		for (int i=0; i<seqs.size();i++) {
+		for (int i=0; i<seqs.size();i++) {    		// Initialize Input Matrix 
 			
 			for (int j=0; j<seqs.size();j++) {
 				
@@ -518,31 +519,28 @@ public class FastaAlignmentManipulator {
 			
 		}
 		
-//		double[][] input = {
-//				{0.0 , 0.7 , 1.0, 0.7},
-//				{0.7 , 0.0 , 0.7, 1.0},
-//				{1.0 , 0.7 , 0.0, 0.7},
-//				{0.7 , 1.0 , 0.7, 0.0},
-//				}; 
-
-		for (Pair<Integer, Integer> pair: a.keySet()) {
+		for (Pair<Integer, Integer> pair: a.keySet()) { // Convert Identities Values to distances (distance = 1 - identity) 
 			
-			input[pair.getFirst()][pair.getSecond()] = 1d - a.get(pair);
-			input[pair.getSecond()][pair.getFirst()] = 1d - a.get(pair);
+			Integer first = pair.getFirst();
+			
+			Integer second = pair.getSecond();
+			
+			input[first][second] = 1d - a.get(pair);
+			
+			input[second][first] = 1d - a.get(pair);
 			
 		}
-//		
+
 		int n=input[0].length;    // number of data objects
 		
 		
-//		double[][] output=MDSJ.classicalScaling(input); // apply MDS
-
-		double[][] evecs = new double[dim][n];
-		double[] evals = new double[dim];
+		double[][] evecs = new double[dim][n];      // Array to store eigenvectors
 		
-		ClassicalScaling.eigen(input, evecs, evals); 
+		double[] evals = new double[dim];           // Array to store eigenvalues
+		
+		ClassicalScaling.eigen(input, evecs, evals);  // Perform MDS
 
-	    StringBuilder headersb = new StringBuilder();
+	    StringBuilder headersb = new StringBuilder(); // Prepare output
 	    
 		for(int i = 0 ; i< dim; i++) {
 
@@ -578,6 +576,7 @@ public class FastaAlignmentManipulator {
 			
 		}
 		
+		out.flush();
 		
 		out.close();
 		
@@ -592,16 +591,14 @@ public class FastaAlignmentManipulator {
 		for (Pair<String, String> pair : seqs) {
 			
 			out.println(">" + pair.getFirst());
+			
 			out.println(pair.getSecond());
-
 			
 		}
-		
 		
 		out.close();
 		
 		System.exit(0);
-
 		
 	}
 
