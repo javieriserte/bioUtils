@@ -379,7 +379,9 @@ final public class GenBankReader {
 		
 		
 		try {
+			po.flush();
 			po.close();
+			oout.flush();
 			oout.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -434,8 +436,11 @@ final public class GenBankReader {
 
 		GenBankRecord gbr;
 		
+		while(gbrd==null) {};
+		
 		try {
-			while ( (gbr = ((GenBankRecord) gbrd.readObject())) != null) {
+			while ((gbr = 
+					((GenBankRecord) gbrd.readObject())) != null) {
 				System.out.println(gbr.getOrigin());
 			}
 		} catch (IOException e) {
