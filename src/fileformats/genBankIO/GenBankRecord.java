@@ -11,11 +11,11 @@ import java.util.List;
  * This class manages a single GenBank record.<br>
  * Each GenBank record is organized in three sections:<br>
  * <ol>
- * <li> Header: Infomation about the definition of the record, publications, authors, etc, </li>
+ * <li> Header: Information about the definition of the record, publications, authors, etc, </li>
  * <li> Feature List: A list of annotations of the sequence data, like Coding sequences, Promoter regions, etc</li>
  * <li> Origin: Full plain sequences of the record. </li>
  * </ol>
- * For every of these three sections there is an appropiate object to store the data.
+ * For every of these three sections there is an appropriate object to store the data.
  * <ol type=disc>
  * <li> For Header there is a <code>GenBankHeader</code> object.</li>
  * <li> For each Feature there is a <code>Feature</code> object.</li>
@@ -25,16 +25,17 @@ import java.util.List;
  * 
  * @author Javier Iserte (jiserte@unq.edu.ar)
  */
-public class GenBankRecord implements Serializable{
-	/**
-	 * 
-	 */
+public class GenBankRecord implements Serializable {
+
+	//////////////////////////////
+	// Private Instance Variables
 	private static final long serialVersionUID = -8284380031577259687L;
 	private GenBankHeader header;
 	private List<Feature> features;
 	private Origin origin;
 	
 	
+	//////////////////////////////
 	// Constructor
 	/**
 	 * Builds a GenBankRecord object from header, features and origin data. 
@@ -54,6 +55,7 @@ public class GenBankRecord implements Serializable{
 	}
 
 	
+	/////////////////////////////
 	// Public Interface
 	/**
 	 * GenBank Origin data can be voliminous and sometimes is not needed to be parsed 
@@ -68,6 +70,7 @@ public class GenBankRecord implements Serializable{
 		return origin != null;
 	}
 	
+	///////////////////////////////
 	// Getters And Setters
 
 	/**

@@ -1,12 +1,17 @@
 package fileformats.genBankIO.elements;
 
+import java.io.Serializable;
+
 /**
  * 
  * Class to store data from a reference of a genbank sequence file.
  * @author Javier Iserte (jiserte@unq.edu.ar)
  *
  */
-public class Reference {
+public class Reference implements Serializable {
+
+	
+	/////////////////////////////
 	//Private Instance Variables
 	private String value;
 	private String authors;
@@ -17,13 +22,16 @@ public class Reference {
 	private String consortiums;
 	private String medline;
 	private String remark;
+	private static final long serialVersionUID = -1098186585663967730L;
 
+	//////////////////////////////
 	// Constructor
 
 	public Reference() {
 		super();
 	}
 
+	//////////////////////////////
 	// getters and setters
 	
 	public String getConsortiums() {

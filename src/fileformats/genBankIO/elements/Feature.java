@@ -1,5 +1,6 @@
 package fileformats.genBankIO.elements;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -21,11 +22,14 @@ import java.util.Set;
  * @author Javier Iserte (jiserte@unq.edu.ar)
  *
  */
-public class Feature {
+public class Feature implements Serializable{
+
 	// PRIVATE INSTANCE VARIABLES
 	private String name;
 	private String region;
 	private Map<String,String> qualifiers;
+
+	private static final long serialVersionUID = -29475721039682375L;
 
 	// Constructor
 	/**

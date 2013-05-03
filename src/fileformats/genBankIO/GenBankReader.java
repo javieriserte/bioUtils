@@ -55,21 +55,21 @@ final public class GenBankReader {
 	 */
 	static private List<GenBankRecord> readGenBank(BufferedReader in) throws GenBankFormatException {
 
-		@SuppressWarnings({ "unused", "resource" })
-		PipedOutputStream po = new PipedOutputStream();
-		
-		PipedInputStream pi = new PipedInputStream();
-		
-		
-		
-		try {
-			@SuppressWarnings({ "unused", "resource" })
-			ObjectInputStream a = new ObjectInputStream(pi);
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		
+//		@SuppressWarnings({ "unused", "resource" })
+//		PipedOutputStream po = new PipedOutputStream();
+//		
+//		PipedInputStream pi = new PipedInputStream();
+//		
+//		
+//		
+//		try {
+//			@SuppressWarnings({ "unused", "resource" })
+//			ObjectInputStream a = new ObjectInputStream(pi);
+//		} catch (IOException e1) {
+//			// TODO Auto-generated catch block
+//			e1.printStackTrace();
+//		}
+//		
 		List<GenBankRecord> result = new ArrayList<GenBankRecord>();
 		StringBuilder headerpart = null;
 		StringBuilder featurespart = null;
@@ -222,19 +222,20 @@ final public class GenBankReader {
 
 			
 			
-			Thread to = new Thread(new Runnable() {
+			Thread to = new Thread(new Runnable(){
 				
 				@Override
 				public void run() {
-					
+
 					try {
 						GenBankReader.bufferedReadGenBank(in, out);
 					} catch (GenBankFormatException e) {
 						e.printStackTrace();
 					}
 					
+					}
 				}
-			});
+			);
 			
 
 			System.out.println("beforeRun");

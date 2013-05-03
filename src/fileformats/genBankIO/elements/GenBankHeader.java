@@ -2,6 +2,7 @@ package fileformats.genBankIO.elements;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
@@ -27,8 +28,11 @@ import java.lang.reflect.Method;
  * @author Javier Iserte (jiserte@unq.edu.ar)
  *
  */
-public class GenBankHeader {
+public class GenBankHeader implements Serializable{
 	
+	/////////////////////////////
+    // Private Instance Variables
+	private static final long serialVersionUID = 8544913462532947561L;
 	private String locus;
 	private String length;
 	private String molType;
@@ -52,7 +56,7 @@ public class GenBankHeader {
 	private List<Reference> references;	
 	
 
-
+    //////////////
 	// Constructor
 	/**
 	 * Creates and empty GenBankHeader object.
@@ -62,6 +66,7 @@ public class GenBankHeader {
 		this.references = new ArrayList<Reference>();
 	}
 
+	///////////////////
 	// Public Interface 
 	
 	/**
@@ -151,6 +156,9 @@ public class GenBankHeader {
 
 	}
 	
+	
+	//////////////////////////////
+	// Private methods
 	/**
 	 * Creates the appropiate getter o setter method for the fields 
 	 * of the <code>GenBankHeader</code> object.
