@@ -1,4 +1,4 @@
-package seqManipulation.fastamanipulator;
+package seqManipulation.fastamanipulator.server;
 
 public class FastaManipulatorProtocol {
 

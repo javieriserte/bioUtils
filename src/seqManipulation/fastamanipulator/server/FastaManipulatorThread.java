@@ -1,4 +1,4 @@
-package seqManipulation.fastamanipulator;
+package seqManipulation.fastamanipulator.server;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -11,7 +11,7 @@ import java.util.List;
 import fileformats.fastaIO.FastaMultipleReader;
 import fileformats.fastaIO.Pair;
 
-import seqManipulation.fastamanipulator.FastaManipulatorProtocol.FastaManipulatorProtocolResponse;
+import seqManipulation.fastamanipulator.server.FastaManipulatorProtocol.FastaManipulatorProtocolResponse;
 
 public class FastaManipulatorThread extends Thread{
 	private Socket socket = null;

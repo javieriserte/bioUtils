@@ -1,4 +1,4 @@
-package seqManipulation.fastamanipulator;
+package seqManipulation.fastamanipulator.server;
 
 import java.util.ArrayList;
 import java.util.HashMap;
