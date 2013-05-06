@@ -1,4 +1,4 @@
-package seqManipulation;
+package seqManipulation.orf;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Vector;
+
+import seqManipulation.complementary.Complementary;
 
 import cmdGA.NoOption;
 import cmdGA.Parser;

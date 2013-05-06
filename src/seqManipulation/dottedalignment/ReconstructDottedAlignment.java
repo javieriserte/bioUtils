@@ -1,4 +1,4 @@
-package seqManipulation;
+package seqManipulation.dottedalignment;
 
 import java.util.ArrayList;
 import java.util.List;

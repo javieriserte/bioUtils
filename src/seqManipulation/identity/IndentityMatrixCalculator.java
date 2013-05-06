@@ -1,4 +1,4 @@
-package seqManipulation;
+package seqManipulation.identity;
 
 import java.util.ArrayList;
 import java.util.HashMap;

@@ -1,4 +1,4 @@
-package seqManipulation;
+package seqManipulation.complementary;
 
 public class Complementary {
 

@@ -1,4 +1,4 @@
-package seqManipulation;
+package seqManipulation.identity;
 
 import static org.junit.Assert.*;
 

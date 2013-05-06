@@ -1,4 +1,4 @@
-package seqManipulation;
+package seqManipulation.fastamanipulator;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -15,6 +15,9 @@ import java.util.Map;
 import math.random.FischerYatesShuffle;
 import mdsj.ClassicalScaling;
 
+import seqManipulation.AlignmentSequenceEditor;
+import seqManipulation.complementary.Complementary;
+import seqManipulation.dottedalignment.ReconstructDottedAlignment;
 import seqManipulation.filtersequences.FilterSequence;
 import seqManipulation.filtersequences.FilterSequenceBooleanNOT;
 import seqManipulation.filtersequences.FilterSequenceContaining;
@@ -22,6 +25,8 @@ import seqManipulation.filtersequences.FilterSequenceContainingInTitle;
 import seqManipulation.filtersequences.FilterSequenceGreaterThan;
 import seqManipulation.filtersequences.FilterSequenceSmallerThan;
 import seqManipulation.filtersequences.FilterSequenceStartingWith;
+import seqManipulation.identity.IndentityMatrixCalculator;
+import seqManipulation.orf.Translate;
 import utils.mutualinformation.MICalculator;
 
 import cmdGA.MultipleOption;

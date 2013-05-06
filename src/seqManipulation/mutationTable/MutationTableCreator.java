@@ -1,4 +1,4 @@
-package utils.mutationTable;
+package seqManipulation.mutationTable;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -64,9 +64,9 @@ public class MutationTableCreator {
 	
 	// CONSTRUCTOR
 
-	// MÉTODOS DE CLASE PÚBLICOS
+	// Mï¿½TODOS DE CLASE Pï¿½BLICOS
 	
-	// MÉTODOS DE INSTANCIA PÚBLICOS
+	// Mï¿½TODOS DE INSTANCIA Pï¿½BLICOS
 	
 	public void addSeq(String description, String sequence) {
 
@@ -112,6 +112,13 @@ public class MutationTableCreator {
 		return result;
 	}
 	
+	public String getTable(char separatorChar, List<Pair<String,String>> alignment) {
+		
+		this.setMySeqs(alignment);
+		
+		return this.getTable(separatorChar);
+		
+	}
 	
 	public String getTable(char separatorChar) {
 	
@@ -161,9 +168,9 @@ public class MutationTableCreator {
 	public List<Pair<String, String>> getMySeqs() {
 		return mySeqs;
 	}
-	// MÉTODOS DE CLASE PRIVADOS
+	// Mï¿½TODOS DE CLASE PRIVADOS
 	
-	// MÉTODOS DE INSTANCIA PRIVADOS
+	// Mï¿½TODOS DE INSTANCIA PRIVADOS
 
 	private boolean isInitilized() {
 		return (this.getMySeqs()!=null);

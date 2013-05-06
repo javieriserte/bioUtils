@@ -1,4 +1,4 @@
-package seqManipulation;
+package fileformats.conversion;
 
 import java.io.File;
 import java.io.FileNotFoundException;
