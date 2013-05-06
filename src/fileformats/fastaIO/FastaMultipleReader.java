@@ -6,11 +6,11 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * 
  * FAS-DPD project, including algorithms design, software implementation and experimental laboratory work, is being developed as a part of the Research Program:
- * 	"Microbiología molecular básica y aplicaciones biotecnológicas"
+ * 	"Microbiologï¿½a molecular bï¿½sica y aplicaciones biotecnolï¿½gicas"
  * 		(Basic Molecular Microbiology and biotechnological applications)
  * 
  * And is being conducted in:
- * 	LIGBCM: Laboratorio de Ingeniería Genética y Biología Celular y Molecular.
+ * 	LIGBCM: Laboratorio de Ingenierï¿½a Genï¿½tica y Biologï¿½a Celular y Molecular.
  *		(Laboratory of Genetic Engineering and Cellular and Molecular Biology)
  *	Universidad Nacional de Quilmes.
  *		(National University Of Quilmes)
@@ -19,7 +19,7 @@
  * The complete team for this project is formed by:
  *	Lic.  Javier A. Iserte.
  *	Lic.  Betina I. Stephan.
- * 	ph.D. Sandra E. Goñi.
+ * 	ph.D. Sandra E. Goï¿½i.
  * 	ph.D. P. Daniel Ghiringhelli.
  *	ph.D. Mario E. Lozano.
  *
@@ -92,9 +92,12 @@ public class FastaMultipleReader {
 			do { 
 				d = textconsumer.consumeLine(); // Description is the first line
 				s = textconsumer.consumeUntil(">"); // sequence is everything until the next '>'
-				s = s.replaceAll("[\r\n]", ""); // remove any  
-				result.add(new Pair<String,String>(d.substring(1),s));
-			} while (textconsumer.ready());
+				s = s.replaceAll("[\r\n]", ""); // remove any
+				
+				if (!d.equals("") && !s.equals(""))
+					result.add(new Pair<String,String>(d.substring(1),s));
+				
+			} while (textconsumer.ready() && !d.equals(""));
 
 		} catch (IOException e) {
 			e.printStackTrace();

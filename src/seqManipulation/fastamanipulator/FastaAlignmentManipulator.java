@@ -1041,8 +1041,7 @@ public class FastaAlignmentManipulator {
 
 	}
 
-	private static void extractCommand(MultipleOption extractOpt,
-			PrintStream out, List<Pair<String, String>> seqs) {
+	private static void extractCommand(MultipleOption extractOpt, PrintStream out, List<Pair<String, String>> seqs) {
 		// Extracts some of the sequences of the alignment			
 		Object[] pos = extractOpt.getValues();
 		
@@ -1054,6 +1053,7 @@ public class FastaAlignmentManipulator {
 				out.println(seqs.get(integer-1).getSecond());
 			}
 		}
+		
 		out.close();
 		
 		System.exit(0);
