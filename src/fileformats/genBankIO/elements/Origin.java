@@ -8,7 +8,7 @@ import java.io.Serializable;
  * @author Javier Iserte (jiserte@unq.edu.ar)
  *
  */
-public class Origin implements Serializable{
+public class Origin implements Serializable {
 	
 	/////////////////////////////
 	// PRIVATE INSTANCE VARIABLES
@@ -29,7 +29,7 @@ public class Origin implements Serializable{
 	//////////////////////////////
 	// GETTERS AND SETTERS
 	public String getSequence() {
-		return sequence;
+		return this.sequence;
 	}
 
 	public void setSequence(String sequence) {
