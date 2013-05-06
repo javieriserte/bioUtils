@@ -74,7 +74,13 @@ public class FastaManipulatorProtocol {
 			
 			if (line.startsWith(Report)) {
 				
-	return new FastaManipulatorProtocolResponse(4, OkRequest);
+				return new FastaManipulatorProtocolResponse(4, OkRequest);
+				
+			}
+			
+			if (line.startsWith(Close)) {
+
+				return new FastaManipulatorProtocolResponse(5, OkRequest);
 				
 			}
 			

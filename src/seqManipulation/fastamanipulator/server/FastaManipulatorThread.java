@@ -18,6 +18,7 @@ public class FastaManipulatorThread extends Thread{
 	private int state = 0;
 	private FastaManipulatorServer fastaManipulatorServer;
 	private List<String> currentData = new ArrayList<String>();
+	private boolean listening = true;
 	
 	public FastaManipulatorThread(Socket socket, FastaManipulatorServer fastaManipulatorServer) {
 
@@ -40,7 +41,7 @@ public class FastaManipulatorThread extends Thread{
 			FastaManipulatorProtocolResponse outputLine;
 		    FastaManipulatorProtocol fnp = new FastaManipulatorProtocol();
 
-		    while ((inputLine = in.readLine()) != null) {
+		    while (this.listening  && (inputLine = in.readLine()) != null) {
 		    	
 			outputLine = fnp.processInput(inputLine, this.state , this);
 
@@ -152,6 +153,11 @@ public class FastaManipulatorThread extends Thread{
 				
 				break;
 				
+			case 5:
+				
+				this.listening = false;
+				
+				out.println("bye bye!");
 				
 				
 		}
