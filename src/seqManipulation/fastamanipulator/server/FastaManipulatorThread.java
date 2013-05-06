@@ -159,6 +159,15 @@ public class FastaManipulatorThread extends Thread{
 				
 				out.println("bye bye!");
 				
+				break;
+				
+			case 6:
+				
+				this.fastaManipulatorServer.stopServer();
+				
+				out.println("Killing the server!");
+				
+				break;
 				
 		}
 		

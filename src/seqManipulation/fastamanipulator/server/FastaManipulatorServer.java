@@ -7,6 +7,7 @@ import java.util.Map;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
+import java.net.Socket;
 
 import fileformats.fastaIO.Pair;
 
@@ -18,9 +19,12 @@ public class FastaManipulatorServer {
     
     public int lastIndex=0;
     
+    public List<Socket> sockets = new ArrayList<Socket>(); 
+    
     private Map<Integer,FastaManipualtorAlignment> alignments = new HashMap<Integer, FastaManipualtorAlignment>();
     
-
+    private ServerSocket serverSocket = null;
+    
 	public FastaManipulatorServer(int port) {
 		super();
 		this.port = port;
@@ -34,7 +38,7 @@ public class FastaManipulatorServer {
 	
     public void startServer(String[] args) throws IOException{
         
-    	ServerSocket serverSocket = null;
+    	
 
         try {
             serverSocket = new ServerSocket(9999);
@@ -43,11 +47,23 @@ public class FastaManipulatorServer {
             System.exit(-1);
         }
 
-        while (listening)
+        while (listening) {
         	
-        	new FastaManipulatorThread(serverSocket.accept(), this).start();
+			Socket accept = serverSocket.accept();
+			
+			this.sockets.add(accept);
+			
+			new FastaManipulatorThread(accept, this).start();
+			
+		}
 
         serverSocket.close();
+    }
+    
+    protected synchronized void stopServer() {
+    	
+        System.exit(0);
+    	
     }
     
     protected synchronized Pair<String,String> getSequence (int align_index, int seq_index) {

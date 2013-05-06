@@ -8,6 +8,9 @@ public class FastaManipulatorProtocol {
 	public static String Close = "CLOSE";
 	public static String Send = "SEND";
 	public static String DoneSending = "DONE";
+	public static String KillServer = "KILL";
+
+	
 
 	public static String BadRequest = "BAD";
 	public static String OkRequest = "OK";
@@ -81,6 +84,12 @@ public class FastaManipulatorProtocol {
 			if (line.startsWith(Close)) {
 
 				return new FastaManipulatorProtocolResponse(5, OkRequest);
+				
+			}
+			
+			if (line.startsWith(KillServer)) {
+
+				return new FastaManipulatorProtocolResponse(6, OkRequest);
 				
 			}
 			
