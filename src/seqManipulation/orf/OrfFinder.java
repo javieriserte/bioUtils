@@ -359,6 +359,92 @@ public class OrfFinder {
 		
 	}
 	
+	public static List<String> getOrfPositions(String sequence, int minSize, boolean circular, int frame) {
+		
+		int[] ATGs = OrfFinder.scanATG(sequence);
+		int[] STOPs = OrfFinder.scanSTOP(sequence);
+		int unitLength = sequence.length();
+		
+		@SuppressWarnings("unchecked")
+		List<Integer>[] ATGsAndSTOPsByFrame = (List<Integer>[]) new List[3];
+		ATGsAndSTOPsByFrame[0] = new ArrayList<Integer>();
+		ATGsAndSTOPsByFrame[1] = new ArrayList<Integer>();
+		ATGsAndSTOPsByFrame[2] = new ArrayList<Integer>();
+
+		@SuppressWarnings("unchecked")
+		List<Boolean>[] ATGorStop = (List<Boolean>[]) new List[3];
+		ATGorStop[0] = new ArrayList<Boolean>();
+		ATGorStop[1] = new ArrayList<Boolean>();
+		ATGorStop[2] = new ArrayList<Boolean>();
+
+		List<String> result = new ArrayList<String>();
+
+		Arrays.sort(ATGs);
+		Arrays.sort(STOPs);
+		
+		if (circular) {
+			
+			if (sequence.length()%3 == 0) {
+				
+				int by = 2;
+				
+				ATGs = replicateArray(sequence, ATGs, by);
+				
+				STOPs = replicateArray(sequence, STOPs, by);
+				
+				sequence = sequence + sequence;
+				
+			} else {
+				
+				int by = 4;
+				
+				ATGs = replicateArray(sequence, ATGs, by);
+
+				STOPs = replicateArray(sequence, STOPs, by);
+				
+				sequence = sequence + sequence + sequence + sequence;
+			}
+		
+		}
+		
+		separateByFrame(frame, ATGs, STOPs, ATGsAndSTOPsByFrame, ATGorStop);
+		
+		excludeAdjacentATGorSTOP(ATGsAndSTOPsByFrame, ATGorStop);
+		
+		
+		
+		for (int fr = 0 ; fr < 3 ;fr++) {
+		
+			if (frame == 0 || frame == fr) {
+			
+				if (ATGorStop[fr].get(0) == false) { // If the first its an Stop, remove it
+					ATGorStop[fr].remove(0);
+					ATGsAndSTOPsByFrame[fr].remove(0); 
+				}
+				if (ATGorStop[fr].get(ATGorStop[fr].size()-1) == true) {  // If the last its an ATG, remove it
+					ATGsAndSTOPsByFrame[fr].remove(ATGsAndSTOPsByFrame[fr].size()-1); 
+					ATGorStop[fr].remove(ATGorStop[fr].size()-1);
+				}
+					
+
+				result.add("frame " + fr);
+				
+
+				
+				for (int i = 0; i<ATGorStop.length ;i=i+2) {
+			
+					result.add(ATGsAndSTOPsByFrame[fr].get(i) + " | " + ATGsAndSTOPsByFrame[fr].get(i+1) + " | " + (ATGsAndSTOPsByFrame[fr].get(i+1)- ATGsAndSTOPsByFrame[fr].get(i)+1));
+			
+				}
+			
+			}
+			
+		}
+		
+		
+		return null;
+	}
+	
 	/**
 	 * Extracts the ATGs and Stop positions from a sequence.
 	 * 
@@ -381,8 +467,6 @@ public class OrfFinder {
 	 *  Frames starting with '-', indicates that the ORF correspond to the reverse complementary sequence.
 	 */
 	public static List<List<Integer>> getMarks(String sequence) {
-
-		
 		
 		String[] seqs = new String[2];
 		
@@ -509,6 +593,8 @@ public class OrfFinder {
 	
 	/**
 	 * Extracts the ATGs and Stop positions from a sequence.
+	 * Note that the ATG at position i of List index 0 and stop at position i of List index 1 
+	 * (both are in the same frame) may no correspond to the same ORF.  
 	 * 
 	 * @param sequence a nucleotide sequence
 	 * @return a List of six List. Each one of these list contains info of ATG and STOP by frame.
