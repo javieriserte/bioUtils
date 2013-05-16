@@ -1,4 +1,4 @@
-package utils.ConservationImage;
+package utils.ConservationImage.renderer;
 
 //import java.awt.BasicStroke;
 import java.awt.Color;
@@ -9,13 +9,25 @@ import java.awt.GradientPaint;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
+import utils.ConservationImage.color.ColoringStrategy;
+
 public class XYPlotRenderer implements Renderer {
 
+	////////////////////////
+	// Instance variables
+	
+	private DrawingLayoutXYPlot layout;
+	
+	///////////////////////
+	// Public Interface
+	
+	@Override
+	public DrawingLayout getDefaultLayout() {
+		return new DrawingLayoutXYPlot();
+	}
+	
 	@Override
 	public BufferedImage render(ColoringStrategy color, double[] data, int windowLen) {
-		
-	
-		
 		
 //	    PaddingW                                    PaddingW
 //      /--/				                            /--/
@@ -34,13 +46,14 @@ public class XYPlotRenderer implements Renderer {
 //                        lineWidth		
 		
 
-		int paddingV = 30;
-		int paddingW = 50;
-		int plotHeight = 200;
-		int space_1 = 10;
-		int rulerHeight = 35;
-		int rulerLinesVspace = 20;
-		int rulerNumbersVspace = 15;
+		int paddingV = layout.getPaddingV();
+		int paddingW = layout.getPaddingW();
+		int plotHeight = layout.getPlotHeight();
+		int space_1 = layout.getSpace_1();
+		int rulerHeight = layout.getRulerHeight();
+		int rulerLinesVspace = layout.getRulerLinesVspace();
+		int rulerNumbersVspace = layout.getRulerNumbersVspace();
+		
 		int lineWidth = data.length - windowLen+1;
 		
 		int imageW = 2 * paddingW + lineWidth;
@@ -82,6 +95,9 @@ public class XYPlotRenderer implements Renderer {
 	}
 
 
+	///////////////////////////
+	// Private Methods
+	
 	private void drawRuler(int paddingV, int paddingW, int plotHeight,
 			int space_1, int rulerLinesVspace, int rulerNumbersVspace,
 			int lineWidth, Graphics2D g) {
@@ -155,10 +171,6 @@ public class XYPlotRenderer implements Renderer {
 		}
 	}
 
-
-	// Private Methods
-	
-
 	private void drawSingleLineOnPlot(Graphics2D g, double lastValue, double newValue, int xPos, ColoringStrategy color, int plotHeight, int yTop, int xLeft) {
 
 		int x1 = xLeft + xPos;
@@ -171,5 +183,14 @@ public class XYPlotRenderer implements Renderer {
 		g.drawLine(x1,y1, x2, y2);
 		
 	}
+
+	public void setLayout(DrawingLayout layout) {
+		
+		this.layout = (DrawingLayoutXYPlot) layout;
+		
+		
+	}
+
+
 
 }

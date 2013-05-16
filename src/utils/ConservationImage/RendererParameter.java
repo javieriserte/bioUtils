@@ -1,7 +1,15 @@
 package utils.ConservationImage;
 
+import utils.ConservationImage.renderer.ColoredLinesRenderer;
+import utils.ConservationImage.renderer.XYPlotRenderer;
 import cmdGA.parameterType.ParameterType;
 
+/**
+ * This class is a ParameterType class defined in cmdGetArg command line interpreter.
+ * Parses a input String and return a Renderer object.
+ * 
+ * @author javier iserte
+ */
 public class RendererParameter extends ParameterType  {
 
 	public static final String XY = "XY";

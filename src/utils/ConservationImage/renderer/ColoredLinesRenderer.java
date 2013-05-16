@@ -1,4 +1,4 @@
-package utils.ConservationImage;
+package utils.ConservationImage.renderer;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -6,13 +6,51 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
-public class ColoredLinesRenderer  implements Renderer {
+import utils.ConservationImage.color.ColoringStrategy;
 
+public class ColoredLinesRenderer implements Renderer {
+	
+	//////////////////////
+	// Instance variables
+	private DrawingLayoutLines layout;
+	
+	
+	//////////////////////
+	// Public Interface
+	public ColoredLinesRenderer(DrawingLayoutLines layout) {
+		super();
+		this.layout = layout;
+	}
+	
+	
+
+	public ColoredLinesRenderer() {
+		super();
+		this.layout = new DrawingLayoutLines();
+		
+	}
+
+	
+	@Override
+	public void setLayout(DrawingLayout layout) {
+		
+		this.layout = (DrawingLayoutLines) layout;
+		
+	}
+
+	/**
+	 * Return the deafult layout fot this renderer
+	 * 
+	 */
+	@Override
+	public DrawingLayout getDefaultLayout() {
+		
+		return new DrawingLayoutLines();
+		
+	}
 	
 	public BufferedImage 		render								(ColoringStrategy color, double[] data, int windowLen) {
 	
-		
-		
 //	    PaddingH                                    PaddingH
 //      /--/				                            /--/
 //		---------------------------------------------------- /
@@ -44,18 +82,17 @@ public class ColoredLinesRenderer  implements Renderer {
 //		---------------------------------------------------- / 
 		
 
-		int paddingV = 30;
-		int paddingW = 50;
+		int paddingV = this.layout.getPaddingV();
+		int paddingW = this.layout.getPaddingW();
+		int lineHeight = this.layout.getLineHeight();
+		int space_1 = this.layout.getSpace_1();
+		int space_2 = this.layout.getSpace_2();
+		int rulerHeight = this.layout.getRulerHeight();
+		int rulerLinesVspace = this.layout.getRulerNumbersVspace();
+		int rulerNumbersVspace = this.layout.getRulerNumbersVspace();
+		int barsPerLine = this.layout.getBarsPerLine();
+		
 		int barsToPrint = data.length-windowLen+1;
-		int lineHeight = 50;
-		int space_1 = 10;
-		int space_2 = 30;
-		int rulerHeight = 35;
-		int rulerLinesVspace = 20;
-		int rulerNumbersVspace = 15;
-		int barsPerLine = 3500;
-		// TODO permit that this values can be set by command line.
-		//       maybe customizing a config file.
 		
 		int numberOfLines = ((barsToPrint-1) /  barsPerLine)+1;
 		
@@ -88,7 +125,6 @@ public class ColoredLinesRenderer  implements Renderer {
 			setColorOnGraphic(g,xPos % barsPerLine,color.getColor(windowValue),yPos,lineHeight, paddingV, paddingW);
 			
 		}
-		
 		
 		g.setColor(Color.BLACK);
 		
@@ -135,13 +171,9 @@ public class ColoredLinesRenderer  implements Renderer {
 			g.drawLine(paddingW + xPosR, paddingV + yPosR - 10, paddingW + xPosR, paddingV + yPosR);
 		}
 
-		
-
-		
-		
 		g.setFont(new Font("Verdana", Font.BOLD, 18));
+
 		g.setStroke(new BasicStroke(2));
-		
 
 		for (int l = 0; l<numberOfLines;l++) {
 
@@ -175,6 +207,7 @@ public class ColoredLinesRenderer  implements Renderer {
 		
 	}
 	
+	////////////////////
 	// Private Methods
 	
 	private void 				setColorOnGraphic					(Graphics2D g, int xPos, Color color, int yPos, int lineHeight, int paddingV, int paddingW) {
@@ -184,6 +217,9 @@ public class ColoredLinesRenderer  implements Renderer {
 		g.drawLine(paddingW+xPos,paddingV+ yPos, paddingW+xPos, paddingV+ yPos + lineHeight);
 		
 	}
+
+
+
 	
 	
 }
