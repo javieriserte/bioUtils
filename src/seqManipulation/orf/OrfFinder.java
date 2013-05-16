@@ -230,7 +230,8 @@ public class OrfFinder {
 		out.println("   -frame      : Looks ORFs in a specific frame: 1, 2 o 3.");
 		out.println("   -largest    : keep the largest ORF found and discard the others.");
 		out.println("               :   If frame is 0, then all frames are analyzed.");
-		out.println("   -fasta      : the input is a fasta file.");			
+		out.println("   -fasta      : the input is a fasta file.");
+		out.println("   -marks      : show the ATG and STOP positions for each orf found and each frame.");
 		out.println("   -help       : Show this information.");
 	}
 
