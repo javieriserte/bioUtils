@@ -304,7 +304,7 @@ public class ConservationImageGenerator {
 				try {
 					p[i][chars.lastIndexOf(c)]++;	
 				} catch (Exception e) {
-					System.out.println("el caracter es: " +  c + " y el �ndice es: " + chars.lastIndexOf(c));
+					System.err.println("el caracter es: " +  c + " y el índice es: " + chars.lastIndexOf(c));
 				}
 				
 				
