@@ -303,9 +303,10 @@ public class OrfFinder {
 	 */
 	public static List<String> allOrfs(String sequence, int minSize, boolean circular, int frame) {
 
+		int unitLength = sequence.length();
+		
 		int[] ATGs = OrfFinder.scanATG(sequence);
 		int[] STOPs = OrfFinder.scanSTOP(sequence);
-		int unitLength = sequence.length();
 		
 		@SuppressWarnings("unchecked")
 		List<Integer>[] ATGsAndSTOPsByFrame = (List<Integer>[]) new List[3];
@@ -322,6 +323,7 @@ public class OrfFinder {
 		List<String> result = new ArrayList<String>();
 
 		Arrays.sort(ATGs);
+		
 		Arrays.sort(STOPs);
 		
 		if (circular) {
@@ -359,12 +361,20 @@ public class OrfFinder {
 		
 	}
 	
+	/**
+	 * 
+	 * 
+	 * @param sequence
+	 * @param minSize
+	 * @param circular
+	 * @param frame
+	 * @return
+	 */
 	public static List<String> getOrfPositions(String sequence, int minSize, boolean circular, int frame) {
 		
 		int[] ATGs = OrfFinder.scanATG(sequence);
 		int[] STOPs = OrfFinder.scanSTOP(sequence);
-		int unitLength = sequence.length();
-		
+
 		@SuppressWarnings("unchecked")
 		List<Integer>[] ATGsAndSTOPsByFrame = (List<Integer>[]) new List[3];
 		ATGsAndSTOPsByFrame[0] = new ArrayList<Integer>();
@@ -411,8 +421,6 @@ public class OrfFinder {
 		
 		excludeAdjacentATGorSTOP(ATGsAndSTOPsByFrame, ATGorStop);
 		
-		
-		
 		for (int fr = 0 ; fr < 3 ;fr++) {
 		
 			if (frame == 0 || frame == fr) {
@@ -426,14 +434,15 @@ public class OrfFinder {
 					ATGorStop[fr].remove(ATGorStop[fr].size()-1);
 				}
 					
-
 				result.add("frame " + fr);
-				
-
 				
 				for (int i = 0; i<ATGorStop.length ;i=i+2) {
 			
-					result.add(ATGsAndSTOPsByFrame[fr].get(i) + " | " + ATGsAndSTOPsByFrame[fr].get(i+1) + " | " + (ATGsAndSTOPsByFrame[fr].get(i+1)- ATGsAndSTOPsByFrame[fr].get(i)+1));
+					Integer atg_pos = ATGsAndSTOPsByFrame[fr].get(i);
+					
+					Integer stop_pos = ATGsAndSTOPsByFrame[fr].get(i+1);
+					
+					result.add(atg_pos + " | " + stop_pos + " | " + (stop_pos - atg_pos+1));
 			
 				}
 			
@@ -442,7 +451,7 @@ public class OrfFinder {
 		}
 		
 		
-		return null;
+		return result;
 	}
 	
 	/**
@@ -655,27 +664,33 @@ public class OrfFinder {
 	 * Usually the method <code>excludeAdjacentATGorSTOP</code> is called before this.
 	 *   
 	 * @param sequence the sequence from which the ORFs will be extracted.  
-	 * @param unitLength is the Sequence minimun unit length.
-	 * @param ATGsAnsSTOPsByFrame an <code>array</code> containing the ATGs and STOPs mark positions.
+	 * @param unitLength is the Sequence minimum unit length.
+	 * @param ATGsAndSTOPsByFrame an <code>array</code> containing the ATGs and STOPs mark positions.
 	 * @param ATGorStop is a list of boolean values that is a reference of which elements in ATGsAnsSTOPsByFrame list are ATG o STOP.
 	 *        When ATGorSTOP[index] is true, then ATGsAnsSTOPsByFrame[index] is the position of an ATG.
 	 *        When ATGorSTOP[index] is false, then ATGsAnsSTOPsByFrame[index] is the position of a STOP.  
 	 * @param result is the array in which the results will be stored.
 	 */
 	protected static void retriveORFs(String sequence, int unitLength,
-			List<Integer>[] ATGsAnsSTOPsByFrame, List<Boolean>[] ATGorStop,
+			List<Integer>[] ATGsAndSTOPsByFrame, List<Boolean>[] ATGorStop,
 			List<String> result, int minSize) {
 		for (int cframe = 0; cframe<3;cframe++ ) {
 			
-			for (int i=0; i<ATGsAnsSTOPsByFrame[cframe].size();i++) {
+			for (int i=0; i<ATGsAndSTOPsByFrame[cframe].size();i++) {
+				// Iterate over all positions
 
-				if (ATGorStop[cframe].get(i) && (i+1)<ATGsAnsSTOPsByFrame[cframe].size()) {
+				if (ATGorStop[cframe].get(i) && (i+1)<ATGsAndSTOPsByFrame[cframe].size()) {
+					// The two conditions are:
+					//    1 - The position analyzed if of and ATG
+					//    2 - An Stop exits for this ATG 
 					
-					int atgpos = ATGsAnsSTOPsByFrame[cframe].get(i);
+					int atgpos = ATGsAndSTOPsByFrame[cframe].get(i);
 					
-					int endIndex = ATGsAnsSTOPsByFrame[cframe].get(i+1);
+					int endIndex = ATGsAndSTOPsByFrame[cframe].get(i+1);
 					
 					if (atgpos<unitLength && (endIndex - atgpos) >= minSize ) {
+						// checks that the ATG belongs to the first repeating unit
+						// checks that the length of the orf is greater or equal than minsize
 						
 						result.add(sequence.substring(atgpos, endIndex+3));
 						

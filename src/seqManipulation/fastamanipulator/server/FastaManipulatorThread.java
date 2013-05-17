@@ -40,6 +40,8 @@ public class FastaManipulatorThread extends Thread{
 		    String inputLine;
 			FastaManipulatorProtocolResponse outputLine;
 		    FastaManipulatorProtocol fnp = new FastaManipulatorProtocol();
+		    
+		    out.println("CONNECTED");
 
 		    while (this.listening  && (inputLine = in.readLine()) != null) {
 		    	
