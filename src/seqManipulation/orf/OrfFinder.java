@@ -205,10 +205,10 @@ public class OrfFinder {
 		
 		int counter =0;
 		
-		int w = r.size()/10 +1;
+		int w = (int) (Math.log10(r.size()) +1);
 
-		if(!baseDescription.trim().equals("")) baseDescription = baseDescription + "|"; 
-
+		if(!baseDescription.trim().equals("")) baseDescription = baseDescription + "|";
+		
 		for (String string : r) {
 			counter++;
 			out.print(">"+baseDescription+"ORF:");
@@ -365,7 +365,7 @@ public class OrfFinder {
 	 * 
 	 * 
 	 * @param sequence
-	 * @param minSize
+     * @param minSize
 	 * @param circular
 	 * @param frame
 	 * @return

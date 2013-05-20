@@ -27,8 +27,10 @@ public class FastaManipulatorClient {
 		
 		SingleOption addNameOpt= new SingleOption(parser, null, "-name", StringParameter.getParameter());
 		
+		@SuppressWarnings("unused")
 		SingleOption retAlOpt = new SingleOption(parser, null , "-ret", StringParameter.getParameter());
 		
+		@SuppressWarnings("unused")
 		SingleOption retSeqOpt = new SingleOption(parser, null , "-rseq", StringParameter.getParameter());
 		
 		try {
