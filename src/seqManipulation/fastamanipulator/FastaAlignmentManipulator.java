@@ -35,6 +35,7 @@ import cmdGA.Option;
 import cmdGA.Parser;
 import cmdGA.SingleOption;
 import cmdGA.exceptions.IncorrectParameterTypeException;
+import cmdGA.parameterType.FloatParameter;
 import cmdGA.parameterType.InFileParameter;
 import cmdGA.parameterType.InputStreamParameter;
 import cmdGA.parameterType.IntegerParameter;
@@ -110,6 +111,9 @@ public class FastaAlignmentManipulator {
 		
 		NoOption stripGappedColumnsOpt = new NoOption(parser, "-stripGappedColumns");
 		uniques.add(stripGappedColumnsOpt);
+		
+		SingleOption stripGapColFrOpt = new SingleOption(parser,null, "-stripGappedColFr", FloatParameter.getParameter());
+		uniques.add(stripGapColFrOpt);
 		
 		NoOption flushEndsOpt = new NoOption(parser, "-flush");
 		uniques.add(flushEndsOpt);
@@ -421,12 +425,61 @@ public class FastaAlignmentManipulator {
 			identityMatrixCommand(out,seqs);
 			
 		}
+		
+		if (stripGapColFrOpt.isPresent()) {
+			
+			double fr = (Float) stripGapColFrOpt.getValue();
+			
+			stripGappedColumnsCommand(out, seqs, fr);
+			
+		}
 
 	}
 
 	
 	///////////////////////////
 	// Private Methods
+
+	private static void stripGappedColumnsCommand(PrintStream out, List<Pair<String, String>> seqs, double fr) {
+		// removes the columns of the alignment that contain a gap
+		double[] gapFreq = new double[seqs.get(0).getSecond().length()];
+		
+		int N = seqs.size();
+		
+		for (Pair<String, String> seq : seqs) {
+			
+			for (int j = 0; j< seq.getSecond().length();j++) {
+				
+				gapFreq[j] = gapFreq[j] + ((seq.getSecond().charAt(j) == '-')?1:0);
+				
+			}
+			
+		}
+		
+		for (Pair<String, String> seq : seqs) {
+			
+			StringBuilder nseq = new StringBuilder();
+			
+			String oldSeq = seq.getSecond();
+			
+			for (int j = 0; j< oldSeq.length();j++) {
+				
+				if (gapFreq[j]/N<=fr) nseq.append(oldSeq.charAt(j)); 
+				
+			}
+			
+			out.println(">" + seq.getFirst());
+			
+			out.println(nseq.toString());
+			
+		}
+		
+		out.close();
+		
+		System.exit(0);
+		
+	}
+
 
 	private static void identityMatrixCommand(PrintStream out, List<Pair<String, String>> seqs) {
 		
@@ -1192,44 +1245,45 @@ public class FastaAlignmentManipulator {
 	 */
 	private static String Help() {
 		return "Fasta Alignment Manipulator - Version " + FastaAlignmentManipulator.VERSION + 
-		       "\nOptions: -infile        : is the input fasta file (or stdin if no present)" +
-		       "\n         -outfile       : is the path to the output file (or stdout if no present)" +
-		       "\n         -revcomp       : gets the reverse complementary sequence"+
-		       "\n         -extract       : extracts some of the sequences of the alignment."+
-		       "\n                           a list of the order numbers of the sequence to be retrieved is needed."+
-		       "\n                           the number 1 is the first sequence."+
-			   "\n         -count         : counts the number of sequences in a fasta file."+
-			   "\n         -length        : counts the number of columns in the alignment. If all of them haven't the same size return 0."+
-			   "\n         -lengths       : counts the number of columns in each row of the alignment."+
-			   "\n         -concatenate   : joins many alignments into one."+
-			   "\n                           the names of files to be concatenated must be separated by a comma (',') chaarcter."+
-			   "\n         -def           : shows and numerates the definitions."+
-			   "\n         -append        : creates one alignment from two. The sequences of the new alignment are the combination from the other two."+
-			   "\n         -slice         : cuts a segment of the alignment and keeps it. The rest is removed. " +
-			   "\n                           you need to give the starting position and the last position. " +
-			   "\n                           Example:  -slice=1,20  | keeps the 20 first characters of the alignment." +
-			   "\n         -degap         : removes \"-\" symbols from each sequence." +
-			   "\n         -translate     : translate DNA sequences into aminoacid." +
-			   "\n         -translateWith : translate DNA sequences into aminoacid using the given file containing" +
-			   "\n                            a genetic code" +
-			   "\n         -genCodeHelp   : shows help about the genetic code format" +
-			   "\n         -randomRT      : back-translate a protein sequence into a DNA sequence, choosing one the posible codons randomly" +
-			   "\n         -recFromCon    : reconstruct an alignment from a dotted alignment with reference consensus sequence" +
-			   "\n                           Example: -recFromCon=1  | uses the first sequence as reference" +
-			   "\n         -fGrTh         : looks through the alignment and removes all the sequences, except the ones that are greater than a given size" +
-			   "\n                           Example: -fGrTh=7000    | removes sequences with lenghts lower or equal to 7000" +
-			   "\n         -fSmTh         : looks through the alignment and removes all the sequences, except the ones that are smaller than a given size" +
-			   "\n                           Example: -fSmTh=7000    | removes sequences with lenghts greater or equal to 7000" +
-			   "\n         -title         : filter sequences that containg a given string in the title" +
-			   "\n                           Example: -title=gi00001 | keeps the sequences that contains the string gi00001 in the title" +
-			   "\n         -idValues      : gets list of identity percent values between all the sequences in the alignment" +
-			   "\n         -idMatrix      : exports an csv file with a symmetric matrix with identities values" +
-			   "\n         -mds           : performs a Multidimensional Scaling analysis (using MDSJ package developed by Christian Pich (University of Konstanz))" +
-			   "\n                           a number that indicantes the number of output dimensions"+
-			   "\n         -pick          : pick a random number set of the sequences" +
-			   "\n                           Example: -pick 5        | pick 5 random sequences"+
-			   "\n         -ver           : prints the number of the version in stdout."+
-			   "\n         -help          : shows this help." +
+		       "\nOptions: -infile            : is the input fasta file (or stdin if no present)" +
+		       "\n         -outfile           : is the path to the output file (or stdout if no present)" +
+		       "\n         -revcomp           : gets the reverse complementary sequence"+
+		       "\n         -extract           : extracts some of the sequences of the alignment."+
+		       "\n                               a list of the order numbers of the sequence to be re-stripGappedColFrtrieved is needed."+
+		       "\n                               the number 1 is the first sequence."+
+			   "\n         -count             : counts the number of sequences in a fasta file."+
+			   "\n         -length            : counts the number of columns in the alignment. If all of them haven't the same size return 0."+
+			   "\n         -lengths           : counts the number of columns in each row of the alignment."+
+			   "\n         -concatenate       : joins many alignments into one."+
+			   "\n                               the names of files to be concatenated must be separated by a comma (',') chaarcter."+
+			   "\n         -def               : shows and numerates the definitions."+
+			   "\n         -append            : creates one alignment from two. The sequences of the new alignment are the combination from the other two."+
+			   "\n         -slice             : cuts a segment of the alignment and keeps it. The rest is removed. " +
+			   "\n                               you need to give the starting position and the last position. " +
+			   "\n                               Example:  -slice=1,20  | keeps the 20 first characters of the alignment." +
+			   "\n         -degap             : removes \"-\" symbols from each sequence." +
+			   "\n         -translate         : translate DNA sequences into aminoacid." +
+			   "\n         -translateWith     : translate DNA sequences into aminoacid using the given file containing" +
+			   "\n                                a genetic code" +
+			   "\n         -genCodeHelp       : shows help about the genetic code format" +
+			   "\n         -randomRT          : back-translate a protein sequence into a DNA sequence, choosing one the posible codons randomly" +
+			   "\n         -recFromCon        : reconstruct an alignment from a dotted alignment with reference consensus sequence" +
+			   "\n                               Example: -recFromCon=1  | uses the first sequence as reference" +
+			   "\n         -fGrTh             : looks through the alignment and removes all the sequences, except the ones that are greater than a given size" +
+			   "\n                               Example: -fGrTh=7000    | removes sequences with lenghts lower or equal to 7000" +
+			   "\n         -fSmTh             : looks through the alignment and removes all the sequences, except the ones that are smaller than a given size" +
+			   "\n                               Example: -fSmTh=7000    | removes sequences with lenghts greater or equal to 7000" +
+			   "\n         -title             : filter sequences that containg a given string in the title" +
+			   "\n                               Example: -title=gi00001 | keeps the sequences that contains the string gi00001 in the title" +
+			   "\n         -idValues          : gets list of identity percent values between all the sequences in the alignment" +
+			   "\n         -idMatrix          : exports an csv file with a symmetric matrix with identities values" +
+			   "\n         -mds               : performs a Multidimensional Scaling analysis (using MDSJ package developed by Christian Pich (University of Konstanz))" +
+			   "\n                               a number that indicantes the number of output dimensions"+
+			   "\n         -stripGappedColFr  : Removes columns of the alignment that contains more than a given proportion of gaps"+
+			   "\n         -pick              : pick a random number set of the sequences" +
+			   "\n                               Example: -pick 5        | pick 5 random sequences"+
+			   "\n         -ver               : prints the number of the version in stdout."+
+			   "\n         -help              : shows this help." +
 			   "\n";
 	}
 
