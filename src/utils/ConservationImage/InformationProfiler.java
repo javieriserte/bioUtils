@@ -82,7 +82,7 @@ private double[][] 			getFreq								(double[][] p ,List<Pair<String, String>> a
 			try {
 				p[i][chars.lastIndexOf(c)]++;	
 			} catch (Exception e) {
-				System.err.println("el caracter es: " +  c + " y el índice es: " + chars.lastIndexOf(c));
+				if (c!='-') System.err.println("el caracter es: " +  c + " y el índice es: " + chars.lastIndexOf(c));
 			}
 			
 		} 
