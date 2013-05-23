@@ -2,10 +2,10 @@
 package utils;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.PrintStream;
 import java.util.List;
 import java.util.Vector;
 
@@ -13,19 +13,22 @@ public class Transponer {
 	List<String[]> datos = new Vector<String[]>();
 	
 		
-	public void readFile(String filePath) throws IOException {
-		BufferedReader br = new BufferedReader(new FileReader(filePath));
+	public void read(InputStream in) throws IOException {
 
-		String linea; 
-		do {
-			linea = br.readLine();
+		BufferedReader br = new BufferedReader(new InputStreamReader(in));
+		
+		String linea = null; 
+		
+		while ((linea = br.readLine())!=null){
+			
 			if (linea != null) this.datos.add(linea.split("\t"));
-		} while (linea!="" && (linea != null));
+		
+		};
 		
 		br.close();
 	}
 	
-	public void writeFile(String filePath) throws IOException {
+	public void writeFile(PrintStream out) throws IOException {
 		
 
 		String result ="";
@@ -40,9 +43,7 @@ public class Transponer {
 			result = result + "\r\n";
 		}
 		
-		BufferedWriter out = new BufferedWriter(new FileWriter(filePath));
-		
-		out.write(result);
+		out.println(result);
 		out.flush();
 		out.close();
 		
@@ -52,8 +53,8 @@ public class Transponer {
 		
 		Transponer t = new Transponer();
 		
-		t.readFile("C:\\paupWin32\\solmati\\data.txt");
-		t.writeFile("C:\\paupWin32\\solmati\\data.out.txt");
+		t.read(System.in);
+		t.writeFile(System.out);
 		
 		
 	}
