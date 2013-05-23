@@ -3,6 +3,8 @@ package seqManipulation.fastamanipulator;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
@@ -164,7 +166,13 @@ public class FastaAlignmentManipulator {
 
 		SingleOption titleConstainsOpt = new SingleOption(parser, 1, "-title", StringParameter.getParameter());
 		uniques.add(titleConstainsOpt);
+
+		SingleOption keepPosOpt = new SingleOption(parser, 1, "-keeppos", InFileParameter.getParameter());
+		uniques.add(keepPosOpt);
 		
+		SingleOption remPosOpt = new SingleOption(parser, 1, "-rempos", InFileParameter.getParameter());
+		uniques.add(remPosOpt);
+
 		// Step Three : Try to parse the command line
 		
 		try {
@@ -433,12 +441,135 @@ public class FastaAlignmentManipulator {
 			stripGappedColumnsCommand(out, seqs, fr);
 			
 		}
+		
+		if(keepPosOpt.isPresent()) {
+			
+			keepPosCommand(out,seqs,keepPosOpt);
+			
+		}
+		
+		if (remPosOpt.isPresent()) {
+			
+			removePosCommand(out,seqs,remPosOpt);
+			
+		}
 
 	}
 
 	
 	///////////////////////////
 	// Private Methods
+
+	private static void removePosCommand(PrintStream out, List<Pair<String, String>> seqs, SingleOption remPosOpt) {
+
+	File in = (File) remPosOpt.getValue();
+		
+		List<Integer> removePos = new ArrayList<Integer>();
+		
+		if (in!=null && in.exists()) {
+
+			String line = null;
+			
+			BufferedReader br;
+			
+			try {
+				
+				br = new BufferedReader(new FileReader(in));
+
+				while ((line = br.readLine())!=null) {
+					
+					removePos.add(Integer.valueOf(line)); 
+					
+				}
+				
+				for (Pair<String, String> pair : seqs) {
+				
+					StringBuilder newseq = new StringBuilder();
+					
+					for(int i = 0; i < pair.getSecond().length(); i++) {
+						
+						if (!removePos.contains(i)) { 
+						
+							newseq.append(pair.getSecond().charAt(i));
+						
+						}
+						
+					}
+					
+					out.println(">" + pair.getFirst() );
+					
+					out.println(newseq.toString());
+					
+				} 
+				
+				
+			} catch (IOException e) {
+				
+				e.printStackTrace();
+				
+			}
+			
+		}
+		
+		out.close();
+		
+		System.exit(0);
+		
+	}
+
+
+	private static void keepPosCommand(PrintStream out, List<Pair<String, String>> seqs, SingleOption keepPosOpt) {
+
+		File in = (File) keepPosOpt.getValue();
+		
+		List<Integer> keepPos = new ArrayList<Integer>();
+		
+		if (in!=null && in.exists()) {
+
+			String line = null;
+			
+			BufferedReader br;
+			
+			try {
+				
+				br = new BufferedReader(new FileReader(in));
+
+				while ((line = br.readLine())!=null) {
+					
+					keepPos.add(Integer.valueOf(line)); 
+					
+				}
+				
+				for (Pair<String, String> pair : seqs) {
+				
+					StringBuilder newseq = new StringBuilder();
+					
+					for (Integer integer : keepPos) {
+						
+						newseq.append(pair.getSecond().charAt(integer));
+						
+					}
+					
+					out.println(">" + pair.getFirst() );
+					
+					out.println(newseq.toString());
+					
+				} 
+				
+				
+			} catch (IOException e) {
+				
+				e.printStackTrace();
+				
+			}
+			
+		}
+		
+		out.close();
+		
+		System.exit(0);
+	}
+
 
 	private static void stripGappedColumnsCommand(PrintStream out, List<Pair<String, String>> seqs, double fr) {
 		// removes the columns of the alignment that contain a gap
@@ -1282,6 +1413,8 @@ public class FastaAlignmentManipulator {
 			   "\n         -stripGappedColFr  : Removes columns of the alignment that contains more than a given proportion of gaps"+
 			   "\n         -pick              : pick a random number set of the sequences" +
 			   "\n                               Example: -pick 5        | pick 5 random sequences"+
+			   "\n         -keeppos           : reads a file that contains one number per line and keeps these numbers position of the alignment and eliminate the others" +
+			   "\n         -rempos            : reads a file that contains one number per line and removes these numbers position of the alignment and keeps the others" +
 			   "\n         -ver               : prints the number of the version in stdout."+
 			   "\n         -help              : shows this help." +
 			   "\n";
