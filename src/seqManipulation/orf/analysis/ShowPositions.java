@@ -34,19 +34,29 @@ public class ShowPositions extends OrfAnalysis{
 		
 		for(int i=0; i<12;i=i+2) {
 			
-			if (marks.get(i+1).get(0) > marks.get(i).get(0)) marks.get(i+1).remove(0);
-
-			out.println("# Frame " + i /2 +1);
+			if (marks.get(i+1).get(0) < marks.get(i).get(0)) marks.get(i+1).remove(0);
 			
 			while (marks.get(i).size()>0 && marks.get(i+1).size()>0) {
-				
+
 				int atg = marks.get(i).remove(0);
+				
 				int stop = marks.get(i+1).remove(0);
 				
-				out.print("["+atg +", "+ stop +"] ");
+				if (stop-atg>=minSize) {
+				
+					StringBuilder sb = new StringBuilder();
+
+					int frame = ((int)i/2) + 1;
+					
+					sb.append("Frame " + String.valueOf(frame) + " ");
+				
+					sb.append("["+atg +" - "+ stop +"] " + String.valueOf(stop - atg));
+					
+					out.println(sb.toString());
+				
+				}
+				
 			}
-			
-			out.print("\n");
 			
 		}
 		

@@ -172,6 +172,9 @@ public class FastaAlignmentManipulator {
 		
 		SingleOption remPosOpt = new SingleOption(parser, 1, "-rempos", InFileParameter.getParameter());
 		uniques.add(remPosOpt);
+		
+		SingleOption remIdPosOpt = new SingleOption(parser, 1, "-remIdPos", InFileParameter.getParameter());
+		uniques.add(remIdPosOpt);
 
 		// Step Three : Try to parse the command line
 		
@@ -453,12 +456,27 @@ public class FastaAlignmentManipulator {
 			removePosCommand(out,seqs,remPosOpt);
 			
 		}
+		
+		if (remIdPosOpt.isPresent()) {
+			
+			removeIdPosCommand(out, seqs);
+			
+		}
 
 	}
 
 	
+	
+	
+	
 	///////////////////////////
 	// Private Methods
+
+	private static void removeIdPosCommand(PrintStream out, List<Pair<String, String>> seqs) {
+
+		
+		
+	}
 
 	private static void removePosCommand(PrintStream out, List<Pair<String, String>> seqs, SingleOption remPosOpt) {
 
@@ -1415,9 +1433,10 @@ public class FastaAlignmentManipulator {
 			   "\n                               Example: -pick 5        | pick 5 random sequences"+
 			   "\n         -keeppos           : reads a file that contains one number per line and keeps these numbers position of the alignment and eliminate the others" +
 			   "\n         -rempos            : reads a file that contains one number per line and removes these numbers position of the alignment and keeps the others" +
+			   "\n         -remIdPos          : removes columsn of an alignment that contains only one char (ignoring gaps)" +
 			   "\n         -ver               : prints the number of the version in stdout."+
 			   "\n         -help              : shows this help." +
 			   "\n";
 	}
-
+	
 }

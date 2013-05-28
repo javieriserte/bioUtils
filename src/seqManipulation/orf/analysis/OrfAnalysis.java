@@ -32,7 +32,7 @@ public abstract class OrfAnalysis {
 		
 		for (int frame : frames) {
 			
-			if (frame<3) fwframe.add(frame);
+			if (frame<=3) fwframe.add(frame);
 			else rvframe.add(frame-3);
 		}
 		

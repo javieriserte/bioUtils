@@ -59,7 +59,7 @@ public class OrfFinder {
 		NoOption largestOpt = new NoOption(parser, "-largest");
 		NoOption marksOpt = new NoOption(parser, "-marks");
 		NoOption inFastaOpt = new NoOption(parser, "-fasta");
-		NoOption positOpt = new NoOption(parser, "-postitions");
+		NoOption positOpt = new NoOption(parser, "-positions");
 		NoOption helpOpt = new NoOption(parser, "-help");
 		
 		
@@ -96,6 +96,11 @@ public class OrfFinder {
 			
 		}
 
+		out.flush();
+		
+		out.close();
+
+
 	}
 
 	private static OrfAnalysis getAnalysis(SingleOption minsize, MultipleOption frameOpt, NoOption largestOpt, NoOption marksOpt, 	NoOption positOpt, Replicate replicate) {
@@ -114,25 +119,30 @@ public class OrfFinder {
 	}
 
 	private static Integer[] getFrames(MultipleOption frameOpt) {
-		Integer[] frames = (Integer[]) frameOpt.getValues();
+		Integer[] frames;
 		
-		if (frames.length==1 && frames[0]==0) {
+		if (frameOpt.getValues().length==1 && (Integer)frameOpt.getValues()[0]==0) {
 			
 			frames = new Integer[]{1,2,3,4,5,6};
 			
-		} 
-		
-		List<Integer> frames2 = new ArrayList<Integer>(); 
-		
-		for (Integer integer : frames) {
+		} else {
 			
-			if (integer!=0) frames2.add(integer);
+			frames = new Integer[frameOpt.count()];
+			int counter = 0;
+			for (int i = 0; i< frameOpt.count() ; i++) {
+				
+				Integer currentvalue = (Integer) frameOpt.getValue(i);
+				
+				if (currentvalue>0 && currentvalue<=6) {
+					frames[counter++] = currentvalue;
+				}
+				
+			}
 			
-		} 
-		
-		frames = new Integer[frames2.size()];
-		
-		frames2.toArray(frames);
+			frames = Arrays.copyOf(frames, counter);
+			
+		}
+
 		return frames;
 	}
 
@@ -406,9 +416,10 @@ public class OrfFinder {
 		ATGorStop[1] = new ArrayList<Boolean>();
 		ATGorStop[2] = new ArrayList<Boolean>();
 		
-		for(int cframe=0;cframe<3;cframe++) {
-		
 			for (int frame : frames) {
+				
+				int cframe = frame-1;
+				
 				if ((cframe+1)==frame || frame == 0) {
 					int atgIndex = 0;
 					int StopIndex = 0;
@@ -468,8 +479,6 @@ public class OrfFinder {
 					}
 
 				}
-
-			}
 
 		}
 		

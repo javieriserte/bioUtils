@@ -39,7 +39,7 @@ public class ShowMarks extends OrfAnalysis {
 			
 			Integer[] newarray = new Integer[pair.getFirst().size()];
 			
-			result.addAll(getStrandMarks(pair.getSecond(), replicator, newarray));
+			result.addAll(getStrandMarks(pair.getSecond(), replicator, pair.getFirst().toArray(newarray)));
 			
 		}
 	
@@ -119,8 +119,6 @@ public class ShowMarks extends OrfAnalysis {
 		}
 		
 		out.flush();
-		
-		out.close();
 		
 	}
 
