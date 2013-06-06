@@ -176,7 +176,7 @@ final public class GenBankReaderAsync  implements Runnable{
 					break;
 					case 1: {
 					// Reading header
-						if (currentline.toUpperCase().trim().startsWith("FEATURES")) {
+						if (currentline.toUpperCase().startsWith("FEATURES")) {
 							// Change to part two
 							partCounter=2;
 							featurespart.append(currentline.toUpperCase().trim());

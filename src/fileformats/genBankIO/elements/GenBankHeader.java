@@ -53,7 +53,8 @@ public class GenBankHeader implements Serializable{
 	private String nid;
 	private List<String> otherFieldNames;
 	private List<String> otherFieldValues;
-	private List<Reference> references;	
+	private List<Reference> references;
+	private String gi;	
 	
 
     //////////////
@@ -206,7 +207,7 @@ public class GenBankHeader implements Serializable{
 	private String getMethodNameForFields(String fieldname) {
 		if (fieldname.equals("DEFINITION")) {return "Definition";};
 		if (fieldname.equals("ACCESSION")) {return "Accession";};
-		if (fieldname.equals("VERSION")) {return "Accession";};
+		if (fieldname.equals("VERSION")) {return "Version";};
 		if (fieldname.equals("NID")) {return "Nid";};
 		if (fieldname.equals("PROJECT")) {return "Project";};
 		if (fieldname.equals("DBLINK")) {return "Dblink";};
@@ -354,13 +355,19 @@ public class GenBankHeader implements Serializable{
 	public void setAccession(String accession) {
 		this.accession = accession;
 	}
+	
+	public String getGi() {
+		return gi;
+	}
 
 	public String getVersion() {
 		return version;
 	}
 
 	public void setVersion(String version) {
-		this.version = version;
+		String data[] = version.trim().split(" +");
+		this.version = data[0].trim();
+		this.gi = data[1].substring(3);
 	}
 
 	public String getKeywords() {
