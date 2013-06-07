@@ -22,6 +22,7 @@ import seqManipulation.complementary.Complementary;
 import seqManipulation.dottedalignment.ReconstructDottedAlignment;
 import seqManipulation.filtersequences.FilterSequence;
 import seqManipulation.filtersequences.FilterSequenceBooleanNOT;
+import seqManipulation.filtersequences.FilterSequenceBooleanOR;
 import seqManipulation.filtersequences.FilterSequenceContaining;
 import seqManipulation.filtersequences.FilterSequenceContainingInTitle;
 import seqManipulation.filtersequences.FilterSequenceGreaterThan;
@@ -144,7 +145,7 @@ public class FastaAlignmentManipulator {
 		SingleOption containsOpt = new SingleOption(parser, null, "-contains", StringParameter.getParameter());
 		uniques.add(containsOpt);
 		
-		SingleOption invertFilterOpt = new SingleOption(parser, null, "-inverseFilter", StringParameter.getParameter());
+		NoOption invertFilterOpt = new NoOption(parser, "-inverseFilter");
 		
 		NoOption complementaryOpt = new NoOption(parser, "-comp");
 		uniques.add(complementaryOpt);
@@ -166,6 +167,9 @@ public class FastaAlignmentManipulator {
 
 		SingleOption titleConstainsOpt = new SingleOption(parser, 1, "-title", StringParameter.getParameter());
 		uniques.add(titleConstainsOpt);
+		
+		MultipleOption titlesConstainOpt = new MultipleOption(parser, 1, "-titles", ',',StringParameter.getParameter());
+		uniques.add(titlesConstainOpt);
 
 		SingleOption keepPosOpt = new SingleOption(parser, 1, "-keeppos", InFileParameter.getParameter());
 		uniques.add(keepPosOpt);
@@ -388,6 +392,22 @@ public class FastaAlignmentManipulator {
 				filterCommand(filter,out,seqs, invertFilterOpt.isPresent());
 
 			}
+			
+		}
+		
+		if (titlesConstainOpt.isPresent()) {
+			
+			Object[] values = titlesConstainOpt.getValues();
+			
+			FilterSequence filter = new FilterSequenceContainingInTitle((String) values[0]);
+			
+			for(int i=1;i<values.length; i++) {
+				
+				filter = new FilterSequenceBooleanOR(filter, new FilterSequenceContainingInTitle((String) values[i]));
+				
+			}
+			
+			filterCommand(filter,out,seqs, invertFilterOpt.isPresent());
 			
 		}
 		
