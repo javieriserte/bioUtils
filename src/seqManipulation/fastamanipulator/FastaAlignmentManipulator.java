@@ -20,6 +20,7 @@ import mdsj.ClassicalScaling;
 import seqManipulation.AlignmentSequenceEditor;
 import seqManipulation.complementary.Complementary;
 import seqManipulation.dottedalignment.ReconstructDottedAlignment;
+import seqManipulation.fastamanipulator.commands.RemoveGappedRows;
 import seqManipulation.filtersequences.FilterSequence;
 import seqManipulation.filtersequences.FilterSequenceBooleanNOT;
 import seqManipulation.filtersequences.FilterSequenceBooleanOR;
@@ -179,6 +180,9 @@ public class FastaAlignmentManipulator {
 		
 		SingleOption remIdPosOpt = new SingleOption(parser, 1, "-remIdPos", InFileParameter.getParameter());
 		uniques.add(remIdPosOpt);
+		
+		NoOption removeAllGapRowsOpt = new NoOption(parser, "-remGapRows");
+		uniques.add(removeAllGapRowsOpt);
 
 		// Step Three : Try to parse the command line
 		
@@ -482,13 +486,29 @@ public class FastaAlignmentManipulator {
 			removeIdPosCommand(out, seqs);
 			
 		}
+		
+		if (removeAllGapRowsOpt.isPresent()) {
+			
+			RemoveGappedRows rgr = new RemoveGappedRows();
+			
+			seqs = rgr.removeGappedRows(seqs);
+			
+			for (Pair<String, String> pair : seqs) {
+				
+				out.println(">"+pair.getFirst());
+				
+				out.println(pair.getSecond());
+				
+			}
+			
+			out.flush();
+			
+			out.close();
+			
+		}
 
 	}
 
-	
-	
-	
-	
 	///////////////////////////
 	// Private Methods
 

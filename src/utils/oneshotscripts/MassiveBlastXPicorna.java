@@ -73,14 +73,14 @@ public class MassiveBlastXPicorna {
 
 						endIndex = r.getQueryStart() - 3 * (r.getSubjectStart()-1);
 						
-						beginIndex = r.getQueryEnd() + 3* (subjectprot.length() - r.getSubjectEnd());
+						beginIndex = r.getQueryEnd() + 3* (subjectprot.length() - r.getSubjectEnd())-1;
 						
 						querygenome = Complementary.reverseComplementary(querygenome.substring(beginIndex,endIndex));
 						
 						
 					} else {
 					
-						beginIndex = r.getQueryStart() - 3 * (r.getSubjectStart()-1);
+						beginIndex = r.getQueryStart() - 3 * (r.getSubjectStart()-1 )-1;
 					
 						endIndex = r.getQueryEnd() + 3* (subjectprot.length() - r.getSubjectEnd());
 						
@@ -98,11 +98,11 @@ public class MassiveBlastXPicorna {
 				
 			}
 			
-			out.close();
-			
 			System.err.println(blastcounter);
 			
 		}
+		
+		out.close();
 
 	}
 	
@@ -117,11 +117,13 @@ public class MassiveBlastXPicorna {
 			out.println(">"+gi);
 			out.println(sequence);
 			
+			out.close();
 			
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
 		
 		return path;
 		
