@@ -108,7 +108,7 @@ public class GapToolbox {
 		
 		for(int i=0; i<keepers.length;i++) {
 			
-			if (keepers[i]) positions.add(i);
+			if (!keepers[i]) positions.add(i);
 			
 		}
 		

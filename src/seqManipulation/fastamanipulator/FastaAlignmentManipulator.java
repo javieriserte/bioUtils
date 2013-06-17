@@ -18,6 +18,7 @@ import math.random.FischerYatesShuffle;
 import mdsj.ClassicalScaling;
 
 import seqManipulation.AlignmentSequenceEditor;
+import seqManipulation.GapToolbox;
 import seqManipulation.complementary.Complementary;
 import seqManipulation.dottedalignment.ReconstructDottedAlignment;
 import seqManipulation.fastamanipulator.commands.RemoveGappedRows;
@@ -43,6 +44,7 @@ import cmdGA.parameterType.FloatParameter;
 import cmdGA.parameterType.InFileParameter;
 import cmdGA.parameterType.InputStreamParameter;
 import cmdGA.parameterType.IntegerParameter;
+import cmdGA.parameterType.OutFileParameter;
 import cmdGA.parameterType.PrintStreamParameter;
 import cmdGA.parameterType.StringParameter;
 import fileformats.fastaIO.FastaMultipleReader;
@@ -119,6 +121,8 @@ public class FastaAlignmentManipulator {
 		SingleOption stripGapColFrOpt = new SingleOption(parser,null, "-stripGappedColFr", FloatParameter.getParameter());
 		uniques.add(stripGapColFrOpt);
 		
+		SingleOption stripGapColFrRefOpt = new SingleOption(parser, null, "-reference", OutFileParameter.getParameter());
+		
 		NoOption flushEndsOpt = new NoOption(parser, "-flush");
 		uniques.add(flushEndsOpt);
 		
@@ -183,6 +187,10 @@ public class FastaAlignmentManipulator {
 		
 		NoOption removeAllGapRowsOpt = new NoOption(parser, "-remGapRows");
 		uniques.add(removeAllGapRowsOpt);
+		
+		SingleOption countGapsInRowOpt = new SingleOption(parser,1, "-countGapsIn", IntegerParameter.getParameter());
+		uniques.add(countGapsInRowOpt);
+
 
 		// Step Three : Try to parse the command line
 		
@@ -465,7 +473,15 @@ public class FastaAlignmentManipulator {
 			
 			double fr = (Float) stripGapColFrOpt.getValue();
 			
-			stripGappedColumnsCommand(out, seqs, fr);
+			File outreference = null;
+			
+			if (stripGapColFrRefOpt.isPresent()) {
+				
+				outreference = (File) stripGapColFrRefOpt.getValue();
+				
+			}
+			
+			stripGappedColumnsCommand(out, seqs, fr, outreference);
 			
 		}
 		
@@ -504,6 +520,24 @@ public class FastaAlignmentManipulator {
 			out.flush();
 			
 			out.close();
+			
+		}
+		
+		if(countGapsInRowOpt.isPresent()) {
+			
+			GapToolbox gtb = new GapToolbox();
+			
+			int seqId = (Integer) countGapsInRowOpt.getValue();
+			
+			ArrayList<Pair<String, String>> newalign = new ArrayList<Pair<String,String>>();
+			
+			newalign.add(seqs.get(seqId-1));
+					
+			boolean[] keepers = gtb.getKeepers(newalign);
+			
+			Integer[] posWithGaps = gtb.getPositionsWithGaps(keepers);
+			
+			out.println(posWithGaps.length);
 			
 		}
 
@@ -629,9 +663,21 @@ public class FastaAlignmentManipulator {
 	}
 
 
-	private static void stripGappedColumnsCommand(PrintStream out, List<Pair<String, String>> seqs, double fr) {
+	private static void stripGappedColumnsCommand(PrintStream out, List<Pair<String, String>> seqs, double fr, File outreference) {
 		// removes the columns of the alignment that contain a gap
 		double[] gapFreq = new double[seqs.get(0).getSecond().length()];
+		
+		boolean[] keepers = new boolean[seqs.get(0).getSecond().length()];
+		
+		PrintStream ref = null;
+		try {
+			if (outreference!=null) {
+				ref = new PrintStream(outreference);
+			}
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+			
+		}
 		
 		int N = seqs.size();
 		
@@ -645,6 +691,19 @@ public class FastaAlignmentManipulator {
 			
 		}
 		
+		for (int j = 0; j< seqs.get(0).getSecond().length();j++) {
+		
+			keepers[j] = gapFreq[j]/N <= fr;
+			
+			if (!keepers[j] && outreference!=null) {
+				
+				ref.println(j);
+			
+			}
+			
+		}
+		
+		
 		for (Pair<String, String> seq : seqs) {
 			
 			StringBuilder nseq = new StringBuilder();
@@ -653,7 +712,11 @@ public class FastaAlignmentManipulator {
 			
 			for (int j = 0; j< oldSeq.length();j++) {
 				
-				if (gapFreq[j]/N<=fr) nseq.append(oldSeq.charAt(j)); 
+				if (keepers[j]) {
+					
+					nseq.append(oldSeq.charAt(j));
+					
+				}
 				
 			}
 			
