@@ -37,6 +37,18 @@ public class ReconstructDottedAlignment {
 	
 		List<Pair<String,String>> result = new ArrayList<Pair<String,String>>();
 		
+		if (referenceConsensusIndex<0) {
+			
+			referenceConsensusIndex = guessIndex(alignment);
+			
+		}
+		
+		if (referenceConsensusIndex<0) {
+			
+			return alignment;
+			
+		}
+		
 		String consensus = alignment.get(referenceConsensusIndex).getSecond();
 		
 		for(int i = 0; i<alignment.size(); i++) {
@@ -135,8 +147,6 @@ public class ReconstructDottedAlignment {
 				counter ++;
 				
 				lastFound = i;
-				
-				System.out.println(counter + " - " + lastFound);
 				
 			}
 			

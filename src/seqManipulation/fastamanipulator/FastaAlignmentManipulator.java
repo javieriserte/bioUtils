@@ -21,6 +21,9 @@ import seqManipulation.AlignmentSequenceEditor;
 import seqManipulation.GapToolbox;
 import seqManipulation.complementary.Complementary;
 import seqManipulation.dottedalignment.ReconstructDottedAlignment;
+import seqManipulation.fastamanipulator.commands.CountCommand;
+import seqManipulation.fastamanipulator.commands.DefinitionsCommand;
+import seqManipulation.fastamanipulator.commands.FastaCommand;
 import seqManipulation.fastamanipulator.commands.RemoveGappedRows;
 import seqManipulation.filtersequences.FilterSequence;
 import seqManipulation.filtersequences.FilterSequenceBooleanNOT;
@@ -51,8 +54,15 @@ import fileformats.fastaIO.FastaMultipleReader;
 import fileformats.fastaIO.Pair;
 
 public class FastaAlignmentManipulator {
-	 
-	private static final String VERSION = "0.0.2";
+
+	public static final String VERSION = "0.0.2";
+	
+	private static final String DEF = "-def";
+	private static final String COUNT = "-count";
+	private static final String EXTRACT = "-extract";
+	private static final String OUTFILE = "-outfile";
+	private static final String INFILE = "-infile";
+	
 
 	/**
 	 * A simple program to manipulate Alignments given in fasta format.
@@ -69,80 +79,111 @@ public class FastaAlignmentManipulator {
 		
 		// Step Two : Add Command Line Options
 		
-		SingleOption inputStreamOpt = new SingleOption(parser, System.in, "-infile", InputStreamParameter.getParameter());
+		SingleOption inputStreamOpt = new SingleOption(parser, System.in, INFILE, InputStreamParameter.getParameter());
 		
-		SingleOption printStreamOpt = new SingleOption(parser, System.out, "-outfile", PrintStreamParameter.getParameter());
-		
-		MultipleOption extractOpt = new MultipleOption(parser, 0, "-extract", ' ', IntegerParameter.getParameter());
+		SingleOption printStreamOpt = new SingleOption(parser, System.out, OUTFILE, PrintStreamParameter.getParameter());
+
+		List<FastaCommand<? extends Option>> uniqueCommands = new ArrayList<FastaCommand<? extends Option>>();
+
+		//DONE
+		MultipleOption extractOpt = new MultipleOption(parser, 0, EXTRACT, ' ', IntegerParameter.getParameter());
 		uniques.add(extractOpt);
-		
-		NoOption countOpt = new NoOption(parser, "-count"); 
+
+		//DONE
+		NoOption countOpt = new NoOption(parser, COUNT); 
 		uniques.add(countOpt);
+		FastaCommand<NoOption> countCommand = new CountCommand(null, null, countOpt);
+		uniqueCommands.add(countCommand);
 		
-		NoOption defOpt = new NoOption(parser, "-def"); 
+		//DONE
+		NoOption defOpt = new NoOption(parser, DEF); 
 		uniques.add(defOpt);
-		
+		FastaCommand<NoOption> defCommand = new DefinitionsCommand(null, null, countOpt);
+		uniqueCommands.add(defCommand);
+
+		// DONE
 		NoOption helpOpt = new NoOption(parser, "-help");
 		uniques.add(helpOpt);
 		
+		//DONE
 		NoOption versionOpt = new NoOption(parser, "-ver");
 		uniques.add(versionOpt);
 		
+		//DONE
 		SingleOption appendOpt = new SingleOption(parser, null, "-append", InFileParameter.getParameter());
 		uniques.add(appendOpt);
 
+		//DONE
 		NoOption lenOpt = new NoOption(parser, "-length");
 		uniques.add(lenOpt);
 
+		//DONE
 		NoOption lensOpt = new NoOption(parser, "-lengths");
 		uniques.add(lensOpt);
 
+		//DONE
 		MultipleOption concatOpt = new MultipleOption(parser, null, "-concatenate", ',', InFileParameter.getParameter());
 		uniques.add(concatOpt);
 		
+		//DONE
 		MultipleOption sliceOpt = new MultipleOption(parser, null, "-slice", ',', IntegerParameter.getParameter());
 		uniques.add(sliceOpt);
-		
+
+		//DONE
 		NoOption degapOPt = new NoOption(parser, "-degap");
 		uniques.add(degapOPt);
 		
+		//DONE
 		NoOption translateOPt = new NoOption(parser, "-translate");
 		uniques.add(translateOPt);
 		
+		//DONE
 		SingleOption translateWithOPt = new SingleOption(parser, null,"-translateWith",InFileParameter.getParameter());
 		uniques.add(translateWithOPt);
 
+		//DONE
 		NoOption geneticCodeHelpOPt = new NoOption(parser, "-genCodeHelp");
 		uniques.add(geneticCodeHelpOPt);
 		
+		//DONE
 		NoOption stripGappedColumnsOpt = new NoOption(parser, "-stripGappedColumns");
 		uniques.add(stripGappedColumnsOpt);
 		
+		//DONE
 		SingleOption stripGapColFrOpt = new SingleOption(parser,null, "-stripGappedColFr", FloatParameter.getParameter());
 		uniques.add(stripGapColFrOpt);
-		
+
+		//DONE
 		SingleOption stripGapColFrRefOpt = new SingleOption(parser, null, "-reference", OutFileParameter.getParameter());
 		
+		//DONE
 		NoOption flushEndsOpt = new NoOption(parser, "-flush");
 		uniques.add(flushEndsOpt);
 		
+		//TODO
 		NoOption consensusOpt = new NoOption(parser, "-consensus");
 		uniques.add(consensusOpt);
 		
+		//DONE
 		NoOption randomBackTranslateOpt = new NoOption(parser, "-randomRT");
 		uniques.add(randomBackTranslateOpt);
 		
+		//DONE
 		NoOption calculateMIOpt = new NoOption(parser, "-MI");
 		uniques.add(calculateMIOpt);
 
+		//DONE
 		SingleOption reconstructOpt = new SingleOption(parser, 0 ,"-recFromCon", IntegerParameter.getParameter());
 		uniques.add(reconstructOpt);
 
+		//DONE
 		SingleOption filterSizeGreaterOpt = new SingleOption(parser, null, "-fGrTh", IntegerParameter.getParameter());
 		uniques.add(filterSizeGreaterOpt);
 		
+		//DONE
 		SingleOption filterSizeSmallerOpt = new SingleOption(parser, null, "-fSmTh", IntegerParameter.getParameter());
 		uniques.add(filterSizeSmallerOpt);
+		
 		
 		SingleOption startsWithOpt = new SingleOption(parser, null, "-fStartWith", StringParameter.getParameter());
 		uniques.add(startsWithOpt);
@@ -190,7 +231,6 @@ public class FastaAlignmentManipulator {
 		
 		SingleOption countGapsInRowOpt = new SingleOption(parser,1, "-countGapsIn", IntegerParameter.getParameter());
 		uniques.add(countGapsInRowOpt);
-
 
 		// Step Three : Try to parse the command line
 		
