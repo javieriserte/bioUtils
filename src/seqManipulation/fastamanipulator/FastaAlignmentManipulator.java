@@ -184,15 +184,17 @@ public class FastaAlignmentManipulator {
 		SingleOption filterSizeSmallerOpt = new SingleOption(parser, null, "-fSmTh", IntegerParameter.getParameter());
 		uniques.add(filterSizeSmallerOpt);
 		
-		
+		//DONE
 		SingleOption startsWithOpt = new SingleOption(parser, null, "-fStartWith", StringParameter.getParameter());
 		uniques.add(startsWithOpt);
 		
+		//DONE
 		SingleOption containsOpt = new SingleOption(parser, null, "-contains", StringParameter.getParameter());
 		uniques.add(containsOpt);
 		
 		NoOption invertFilterOpt = new NoOption(parser, "-inverseFilter");
-		
+
+		//DONE
 		NoOption complementaryOpt = new NoOption(parser, "-comp");
 		uniques.add(complementaryOpt);
 		

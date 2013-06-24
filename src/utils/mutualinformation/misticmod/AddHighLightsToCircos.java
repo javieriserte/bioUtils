@@ -155,7 +155,7 @@ public class AddHighLightsToCircos {
 	 */
 	public int getRangeNumber(int position, Integer[] lengths) {
 		
-		for (int i=0; i<lengths.length-1; i++) {
+		for (int i=0; i<lengths.length; i++) {
 			
 			if (position - lengths[i]<=0) return i;
 			

@@ -9,6 +9,12 @@ import seqManipulation.filtersequences.FilterSequenceSmallerThan;
 import cmdGA.NoOption;
 import cmdGA.SingleOption;
 
+/**
+ * Filter sequences whose lengths is smaller or equal than a threshold value.
+ * 
+ * @author javier iserte
+ *
+ */
 public class FilterSizeSmEqThanCommand extends FilterCommand<SingleOption> {
 
 	public FilterSizeSmEqThanCommand(InputStream inputstream, PrintStream output, SingleOption option, NoOption invertFiler) {
