@@ -21,6 +21,9 @@ public class FilterSizeSmEqThanCommand extends FilterCommand<SingleOption> {
 		
 		super(inputstream, output, option, invertFiler);
 		
+	}
+
+	public void getFilter() {
 		Integer size = (Integer) this.getOption().getValue();
 		
 		if (size != null) {
@@ -34,7 +37,6 @@ public class FilterSizeSmEqThanCommand extends FilterCommand<SingleOption> {
 			this.filter = null;
 			
 		}
-
 	}
 
 

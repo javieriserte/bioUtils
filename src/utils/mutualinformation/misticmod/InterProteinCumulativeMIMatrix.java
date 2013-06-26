@@ -82,7 +82,7 @@ public class InterProteinCumulativeMIMatrix {
 
 
 
-	private Double[][] calculateCMIInter(int length, Integer[] lengths) {
+	public Double[][] calculateCMIInter(int length, Integer[] lengths) {
 		
 		Double[][] results = new Double[length][length];
 		
@@ -126,7 +126,7 @@ public class InterProteinCumulativeMIMatrix {
 	 * 
 	 * @param lengths
 	 */
-	private void assignProteinNumber(Integer[] lengths) {
+	public void assignProteinNumber(Integer[] lengths) {
 		
 		for (MI_PositionWithProtein pos : this.data) {
 			
@@ -167,7 +167,7 @@ public class InterProteinCumulativeMIMatrix {
 	 * @param lengthsOpt
 	 * @return
 	 */
-	private static Integer[] getLengths(MultipleOption lengthsOpt) {
+	public static Integer[] getLengths(MultipleOption lengthsOpt) {
 
 		Integer[] result = new Integer[lengthsOpt.count()];
 		
@@ -188,7 +188,7 @@ public class InterProteinCumulativeMIMatrix {
 	 * 
 	 * @param in
 	 */
-	private void readMiData(InputStream in) {
+	public void readMiData(InputStream in) {
 		
 		String currentLine = null;
 		

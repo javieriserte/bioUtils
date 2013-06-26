@@ -21,6 +21,9 @@ public class FilterSequenceStartingWithCommand extends FilterCommand<SingleOptio
 		
 		super(inputstream, output, option, invertFiler);
 		
+	}
+
+	public void getFilter() {
 		String string = (String) this.getOption().getValue();
 		
 		if (string != null) {
@@ -34,7 +37,6 @@ public class FilterSequenceStartingWithCommand extends FilterCommand<SingleOptio
 			this.filter = null;
 			
 		}
-		
 	}
 
 }

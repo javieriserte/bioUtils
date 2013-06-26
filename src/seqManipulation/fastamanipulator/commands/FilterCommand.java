@@ -33,6 +33,8 @@ public abstract class FilterCommand<Op extends Option> extends FastaCommand<Op> 
 		
 		List<Pair<String, String>> seqs = this.getSequences();
 		
+		this.getFilter();
+		
 		for (Pair<String, String> pair : seqs) {
 			
 			if (filter.filter(pair) ) {
@@ -48,5 +50,7 @@ public abstract class FilterCommand<Op extends Option> extends FastaCommand<Op> 
 		return results;
 		
 	}
+	
+	protected abstract void getFilter();
 
 }

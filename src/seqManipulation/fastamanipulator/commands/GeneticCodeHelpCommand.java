@@ -13,9 +13,9 @@ import cmdGA.NoOption;
  * @author javier iserte
  *
  */
-public class GeneticCodeHelp extends FastaCommand<NoOption> {
+public class GeneticCodeHelpCommand extends FastaCommand<NoOption> {
 
-	public GeneticCodeHelp(InputStream inputstream, PrintStream output, NoOption option) {
+	public GeneticCodeHelpCommand(InputStream inputstream, PrintStream output, NoOption option) {
 		
 		super(inputstream, output, option);
 		

@@ -6,6 +6,12 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import javax.imageio.IIOException;
+import javax.imageio.IIOImage;
+import javax.imageio.ImageIO;
+import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageWriter;
+
 import utils.ConservationImage.color.ColoringStrategy;
 import utils.ConservationImage.color.RedBlueColorringStrategy;
 import utils.ConservationImage.managers.CountGap;
@@ -25,8 +31,6 @@ import cmdGA.exceptions.IncorrectParameterTypeException;
 import cmdGA.parameterType.InputStreamParameter;
 import cmdGA.parameterType.IntegerParameter;
 import cmdGA.parameterType.OutFileParameter;
-
-import com.sun.image.codec.jpeg.*;
 
 public class ConservationImageGenerator {
 
@@ -49,8 +53,7 @@ public class ConservationImageGenerator {
 	///////////////////
 	// Public Interface
 	
-	@SuppressWarnings("restriction")
-	public void 				printImage							(File outfile, ColoringStrategy color, int windowSize, Renderer renderer ) throws ImageFormatException, IOException {
+	public void 				printImage							(File outfile, ColoringStrategy color, int windowSize, Renderer renderer ) throws FileNotFoundException, IOException  {
 		
 		// notice that createGraphics returns a g2d object directly, no cast!
 		
@@ -65,14 +68,30 @@ public class ConservationImageGenerator {
 	//////////////////
 	// Private Methods
 
-	@SuppressWarnings("restriction")
 	private void 				exportJPG							(File outfile, BufferedImage bi) throws FileNotFoundException, IOException {
+		
 		FileOutputStream out = new FileOutputStream(outfile);
-		JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(out);
-		JPEGEncodeParam param = encoder.getDefaultJPEGEncodeParam(bi);
-		param.setQuality(1.0f, false);
-		encoder.setJPEGEncodeParam(param);
-		encoder.encode(bi);
+		
+		ImageWriter imagewriter = ImageIO.getImageWritersByFormatName("png").next();
+		
+		ImageWriteParam writerparam = imagewriter.getDefaultWriteParam();
+		
+		writerparam.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+		
+		writerparam.setCompressionQuality(1.0f);
+	
+		imagewriter.setOutput(out);
+		
+		imagewriter.write(null, new IIOImage(bi, null, null), writerparam);
+		
+		imagewriter.dispose();
+//		ImageIO.write(bi, "jpeg", out);
+		
+//		JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(out);
+//		JPEGEncodeParam param = encoder.getDefaultJPEGEncodeParam(bi);
+//		param.setQuality(1.0f, false);
+//		encoder.setJPEGEncodeParam(param);
+//		encoder.encode(bi);
 	}
 		
 	///////////////////
@@ -95,7 +114,6 @@ public class ConservationImageGenerator {
 
 	}
 	
-	@SuppressWarnings("restriction")
 	public static void commandlineMain(String[] args) {
 		
 		if (args.length==0) {
@@ -178,7 +196,7 @@ public class ConservationImageGenerator {
 			renderer.setLayout(layout);
 			
 			cig.printImage((File)outfile.getValue(), new RedBlueColorringStrategy(),(Integer) windowSize.getValue(),renderer );   		
-			} catch (ImageFormatException e) { System.out.println("Hubo Un error con el formato de la imagen."); 
+			} catch (IIOException e) { System.out.println("Hubo Un error con el formato de la imagen."); 
 				e.printStackTrace();  
 			} catch (IOException e) {          System.out.println("Hubo Un error con el archivo de salida.");
 				e.printStackTrace(); }

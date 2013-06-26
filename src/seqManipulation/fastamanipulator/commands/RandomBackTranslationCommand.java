@@ -19,9 +19,9 @@ import fileformats.fastaIO.Pair;
  * @author javier iserte
  *
  */
-public class RandomBackTranslation extends FastaCommand<NoOption> {
+public class RandomBackTranslationCommand extends FastaCommand<NoOption> {
 
-	public RandomBackTranslation(InputStream inputstream, PrintStream output, NoOption option) {
+	public RandomBackTranslationCommand(InputStream inputstream, PrintStream output, NoOption option) {
 		
 		super(inputstream, output, option);
 

@@ -18,8 +18,12 @@ import cmdGA.SingleOption;
 public class FilterSequenceContainingCommand extends FilterCommand<SingleOption> {
 
 	public FilterSequenceContainingCommand(InputStream inputstream, PrintStream output, SingleOption option, NoOption invertFiler) {
+
 		super(inputstream, output, option, invertFiler);
-		
+	
+	}
+
+	public void getFilter() {
 		String value = (String) this.getOption().getValue();
 		
 		if (value!=null) {
@@ -30,7 +34,6 @@ public class FilterSequenceContainingCommand extends FilterCommand<SingleOption>
 			
 			this.filter = null;
 		}
-		
 	}
 
 }

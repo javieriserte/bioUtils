@@ -20,7 +20,10 @@ public class FilterSizeGrEqThanCommand extends FilterCommand<SingleOption> {
 	public FilterSizeGrEqThanCommand(InputStream inputstream, PrintStream output, SingleOption option, NoOption invertFiler) {
 		
 		super(inputstream, output, option, invertFiler);
+	
+	}
 
+	public void getFilter() {
 		Integer value = (Integer) this.getOption().getValue();
 		
 		if (value!=null) {
@@ -35,7 +38,6 @@ public class FilterSizeGrEqThanCommand extends FilterCommand<SingleOption> {
 			// TODO create a neutral Filter that do not eliminates anything.
 			
 		}
-		
 	}
 	
 }

@@ -14,9 +14,9 @@ import fileformats.fastaIO.Pair;
  * @author javier Iserte
  *
  */
-public class LengthsOption extends FastaCommand<NoOption> {
+public class LengthsCommand extends FastaCommand<NoOption> {
 
-	public LengthsOption(InputStream inputstream, PrintStream output, NoOption option) {
+	public LengthsCommand(InputStream inputstream, PrintStream output, NoOption option) {
 		
 		super(inputstream, output, option);
 		
