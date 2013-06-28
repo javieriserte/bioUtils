@@ -25,7 +25,7 @@ public class RemoveGappedRowsCommand extends FastaCommand<NoOption> {
 		
 		List<String> results = new ArrayList<String>();
 				
-		seqs = rgr.removeGappedRows(seqs);
+		seqs = rgr.removeAllGapRows(seqs);
 		
 		for (Pair<String, String> pair : seqs) {
 			

@@ -6,6 +6,12 @@ import java.util.List;
 
 import fileformats.fastaIO.Pair;
 
+/**
+ * Remove sequences that olny contains gaps from an alignment
+ * 
+ * @author javier
+ *
+ */
 public class RemoveGappedRows {
 
 	//////////////////////
@@ -14,7 +20,7 @@ public class RemoveGappedRows {
 
 	//////////////////////////
 	// Public Class Interface
-	public List<Pair<String,String>> removeGappedRows(List<Pair<String,String>> align ) {
+	public List<Pair<String,String>> removeAllGapRows(List<Pair<String,String>> align ) {
 
 		List<Integer> toRemove = new ArrayList<Integer>();
 		
