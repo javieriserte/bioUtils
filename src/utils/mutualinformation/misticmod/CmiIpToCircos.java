@@ -1,15 +1,21 @@
 package utils.mutualinformation.misticmod;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import utils.mutualinformation.misticmod.InterProteinCumulativeMIMatrix.Normalizer;
+
 import cmdGA.MultipleOption;
+import cmdGA.NoOption;
 import cmdGA.Parser;
 import cmdGA.SingleOption;
 import cmdGA.exceptions.IncorrectParameterTypeException;
@@ -32,11 +38,17 @@ public class CmiIpToCircos {
 		
 		MultipleOption lengthsOpt = new MultipleOption(parser, null, "-lengths", ',', IntegerParameter.getParameter());
 		
-		SingleOption outOpt = new SingleOption(parser, "", "-prefix", StringParameter.getParameter()); 
+		SingleOption outOpt = new SingleOption(parser, "", "-prefix", StringParameter.getParameter());
+		
+		NoOption countAllPairsOpt = new NoOption(parser, "-countall");
+		
+		SingleOption pngDirOpt=  new SingleOption(parser, ".", "-pngdir", StringParameter.getParameter());
 		
 		parser.parseEx(args);
 		
 		String outPrefix = (String)outOpt.getValue();
+		
+		String pngDir = (String) pngDirOpt.getValue();
 
 		InterProteinCumulativeMIMatrix ipcm = new InterProteinCumulativeMIMatrix();
 
@@ -46,7 +58,9 @@ public class CmiIpToCircos {
 		
 		ipcm.assignProteinNumber(lengths);
 		
-		Double[][] cmi_inter = ipcm.calculateCMIInter(lengths.length, lengths);
+		Normalizer normalizer = countAllPairsOpt.isPresent()?(ipcm.new NormalizeWithAll(lengths)):(ipcm.new NormalizeWithPositives(lengths.length, ipcm.data, lengths));
+		
+		Double[][] cmi_inter = ipcm.calculateCMIInter(lengths.length, lengths, normalizer, ipcm.data);
 		
 		CmiIpToCircos citc = new CmiIpToCircos();
 		
@@ -56,9 +70,9 @@ public class CmiIpToCircos {
 		
 		citc.generateLinksFile(outPrefix, cmi_inter, chromosomeNames);
 		
+		citc.generateConfigFile(outPrefix+".conf", outPrefix+".kario", outPrefix+".png", outPrefix+".links", pngDir);
+		
 	}
-	
-	
 
 	private void generateLinksFile(String outPrefix, Double[][] cmi_inter, List<String> chromosomeNames) {
 
@@ -192,8 +206,6 @@ public class CmiIpToCircos {
 		
 	}
 
-
-
 	private List<String> getChromosomeNames(int length) {
 		
 		List<String> results = new ArrayList<String>();
@@ -205,6 +217,58 @@ public class CmiIpToCircos {
 		}
 		
 		return results;
+		
+	}
+	
+	private void generateConfigFile(String outfile,String kariotype, String image, String links, String dir) {
+		
+		try {
+			
+			PrintStream out = new PrintStream(new File(outfile));
+			
+			BufferedReader a = new BufferedReader( new InputStreamReader( this.getClass().getResourceAsStream("circos.conf.template")));
+			
+			String l = null;
+		
+			while ((l=a.readLine())!=null) {
+
+				if (l.contains("#KARIOFILE#")) {
+					
+					l = l.replaceAll("#KARIOFILE#", kariotype);
+					
+				} else 
+					
+				if (l.contains("#DIR#")) {
+						
+					l = l.replaceAll("#DIR#", dir);
+						
+				} else 
+
+					if (l.contains("#IMAGEFILE#")) {
+					
+				l = l.replaceAll("#IMAGEFILE#", image);
+					
+				} else 
+				
+				if (l.contains("#LINKSFILE")) {
+					
+					l = l.replaceAll("#LINKSFILE#", links);
+					
+				}
+				
+				out.println(l);
+				
+			}
+			
+			out.flush();
+			
+			out.close();
+			
+		} catch (IOException e) {
+			
+			System.err.println("There was an error writing the output file:" + e.getMessage());
+			
+		}
 		
 	}
 

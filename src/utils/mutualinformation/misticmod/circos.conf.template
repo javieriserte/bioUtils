@@ -1,0 +1,78 @@
+karyotype = #KARIOFILE#
+
+<image>
+file  = #IMAGEFILE#
+dir   = #DIR#
+png   = yes
+svg   = no
+radius         = 1500p
+angle_offset      = -90
+auto_alpha_colors = yes
+auto_alpha_steps  = 5
+background = white
+</image>
+
+<<include etc/colors_fonts_patterns.conf>>
+<<include etc/housekeeping.conf>>
+
+<ideogram>
+
+<spacing>
+default = 0.01r
+</spacing>
+
+radius    = 0.9r
+thickness = 50p
+fill      = yes
+
+show_label = yes
+label_with_tag = yes
+label_font     = bold
+label_radius   = 1.03r
+label_center   = yes
+label_size     = 36p
+label_color    = black
+label_parallel = true
+label_case     = lower 
+
+show_bands = yes
+fill_bands = yes
+band_transparency = 5
+band_stroke_thickness = 5
+band_stroke_color = white
+
+</ideogram>
+
+<colors>
+chr0* = greys-4-seq-3
+chr1* = blue
+chr2* = green
+chr3* = red
+chr4* = white
+chr5* = grey
+chr6* = yellow
+chr7* = orange
+chr8* = purple
+</colors>
+
+<links>
+<link>
+ribbon        = yes
+flat          = yes
+file          = #LINKSFILE#
+radius        = 1r - 50p
+bezier_radius = 0.05r
+show          = yes
+color         = 255, 100, 100
+thickness     = 5
+<rules>
+<rule>
+condition = 1
+show = yes
+color = eval(my $lightness = (50-var(size1))*3+100; "255, $lightness, $lightness, 0.1")
+stroke_color = eval(my $gray = (50-var(size1))*2+50; "$gray, $gray , $gray, 0.1")
+stroke_thickness = eval(my $thick = var(size1)/50 ; $thick = $thick * 5; "$thick")
+</rule>
+</rules>
+</link>
+</links>

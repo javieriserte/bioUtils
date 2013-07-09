@@ -21,7 +21,7 @@ public class CircosChromosome {
 	@Override
 	public String toString() {
 		
-		return "chr - " + id + " " +label + " " + String.valueOf(this.start) + String.valueOf(this.end) + this.color;
+		return "chr - " + id + " " +label + " " + String.valueOf(this.start) + " " +String.valueOf(this.end) +" " + this.color;
 		
 	}
 	

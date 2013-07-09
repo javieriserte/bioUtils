@@ -6,9 +6,11 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import cmdGA.MultipleOption;
+import cmdGA.NoOption;
 import cmdGA.Parser;
 import cmdGA.SingleOption;
 import cmdGA.exceptions.IncorrectParameterTypeException;
@@ -20,10 +22,6 @@ public class InterProteinCumulativeMIMatrix {
 
 	List<MI_PositionWithProtein> data;
 	
-	/**
-	 * @param args
-	 * @throws IncorrectParameterTypeException 
-	 */
 	public static void main(String[] args) throws IncorrectParameterTypeException {
 
 		Parser parser = new Parser();
@@ -34,6 +32,8 @@ public class InterProteinCumulativeMIMatrix {
 		
 		MultipleOption lengthsOpt = new MultipleOption(parser, null, "-lengths", ',', IntegerParameter.getParameter());
 		
+		NoOption countAllPairsOpt = new NoOption(parser, "-countall");
+		
 		parser.parseEx(args);
 
 		InterProteinCumulativeMIMatrix ipcm = new InterProteinCumulativeMIMatrix();
@@ -43,8 +43,10 @@ public class InterProteinCumulativeMIMatrix {
 		ipcm.readMiData((InputStream) inOpt.getValue());
 		
 		ipcm.assignProteinNumber(lengths);
+
+		Normalizer normalizer = countAllPairsOpt.isPresent()?(ipcm.new NormalizeWithAll(lengths)):(ipcm.new NormalizeWithPositives(lengths.length, ipcm.data, lengths));
 		
-		Double[][] cmi_inter = ipcm.calculateCMIInter(lengths.length, lengths);
+		Double[][] cmi_inter = ipcm.calculateCMIInter(lengths.length, lengths,normalizer, ipcm.data);
 		
 		PrintStream out = (PrintStream)outOpt.getValue();
 		
@@ -59,7 +61,7 @@ public class InterProteinCumulativeMIMatrix {
 	
 	
 	/***
-	 * export CMI interportein data.
+	 * export CMI inter-protein data.
 	 * Prints one line for protein-protein CMI.
 	 * And shows the protein number for each protein and CMI, separated by a tab.
 	 * 
@@ -82,35 +84,27 @@ public class InterProteinCumulativeMIMatrix {
 
 
 
-	public Double[][] calculateCMIInter(int length, Integer[] lengths) {
+	public Double[][] calculateCMIInter(int length, Integer[] lengths, Normalizer normalizer, List<MI_PositionWithProtein> data) {
 		
-		Double[][] results = new Double[length][length];
+		Double[][] results   = new Double[length][length];
 		
-		for (int i =0 ; i< length ;i ++) {
-			
-			for (int j=0; j<length ;j++) {
-				
-				results[i][j] = 0d;
-				
-			}
+		for (int i=0; i<results.length;i++) {
+		
+			Arrays.fill(results[i], 0d); // Initializes Array
 			
 		}
 
-		for (MI_PositionWithProtein pos : this.data) {
-			
-			double cv = pos.mi>0?pos.mi:0;
-			
-			results[pos.prot1][pos.prot2] = results[pos.prot1][pos.prot2] + cv ;
-			
-			results[pos.prot2][pos.prot1]= results[pos.prot2][pos.prot1]+cv;
-			
-		}
+		results = sumMI(results,data); // Sum MI
 		
-		for(int i=0;i<length;i++) {
+		//////////////////////////////////
+		// Normalize sum
+		for(int i=0 ; i<length ; i++) {
 			
 			for(int j=0; j<length ; j++) {
 
-				results[i][j] = results[i][j] / (lengths[i] * lengths[j]); 
+				double denominator = normalizer.denominator(i,j);
+				
+				results[i][j] = (denominator==0)?0:results[i][j] / denominator; 
 				
 			}
 			
@@ -118,6 +112,30 @@ public class InterProteinCumulativeMIMatrix {
 		
 		return results;
 		
+	}
+
+
+
+	/***
+	 * 
+	 * Fill an array with MI values
+	 * 
+	 * @param results
+	 * @return
+	 */
+	public Double[][] sumMI(Double[][] results, List<MI_PositionWithProtein> data) {
+		
+		for (MI_PositionWithProtein pos : data) {
+			
+			double cv = pos.mi>0?pos.mi:0;
+
+			results[pos.prot1][pos.prot2] = results[pos.prot1][pos.prot2] + cv ;
+			
+			results[pos.prot2][pos.prot1]= results[pos.prot2][pos.prot1] + cv;
+
+		}
+		
+		return results;
 	}
 
 
@@ -151,7 +169,7 @@ public class InterProteinCumulativeMIMatrix {
 			
 			pos2 = pos2 - lengths[i];
 			
-			if (pos2<0) return i;
+			if (pos2<=0) return i;
 			
 		}
 		
@@ -210,7 +228,94 @@ public class InterProteinCumulativeMIMatrix {
 			
 		}
 		
+	}
+	
+	///////////////////////
+	// Helper Classes
+	abstract class Normalizer { 
+		
+		public abstract double  denominator(int row, int column); 		
 		
 	}
+	/**
+	 * Normalize the sum of MI values among two proteins with all pairs.
+	 * This normalization includes pairs with MI = -999.99.
+	 * 
+	 * @author javier iserte
+	 *
+	 */
+	class NormalizeWithAll extends Normalizer {
+
+		Integer[] lengths;
+		
+		public NormalizeWithAll(Integer[] lengths) {
+			super();
+			this.lengths = lengths;
+		}
+
+		@Override
+		public double denominator(int row, int column) {
+			
+			return (lengths[row] * lengths[column]);
+			
+		}
+		
+	}
+	
+	/**
+	 * Normalize the sum of MI values among two proteins with only positive pairs.
+	 * Discarding all pairs with MI = -999.99 marked by others programs.
+	 * 
+	 * @author javier iserte
+	 *
+	 */
+	class NormalizeWithPositives extends Normalizer {
+	
+		/////////////////////////////////
+		// Private Instance Variables
+		private Double[][] normalize; // Normalize counts the number of links between every pair of proteins 
+		
+		//////////////////////////
+		// Constructor
+		public NormalizeWithPositives(int length, List<MI_PositionWithProtein> data, Integer[] lengths) {
+			
+			//////////////////////////////
+			// Initialize internal state
+			normalize = new Double[length][length];
+			
+			for (int i =0 ; i < length ;i ++) {
+				
+				for (int j=0; j < length ;j++) {
+					
+					normalize[i][j] = 0d;
+					
+				}
+				
+			}
+			
+			////////////////////////////////////
+			// Counts links with MI values > 0 
+			/// (usually MI>0 implies MI>6.5 due to previous filters)
+			for (MI_PositionWithProtein pos : data) {
+				
+				double nv = pos.mi>0?1:0;
+				
+				normalize[pos.prot1][pos.prot2] = normalize[pos.prot1][pos.prot2] + nv ;
+				
+				normalize[pos.prot2][pos.prot1]= normalize[pos.prot2][pos.prot1] + nv;
+				
+			}
+			
+		}
+
+		@Override
+		public double denominator(int row, int column) {
+			
+			return normalize[row][column];
+			
+		}
+		
+	}
+	
 
 }
