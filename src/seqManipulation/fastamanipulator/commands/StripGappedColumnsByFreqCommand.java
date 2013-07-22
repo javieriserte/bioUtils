@@ -62,7 +62,10 @@ public class StripGappedColumnsByFreqCommand extends FastaCommand<SingleOption> 
 				ref = new PrintStream(outreference);
 			}
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			
+			System.err.println("There was an error trying to open reference file: " +e.getMessage() );
+
+			System.exit(1);
 			
 		}
 		
@@ -113,7 +116,11 @@ public class StripGappedColumnsByFreqCommand extends FastaCommand<SingleOption> 
 			
 		}
 		
-		ref.close();
+		if (ref!=null) {
+		
+			ref.close();
+		
+		}
 		
 		return results;		
 	}

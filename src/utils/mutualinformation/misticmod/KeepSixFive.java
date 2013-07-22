@@ -1,8 +1,10 @@
 package utils.mutualinformation.misticmod;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.PrintStream;
-import java.util.List;
 
 import cmdGA.Parser;
 import cmdGA.SingleOption;
@@ -10,21 +12,18 @@ import cmdGA.exceptions.IncorrectParameterTypeException;
 import cmdGA.parameterType.InputStreamParameter;
 import cmdGA.parameterType.PrintStreamParameter;
 
-public class KeepSixFive extends FilterMIData {
+public class KeepSixFive {
 
-	@Override
-	public void filter(PrintStream out, List<Double> values, List<MI_Position> MI_Data_Lines) {
+	public MI_Position filter(MI_Position pos) {
 
-		for (MI_Position pos : MI_Data_Lines) {
-			
-			if (pos.mi < 6.5) {
-	
-				pos.mi = -999.99d;
-				
-			}
-			
-			out.println(pos);
+
+		if (pos.mi < 6.5) {
+		
+			pos.mi = -999.99d;
+
 		}
+		
+		return pos;
 
 	}
 
@@ -45,22 +44,30 @@ public class KeepSixFive extends FilterMIData {
 			
 		} catch (IncorrectParameterTypeException e) {
 			
-			e.printStackTrace();
+			System.err.println("There was an parsing command line:" + e.getMessage());
+			
+			System.exit(1);
 			
 		}
 
+		BufferedReader in = new BufferedReader(new InputStreamReader((InputStream) inOpt.getValue()));
 		
+		PrintStream out = (PrintStream) outopt.getValue();
+
 		KeepSixFive ksf = new KeepSixFive();
 		
-		FilterMIData.filter = ksf;
+		String currentline =null;
 		
-		filter.inOpt = inOpt;
+		while ((currentline = in.readLine())!=null) {
+			
+			MI_Position pos = MI_Position.valueOf(currentline);
+			
+			pos = ksf.filter(pos);
+			
+			out.println(pos);
+			
+		}
 		
-		filter.outopt = outopt;
-		
-		ksf.main();
-		
-
 	}
 
 }

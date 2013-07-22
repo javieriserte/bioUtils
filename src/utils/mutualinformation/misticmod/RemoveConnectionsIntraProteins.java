@@ -3,10 +3,9 @@ package utils.mutualinformation.misticmod;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.PrintStream;
-import java.io.StringReader;
 
-import removecomments.RemoveComments;
 import cmdGA.MultipleOption;
 import cmdGA.Parser;
 import cmdGA.SingleOption;
@@ -45,9 +44,9 @@ public class RemoveConnectionsIntraProteins {
 	
 		PrintStream out = (PrintStream) outopt.getValue();
 
-		String nocomments = (new RemoveComments()).uncomment((InputStream) inOpt.getValue());
+//		String nocomments = (new RemoveComments()).uncomment((InputStream) inOpt.getValue());
 		
-		BufferedReader in = new BufferedReader(new StringReader(nocomments));
+		BufferedReader in = new UncommenterBufferedReader(new InputStreamReader((InputStream) inOpt.getValue()));
 		
 		String currentLine = null;
 		
@@ -64,11 +63,11 @@ public class RemoveConnectionsIntraProteins {
 				
 				if (p_1!=p_2) {
 					
-					out.println(currentLine + "\t");
+					out.println(currentLine);
 					
 				} else {
 					
-					out.println(data[0]+"\t"+data[1]+"\t"+data[2]+"\t"+data[3]+"\t"+"-999");
+					out.println(data[0]+"\t"+data[1]+"\t"+data[2]+"\t"+data[3]+"\t"+"-999.99");
 					
 				}
 				

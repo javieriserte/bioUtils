@@ -116,4 +116,14 @@ public class GapToolbox {
 		
 	}
 	
+	/**
+	 * Removes gaps from a sequence
+	 * @return
+	 */
+	public String getUngappedSequence(String sequence) {
+		
+		return sequence.replaceAll("-", "");
+		
+	}
+	
 }

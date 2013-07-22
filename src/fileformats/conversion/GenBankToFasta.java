@@ -70,7 +70,7 @@ public class GenBankToFasta {
 				
 				for (GenBankRecord genBankRecord : a) {
 					out.println(">" + genBankRecord.getHeader().getDefinition());
-					out.println(genBankRecord.getHeader());
+					out.println(genBankRecord.getOrigin().getSequence());
 
 				}
 				
