@@ -11,6 +11,7 @@ import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
+import javax.imageio.stream.ImageOutputStream;
 
 import utils.ConservationImage.color.ColoringStrategy;
 import utils.ConservationImage.color.RedBlueColorringStrategy;
@@ -72,26 +73,22 @@ public class ConservationImageGenerator {
 		
 		FileOutputStream out = new FileOutputStream(outfile);
 		
-		ImageWriter imagewriter = ImageIO.getImageWritersByFormatName("png").next();
+		ImageWriter imagewriter = ImageIO.getImageWritersByFormatName("jpg").next();
 		
 		ImageWriteParam writerparam = imagewriter.getDefaultWriteParam();
 		
 		writerparam.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
 		
 		writerparam.setCompressionQuality(1.0f);
-	
-		imagewriter.setOutput(out);
+		
+		ImageOutputStream ios = ImageIO.createImageOutputStream(out);
+		
+		imagewriter.setOutput(ios);
 		
 		imagewriter.write(null, new IIOImage(bi, null, null), writerparam);
 		
 		imagewriter.dispose();
-//		ImageIO.write(bi, "jpeg", out);
-		
-//		JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(out);
-//		JPEGEncodeParam param = encoder.getDefaultJPEGEncodeParam(bi);
-//		param.setQuality(1.0f, false);
-//		encoder.setJPEGEncodeParam(param);
-//		encoder.encode(bi);
+
 	}
 		
 	///////////////////

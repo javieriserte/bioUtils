@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import seqManipulation.fastamanipulator.commands.AppendCommand;
+import seqManipulation.fastamanipulator.commands.AppendManyCommand;
 import seqManipulation.fastamanipulator.commands.CalculateMICommand;
 import seqManipulation.fastamanipulator.commands.ComplementaryCommand;
 import seqManipulation.fastamanipulator.commands.ConcatenateCommand;
@@ -35,6 +36,7 @@ import seqManipulation.fastamanipulator.commands.PickRandomCommand;
 import seqManipulation.fastamanipulator.commands.RandomBackTranslationCommand;
 import seqManipulation.fastamanipulator.commands.ReconstructDottedAlignmentCommand;
 import seqManipulation.fastamanipulator.commands.RemPositionsCommand;
+import seqManipulation.fastamanipulator.commands.RemoveCommand;
 import seqManipulation.fastamanipulator.commands.RemoveGappedRowsCommand;
 import seqManipulation.fastamanipulator.commands.ReplaceUncommonChars;
 import seqManipulation.fastamanipulator.commands.SliceCommand;
@@ -286,10 +288,14 @@ public class FastaAlignmentManipulator {
 		uniqueCommands.add(new CountGapsInRowCommand(null, null, new SingleOption(parser,1, "-countGapsIn", IntegerParameter.getParameter())));
 //		SingleOption countGapsInRowOpt = new SingleOption(parser,1, "-countGapsIn", IntegerParameter.getParameter());
 //		uniques.add(countGapsInRowOpt);
+
+		uniqueCommands.add(new AppendManyCommand(null, null, new MultipleOption(parser,1, "-appendMany", ',', InFileParameter.getParameter())));
 		
 		uniqueCommands.add(new PadWithGapCommand(null, null, new NoOption(parser, "-pad")));
 		
 		uniqueCommands.add(new ReplaceUncommonChars(null, null, new MultipleOption(parser, null, "-repUncommon", ',', StringParameter.getParameter())));
+		
+		uniqueCommands.add(new RemoveCommand(null,null,new MultipleOption(parser,null, "-remove", ',',IntegerParameter.getParameter())));
 
 		// Step Three : Try to parse the command line
 		

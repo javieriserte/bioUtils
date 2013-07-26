@@ -9,7 +9,8 @@ import cmdGA.NoOption;
 import fileformats.fastaIO.Pair;
 
 /**
- * Command to get the descriptions of a fasta file
+ * Command to get the descriptions of a fasta file with its row number.
+ * The row number starts with one.
  * 
  * @author javier Iserte
  */
@@ -30,7 +31,7 @@ public class DefinitionsCommand extends FastaCommand<NoOption> {
 			
 			int index = pairs.indexOf(pair);
 			
-			results.add(index + ": " + pair.getFirst());
+			results.add((index+1) + "\t" + pair.getFirst());
 			
 		}
 	

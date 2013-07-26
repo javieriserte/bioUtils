@@ -58,7 +58,7 @@ public class LayoutParameter extends ParameterType {
 				
 			}
 			
-			if (renderer.equals("XYPLOY")) {
+			if (renderer.equals("XYPLOT")) {
 				return parse_xyplot(in);
 			} else 
 			if (renderer.equals("LINES")) {
