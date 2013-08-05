@@ -6,6 +6,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintStream;
+
 import javax.imageio.IIOException;
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
@@ -32,6 +34,7 @@ import cmdGA.exceptions.IncorrectParameterTypeException;
 import cmdGA.parameterType.InputStreamParameter;
 import cmdGA.parameterType.IntegerParameter;
 import cmdGA.parameterType.OutFileParameter;
+import cmdGA.parameterType.PrintStreamParameter;
 
 public class ConservationImageGenerator {
 
@@ -133,7 +136,8 @@ public class ConservationImageGenerator {
 		SingleOption renderOpt = new SingleOption(parser, new XYPlotRenderer(),"-renderer",RendererParameter.getParameter());
 		SingleOption layoutOpt = new SingleOption(parser, null, "-layout", LayoutParameter.getParameter());
 		NoOption countGapOpt =  new NoOption(parser, "-countgap");
-		
+		NoOption noDrawOpt = new NoOption(parser, "-noDraw");
+		SingleOption exportValuesOpt = new SingleOption(parser, System.out, "-export", PrintStreamParameter.getParameter());
 		
 		
 		// STEP THREE
@@ -148,8 +152,9 @@ public class ConservationImageGenerator {
 		}
 		
 			
-		if (outfile.getValue() == null) {
+		if (outfile.getValue() == null && !noDrawOpt.isPresent()) {
 			System.err.println("No outfile was given.\n.");
+			System.exit(1);
 		}
 		
 		// Program 
@@ -181,22 +186,45 @@ public class ConservationImageGenerator {
 		
 		double[] plotdata = profiler.getdata(invalue, manager, gap);
 		
-		cig.setData(plotdata);
+		if (exportValuesOpt.isPresent()) {
+			
+			PrintStream out = (PrintStream) exportValuesOpt.getValue();
+			
+			for (double d : plotdata) {
+				
+				out.println(d);
+				
+			}
+			
+		}
 		
-		try {   
-			Renderer renderer = (Renderer) renderOpt.getValue();
+		if (!noDrawOpt.isPresent()) {
+		
+			cig.setData(plotdata);
 			
-			DrawingLayout layout = (DrawingLayout) layoutOpt.getValue();
-			
-			if (layout ==null) { layout = renderer.getDefaultLayout() ; }
-			
-			renderer.setLayout(layout);
-			
-			cig.printImage((File)outfile.getValue(), new RedBlueColorringStrategy(),(Integer) windowSize.getValue(),renderer );   		
-			} catch (IIOException e) { System.out.println("Hubo Un error con el formato de la imagen."); 
-				e.printStackTrace();  
-			} catch (IOException e) {          System.out.println("Hubo Un error con el archivo de salida.");
-				e.printStackTrace(); }
+			try {   
+				Renderer renderer = (Renderer) renderOpt.getValue();
+				
+				DrawingLayout layout = (DrawingLayout) layoutOpt.getValue();
+				
+				if (layout ==null) { layout = renderer.getDefaultLayout() ; }
+				
+				renderer.setLayout(layout);
+				
+				cig.printImage((File)outfile.getValue(), new RedBlueColorringStrategy(),(Integer) windowSize.getValue(),renderer );   
+				
+				} catch (IIOException e) {
+					
+					System.err.println("Hubo Un error con el formato de la imagen: "+ e.getMessage());
+					
+				} catch (IOException e) {
+					
+					System.out.println("Hubo Un error con el archivo de salida: "+e.getMessage());
+					
+				}
+		
+		}
+	
 	}
 
 }

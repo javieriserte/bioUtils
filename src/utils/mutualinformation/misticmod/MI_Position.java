@@ -8,11 +8,11 @@ package utils.mutualinformation.misticmod;
 public class MI_Position {
 	int pos1;
 	int pos2;
-	String aa1;
-	String aa2;
+	char aa1;
+	char aa2;
 	Double mi;
 
-	public MI_Position(int pos1, int pos2, String aa1, String aa2, Double mi) {
+	public MI_Position(int pos1, int pos2, char aa1, char aa2, Double mi) {
 		super();
 		this.pos1 = pos1;
 		this.pos2 = pos2;
@@ -37,7 +37,7 @@ public class MI_Position {
 		
 		String[] data = positionLine.split("\t");
 		
-		return new MI_Position(Integer.valueOf(data[0]), Integer.valueOf(data[2]), data[1], data[3], Double.valueOf(data[4]));
+		return new MI_Position(Integer.valueOf(data[0]), Integer.valueOf(data[2]), data[1].charAt(0), data[3].charAt(0), Double.valueOf(data[4]));
 		
 		
 	}

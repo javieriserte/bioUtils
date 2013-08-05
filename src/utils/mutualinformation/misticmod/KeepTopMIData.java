@@ -46,7 +46,6 @@ public static void main(String[] args ) throws IOException{
 		e.printStackTrace();
 		
 	}
-
 	
 	KeepTopMIData ktm = new KeepTopMIData();
 	
@@ -77,13 +76,15 @@ public void filter(PrintStream out, List<Double> values, List<MI_Position> MI_Da
 		Comparator<Double> comparator = new Comparator<Double>() {
 	
 			@Override
-			public int compare(Double o1, Double o2) {
+			public int compare(Double val1, Double val2) {
 				
-				return (int) (o2-o1);
+				return (int) ((val2-val1)/ Math.abs(val2-val1));
 				
 			}
 			
 		};
+		
+//		Collections.sort(values);
 		
 		Collections.sort(values, comparator);
 		

@@ -6,7 +6,7 @@ public class MI_PositionWithProtein extends MI_Position {
 
 	int prot2;
 	
-	public MI_PositionWithProtein(int pos1, int pos2, String aa1, String aa2, 	Double mi) {
+	public MI_PositionWithProtein(int pos1, int pos2, char aa1, char aa2, 	Double mi) {
 
 		super(pos1, pos2, aa1, aa2, mi);
 		

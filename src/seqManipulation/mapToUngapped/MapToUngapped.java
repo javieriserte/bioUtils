@@ -48,7 +48,7 @@ public class MapToUngapped {
 		
 		for (Integer integer : set) {
 
-			out.println(integer + "\t" + map.get(integer));
+			out.println((integer +1) + "\t" + (map.get(integer)+1));
 			
 		}
 		

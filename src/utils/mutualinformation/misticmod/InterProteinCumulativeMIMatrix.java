@@ -34,8 +34,22 @@ public class InterProteinCumulativeMIMatrix {
 		
 		NoOption countAllPairsOpt = new NoOption(parser, "-countall");
 		
+		NoOption helpOpt = new NoOption(parser, "-help");
+		
 		parser.parseEx(args);
-
+		
+		PrintStream out = (PrintStream)outOpt.getValue();
+		
+		boolean help = helpOpt.isPresent();
+		
+		if (help || !lengthsOpt.isPresent()) {
+			
+			printHelp(out);
+			
+			System.exit(1);
+			
+		}
+		
 		InterProteinCumulativeMIMatrix ipcm = new InterProteinCumulativeMIMatrix();
 
 		Integer[] lengths = getLengths(lengthsOpt);
@@ -48,13 +62,21 @@ public class InterProteinCumulativeMIMatrix {
 		
 		Double[][] cmi_inter = ipcm.calculateCMIInter(lengths.length, lengths,normalizer, ipcm.data);
 		
-		PrintStream out = (PrintStream)outOpt.getValue();
-		
 		export(out,cmi_inter);
 
 		out.flush();
 		
 		out.close();
+		
+	}
+	
+	private static void printHelp(PrintStream out) {
+		
+		out.println("Options:");
+		out.println("  -infile         : Input Data of MI values of MISTIC");
+		out.println("  -outfile        : Output file");
+		out.println("  -countall       : Count all pairs in MI-IP normalization");
+		out.println("  -lengths        : Size of proteins");
 		
 	}
 	
@@ -219,7 +241,7 @@ public class InterProteinCumulativeMIMatrix {
 			
 				String[] data = currentLine.split("\t");
 				
-				this.data.add(new MI_PositionWithProtein(Integer.valueOf(data[0]), Integer.valueOf(data[2]), data[1], data[3], Double.valueOf(data[4])));
+				this.data.add(new MI_PositionWithProtein(Integer.valueOf(data[0]), Integer.valueOf(data[2]), data[1].charAt(0), data[3].charAt(0), Double.valueOf(data[4])));
 				
 			}
 		} catch (IOException e) {

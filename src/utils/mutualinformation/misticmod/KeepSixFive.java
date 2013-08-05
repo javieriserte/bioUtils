@@ -9,15 +9,26 @@ import java.io.PrintStream;
 import cmdGA.Parser;
 import cmdGA.SingleOption;
 import cmdGA.exceptions.IncorrectParameterTypeException;
+import cmdGA.parameterType.DoubleParameter;
 import cmdGA.parameterType.InputStreamParameter;
 import cmdGA.parameterType.PrintStreamParameter;
 
 public class KeepSixFive {
+	
+	public static final double DEFAULT_CUT_OFF = 6.5; 
+	
+	private double cut_off;
+
+
+	public KeepSixFive(double cut_off) {
+		super();
+		this.cut_off = cut_off;
+	}
 
 	public MI_Position filter(MI_Position pos) {
 
 
-		if (pos.mi < 6.5) {
+		if (pos.mi < this.cut_off) {
 		
 			pos.mi = -999.99d;
 
@@ -38,6 +49,8 @@ public class KeepSixFive {
 		
 		SingleOption outopt = new SingleOption(parser, System.out, "-outfile", PrintStreamParameter.getParameter());
 		
+		SingleOption ctOpt = new SingleOption(parser, DEFAULT_CUT_OFF, "-c", DoubleParameter.getParameter());
+		
 		try {
 			
 			parser.parseEx(args);
@@ -53,8 +66,10 @@ public class KeepSixFive {
 		BufferedReader in = new BufferedReader(new InputStreamReader((InputStream) inOpt.getValue()));
 		
 		PrintStream out = (PrintStream) outopt.getValue();
-
-		KeepSixFive ksf = new KeepSixFive();
+		
+		double ct = (Double) ctOpt.getValue();
+		
+		KeepSixFive ksf = new KeepSixFive(ct);
 		
 		String currentline =null;
 		

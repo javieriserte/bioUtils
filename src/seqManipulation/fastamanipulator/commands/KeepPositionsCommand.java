@@ -14,7 +14,7 @@ import fileformats.fastaIO.Pair;
 
 /**
  * Keeps a set of columns from a MSA and removes the rest.
- * 
+ * The first column is number 1. 
  * 
  * @author javier
  *
@@ -45,7 +45,7 @@ public class KeepPositionsCommand extends FastaCommand<SingleOption> {
 
 				while ((line = br.readLine())!=null) {
 							
-					positionsToKeep.add(Integer.valueOf(line)); 
+					positionsToKeep.add(Integer.valueOf(line)-1); 
 							
 				}
 				
