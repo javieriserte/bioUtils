@@ -17,23 +17,23 @@ public abstract class FilterCommand<Op extends Option> extends FastaCommand<Op> 
 	FilterSequence filter;
 	NoOption invertFilter;
 	
-	public FilterCommand(InputStream inputstream, PrintStream output, Op option, NoOption invertFiler) {
+	public FilterCommand(InputStream inputstream, PrintStream output, Op option, NoOption invertFilter) {
 		super(inputstream, output, option);
 		
-		this.invertFilter = invertFiler;
+		this.invertFilter = invertFilter;
 		
 	}
 
 	@Override
 	protected List<String> performAction() {
 		
+		this.getFilter();
+		
 		if (invertFilter.isPresent()) filter = new FilterSequenceBooleanNOT(filter);
 		
 		List<String> results = new ArrayList<String>(); 
 		
 		List<Pair<String, String>> seqs = this.getSequences();
-		
-		this.getFilter();
 		
 		for (Pair<String, String> pair : seqs) {
 			
