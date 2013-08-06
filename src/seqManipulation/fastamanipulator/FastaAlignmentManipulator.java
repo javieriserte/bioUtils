@@ -17,6 +17,7 @@ import seqManipulation.fastamanipulator.commands.DefinitionsCommand;
 import seqManipulation.fastamanipulator.commands.DegapCommand;
 import seqManipulation.fastamanipulator.commands.ExtractCommand;
 import seqManipulation.fastamanipulator.commands.FastaCommand;
+import seqManipulation.fastamanipulator.commands.FilterSequenceContainingCommand;
 import seqManipulation.fastamanipulator.commands.FilterSequenceStartingWithCommand;
 import seqManipulation.fastamanipulator.commands.FilterSizeGrEqThanCommand;
 import seqManipulation.fastamanipulator.commands.FilterSizeSmEqThanCommand;
@@ -220,7 +221,7 @@ public class FastaAlignmentManipulator {
 //		uniques.add(startsWithOpt);
 		
 		//DONE
-		uniqueCommands.add(new FilterTitleContainingCommand(null, null, new SingleOption(parser, null, "-contains", StringParameter.getParameter()), invertFilterOpt));
+		uniqueCommands.add(new FilterSequenceContainingCommand(null, null, new SingleOption(parser, null, "-contains", StringParameter.getParameter()), invertFilterOpt));
 //		SingleOption containsOpt = new SingleOption(parser, null, "-contains", StringParameter.getParameter());
 //		uniques.add(containsOpt);
 		
