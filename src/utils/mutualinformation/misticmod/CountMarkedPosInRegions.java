@@ -148,6 +148,8 @@ public class CountMarkedPosInRegions {
 		for(int pos : markedPositions) { // Iterates over each marked positions
 			
 			if (pos >= nextStop) { // Checks if the current positions falls outside the current region
+				                   // The '>' symbol implies that pos start counting in Zero, not one
+				                   // I should change this to start in one.
 				
 				currentRegion++;   // If so, updates the current region
 				

@@ -151,9 +151,9 @@ public class InterProteinCumulativeMIMatrix {
 			
 			double cv = pos.mi>0?pos.mi:0;
 
-			results[pos.prot1][pos.prot2] = results[pos.prot1][pos.prot2] + cv ;
+			results[pos.getProtein_1()][pos.getProtein_2()] = results[pos.getProtein_1()][pos.getProtein_2()] + cv ;
 			
-			results[pos.prot2][pos.prot1]= results[pos.prot2][pos.prot1] + cv;
+			results[pos.getProtein_2()][pos.getProtein_1()]= results[pos.getProtein_2()][pos.getProtein_1()] + cv;
 
 		}
 		
@@ -170,9 +170,9 @@ public class InterProteinCumulativeMIMatrix {
 		
 		for (MI_PositionWithProtein pos : this.data) {
 			
-			pos.setProt1(this.getProteinNumberFromPos(pos.pos1,lengths));
+			pos.setProtein_1(this.getProteinNumberFromPos(pos.pos1,lengths));
 			
-			pos.setProt2(this.getProteinNumberFromPos(pos.pos2,lengths));
+			pos.setProtein_2(this.getProteinNumberFromPos(pos.pos2,lengths));
 			
 		}
 		
@@ -322,9 +322,9 @@ public class InterProteinCumulativeMIMatrix {
 				
 				double nv = pos.mi>0?1:0;
 				
-				normalize[pos.prot1][pos.prot2] = normalize[pos.prot1][pos.prot2] + nv ;
+				normalize[pos.getProtein_1()][pos.getProtein_2()] = normalize[pos.getProtein_1()][pos.getProtein_2()] + nv ;
 				
-				normalize[pos.prot2][pos.prot1]= normalize[pos.prot2][pos.prot1] + nv;
+				normalize[pos.getProtein_2()][pos.getProtein_1()]= normalize[pos.getProtein_2()][pos.getProtein_1()] + nv;
 				
 			}
 			

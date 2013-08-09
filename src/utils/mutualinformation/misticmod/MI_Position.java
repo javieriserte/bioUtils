@@ -36,7 +36,7 @@ public class MI_Position {
 	public static MI_Position valueOf(String positionLine) { 
 		
 		String[] data = positionLine.split("\t");
-		
+
 		return new MI_Position(Integer.valueOf(data[0]), Integer.valueOf(data[2]), data[1].charAt(0), data[3].charAt(0), Double.valueOf(data[4]));
 		
 		

@@ -3,6 +3,7 @@ package utils.mutualinformation.misticmod;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -19,6 +20,7 @@ import cmdGA.NoOption;
 import cmdGA.Parser;
 import cmdGA.SingleOption;
 import cmdGA.exceptions.IncorrectParameterTypeException;
+import cmdGA.parameterType.InFileParameter;
 import cmdGA.parameterType.InputStreamParameter;
 import cmdGA.parameterType.IntegerParameter;
 import cmdGA.parameterType.StringParameter;
@@ -29,11 +31,16 @@ public class CmiIpToCircos {
 	 * Creates the files for creating a circos graph from CMI interprotein data
 	 * @param args
 	 * @throws IncorrectParameterTypeException 
+	 * @throws IOException 
 	 */
-	public static void main(String[] args) throws IncorrectParameterTypeException {
+	public static void main(String[] args) throws IncorrectParameterTypeException, IOException {
 
+		/////////////////////////////
+		// Create Parser
 		Parser parser = new Parser();
 		
+		/////////////////////////////
+		// Define Command line arguments
 		SingleOption inOpt = new SingleOption(parser, System.in, "-infile", InputStreamParameter.getParameter());
 		
 		MultipleOption lengthsOpt = new MultipleOption(parser, null, "-lengths", ',', IntegerParameter.getParameter());
@@ -42,19 +49,33 @@ public class CmiIpToCircos {
 		
 		NoOption countAllPairsOpt = new NoOption(parser, "-countall");
 		
+		SingleOption labelFileOpt = new SingleOption(parser, null, "-names", InFileParameter.getParameter());
+		
 		SingleOption pngDirOpt=  new SingleOption(parser, ".", "-pngdir", StringParameter.getParameter());
 		
+		/////////////////////////
+		// Parse comman line
 		parser.parseEx(args);
 		
+		/////////////////////////
+		// Get values from command line
 		String outPrefix = (String)outOpt.getValue();
 		
 		String pngDir = (String) pngDirOpt.getValue();
 
+		InputStream infile = (InputStream) inOpt.getValue();
+		
+		File labelsFile = (File) labelFileOpt.getValue();
+		
+		///////////////////////////
+		// Program 
 		InterProteinCumulativeMIMatrix ipcm = new InterProteinCumulativeMIMatrix();
 
 		Integer[] lengths = InterProteinCumulativeMIMatrix.getLengths(lengthsOpt);
 		
-		ipcm.readMiData((InputStream) inOpt.getValue());
+		List<String> labels = readLabels(labelsFile);
+		
+		ipcm.readMiData(infile);
 		
 		ipcm.assignProteinNumber(lengths);
 		
@@ -66,11 +87,40 @@ public class CmiIpToCircos {
 		
 		List<String> chromosomeNames = citc.getChromosomeNames(lengths.length);
 		
-		citc.generateKaryotypeFile(outPrefix, lengths.length, chromosomeNames);
+		citc.generateKaryotypeFile(outPrefix, lengths.length, chromosomeNames,labels);
 		
 		citc.generateLinksFile(outPrefix, cmi_inter, chromosomeNames);
 		
 		citc.generateConfigFile(outPrefix+".conf", outPrefix+".kario", outPrefix+".png", outPrefix+".links", pngDir);
+		
+	}
+
+	private static List<String> readLabels(File labelsFile) throws IOException {
+		
+		if (labelsFile==null) {
+			
+			return null;
+			
+		} else {
+			
+			List<String> results = new ArrayList<>();
+
+			BufferedReader br = new BufferedReader(new FileReader(labelsFile));
+			
+			String currentline = null;
+			
+			while((currentline=br.readLine())!=null) {
+				
+				results.add(currentline.trim());
+				
+			}
+			
+			br.close();
+			
+			return results;
+			
+		}
+		
 		
 	}
 
@@ -175,17 +225,21 @@ public class CmiIpToCircos {
 
 
 
-	private void generateKaryotypeFile(String outPrefix, int length, List<String> chromosomeNames) {
+	private void generateKaryotypeFile(String outPrefix, int length, List<String> chromosomeNames, List<String> chromosomeLabels) {
 		
 		PrintStream out = null;
 		
 		try {
 
 			out = new PrintStream(new File(outPrefix + ".kario"));
-			
-			for (String string : chromosomeNames) {
+
+			for (int i=0;i<chromosomeNames.size();i++) {
 				
-				CircosChromosome c = new CircosChromosome(string, string, 1, 100, "green");
+				String chrName = chromosomeNames.get(i);
+				
+				String chrLabel = (chromosomeLabels!=null&&i<chromosomeLabels.size())?chromosomeLabels.get(i):chrName;
+				
+				CircosChromosome c = new CircosChromosome(chrName,chrLabel , 1, 100, "green");
 				
 				out.println(c);
 				
