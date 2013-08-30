@@ -45,7 +45,6 @@ public class OnePixel {
 		
 		NoOption isprotOpt = new NoOption(parser, "-isprotein");
 		
-		
 		////////////////////////////////
 		// Parse Command Line
 		try {
@@ -66,7 +65,7 @@ public class OnePixel {
 		
 		File out = (File) outOpt.getValue();
 		
-		boolean isProtein = isprotOpt.getValue();
+		boolean isProtein = isprotOpt.isPresent();
 		
 		//////////////////////////////
 		// Checks if output is valid
