@@ -16,7 +16,7 @@ import javax.imageio.ImageWriter;
 import javax.imageio.stream.ImageOutputStream;
 
 import utils.ConservationImage.color.ColoringStrategy;
-import utils.ConservationImage.color.RedBlueColorringStrategy;
+import utils.ConservationImage.color.RedBlueColoringStrategy;
 import utils.ConservationImage.managers.CountGap;
 import utils.ConservationImage.managers.DNAManager;
 import utils.ConservationImage.managers.GapManager;
@@ -138,6 +138,7 @@ public class ConservationImageGenerator {
 		NoOption countGapOpt =  new NoOption(parser, "-countgap");
 		NoOption noDrawOpt = new NoOption(parser, "-noDraw");
 		SingleOption exportValuesOpt = new SingleOption(parser, System.out, "-export", PrintStreamParameter.getParameter());
+		SingleOption colorOpt = new SingleOption(parser, new RedBlueColoringStrategy() , "-color", ColorStrategyParameter.getParameter());
 		
 		
 		// STEP THREE
@@ -198,6 +199,8 @@ public class ConservationImageGenerator {
 			
 		}
 		
+		ColoringStrategy color = (ColoringStrategy) colorOpt.getValue();
+		
 		if (!noDrawOpt.isPresent()) {
 		
 			cig.setData(plotdata);
@@ -211,7 +214,7 @@ public class ConservationImageGenerator {
 				
 				renderer.setLayout(layout);
 				
-				cig.printImage((File)outfile.getValue(), new RedBlueColorringStrategy(),(Integer) windowSize.getValue(),renderer );   
+				cig.printImage((File)outfile.getValue(), color,(Integer) windowSize.getValue(),renderer );   
 				
 				} catch (IIOException e) {
 					
@@ -222,7 +225,7 @@ public class ConservationImageGenerator {
 					System.out.println("Hubo Un error con el archivo de salida: "+e.getMessage());
 					
 				}
-		
+			
 		}
 	
 	}

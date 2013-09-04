@@ -119,14 +119,30 @@ public class ColoredLinesRenderer implements Renderer {
 		setColorOnGraphic(g,xPos ,color.getColor(windowValue),0,lineHeight, paddingV, paddingW);
 		
 		// Process the rest of the elements
-		for (int x=windowLen;x<data.length;x++,xPos++) {
+		xPos++; 
+		
+		for (int x=windowLen-1;x<data.length;x++,xPos++) {
 			windowValue = windowValue + (data[x] - data[xPos]) / windowLen;
 			int yPos = ((xPos) / barsPerLine) * ( lineHeight + space_1 + space_2 + rulerHeight ); 
 			setColorOnGraphic(g,xPos % barsPerLine,color.getColor(windowValue),yPos,lineHeight, paddingV, paddingW);
 			
 		}
 		
+		////////////////////////////////
+		
+		// Draw Black borders
+				
 		g.setColor(Color.BLACK);
+		
+		for (int row = 0; row< ((data.length-1) / barsPerLine) + 1;row++ ) {
+			
+			int last_x = Math.min(barsPerLine, data.length - windowLen + 1 - row * barsPerLine );
+			
+			int yPos = row * ( lineHeight + space_1 + space_2 + rulerHeight );
+			
+			g.drawRect(paddingW-1, yPos +paddingV -1, last_x+2, lineHeight+2);
+			
+		}
 		
 		int minRuleDiv = 10;
 		int maxRuleDiv = 100;
