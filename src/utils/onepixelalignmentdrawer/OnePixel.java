@@ -29,6 +29,13 @@ import cmdGA.parameterType.OutFileParameter;
 import fileformats.fastaIO.FastaMultipleReader;
 import fileformats.fastaIO.Pair;
 
+/**
+ * Draws an one-pixel representation of a Multiple
+ * Sequence Alignment
+ * 
+ * @author Javier Iserte
+ *
+ */
 public class OnePixel {
 
 	public static void main(String[] args) {
@@ -44,6 +51,10 @@ public class OnePixel {
 		SingleOption outOpt = new SingleOption(parser, null, "-out", OutFileParameter.getParameter());
 		
 		NoOption isprotOpt = new NoOption(parser, "-isprotein");
+		
+		NoOption helpOpt = new NoOption(parser, "-help");
+		
+		NoOption verOpt = new NoOption(parser, "-v");
 		
 		////////////////////////////////
 		// Parse Command Line
@@ -67,6 +78,20 @@ public class OnePixel {
 		
 		boolean isProtein = isprotOpt.isPresent();
 		
+		boolean help = helpOpt.isPresent();
+		
+		boolean ver = verOpt.isPresent();
+		
+		//////////////////////////////
+		// Checks for help
+		if (help) {
+			
+			printHelp();
+			
+			System.exit(1);
+			
+		}
+		
 		//////////////////////////////
 		// Checks if output is valid
 		if (out==null) {
@@ -76,10 +101,14 @@ public class OnePixel {
 			System.exit(1);
 			
 		}
-		
-		System.err.println("# Output file: " + out.getAbsolutePath());
 
-		System.err.println("# Is Protein : " + String.valueOf(isProtein));
+		if (ver) {
+			
+			System.err.println("# Output file: " + out.getAbsolutePath());
+			
+			System.err.println("# Is Protein : " + String.valueOf(isProtein));
+			
+		}
 		
 		//////////////////////////////
 		// Create Fasta Reader
@@ -87,7 +116,18 @@ public class OnePixel {
 
 		//////////////////////////////
 		// Read Input Fasta Alignment
+		long before = System.currentTimeMillis();
 		List<Pair<String, String>> alignment = fmr.readBuffer(in);
+		
+		if (ver) {
+		
+			System.err.println("# Input MSA loaded in " + (System.currentTimeMillis() - before ) + "ms.");
+			
+			System.err.println("# Input MSA is " + alignment.get(0).getSecond().length()+ "bp long.");
+			
+			System.err.println("# Input MSA contains " + alignment.size() + " sequences.");
+			
+		}
 		
 		//////////////////////////////
 		// Create Coloring Scheme
@@ -99,14 +139,60 @@ public class OnePixel {
 		
 		//////////////////////////////
 		// Create Image
+		before = System.currentTimeMillis();
 		BufferedImage onePixelAlignmentImage = onePixel.drawImage(alignment, color);
+		if (ver) {
+			
+			System.err.println("# Image created in " + (System.currentTimeMillis() - before) +"ms.");
+			
+		}
 		
 		//////////////////////////////
 		// Export Image
 		try {
+			before = System.currentTimeMillis();
 			onePixel.writePNG(onePixelAlignmentImage, out);
+			
+			if (ver) {
+				
+				System.err.println("# Image written in file in " + (System.currentTimeMillis() - before) +"ms.");
+				
+			}
+			
 		} catch (IOException e) {
+			
 			System.err.println("There was an error trying to write PNG file: "+e.getMessage());
+			
+		}
+		
+	}
+
+
+	/**
+	 * Prints Program Help into standard error.
+	 * 
+	 */
+	private static void printHelp() {
+
+		InputStream isHelp = OnePixel.class.getResourceAsStream("help");
+		
+		BufferedReader brHelp = new BufferedReader(new InputStreamReader(isHelp));
+		
+		String currentline = null;
+		
+		try {
+			
+			while((currentline=brHelp.readLine())!=null) {
+				
+				System.err.println(currentline);
+				
+			}
+		} catch (IOException e) {
+
+			System.err.println("Error: "+ e .getMessage());
+			
+			System.exit(1);
+			
 		}
 		
 	}

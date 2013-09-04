@@ -1,0 +1,11 @@
+OnePixel - Draws one pixel representation of a MSA
+
+USAGE: 
+  onepixel.jar [options]
+
+OPTIONS:
+  -infile 'path'   Path to the input MSA.
+  -out 'path'      Path to the output 'png' file.
+  -isprotein       Use coloring scheme for proteins (DNA is default).
+  -help            Shows this help.
+  -v               Verbose mode. 
