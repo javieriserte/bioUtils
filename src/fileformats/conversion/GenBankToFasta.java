@@ -1,7 +1,9 @@
 package fileformats.conversion;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.PrintStream;
 import java.util.List;
 
@@ -13,6 +15,7 @@ import cmdGA.parameterType.InFileParameter;
 import cmdGA.parameterType.PrintStreamParameter;
 import fileformats.genBankIO.GenBankFormatException;
 import fileformats.genBankIO.GenBankReader;
+import fileformats.genBankIO.GenBankReaderAsync;
 import fileformats.genBankIO.GenBankRecord;
 
 public class GenBankToFasta {
@@ -32,7 +35,9 @@ public class GenBankToFasta {
 		
 		SingleOption printStreamOpt = new SingleOption(parser, System.out, "-outfile", PrintStreamParameter.getParameter());
 		
-		NoOption countOpt = new NoOption(parser, "-count"); 
+		NoOption countOpt = new NoOption(parser, "-count");
+		
+		NoOption giOpt  = new NoOption(parser, "-desc_gi");
 
 		// Step Three : Try to parse the command line
 		
@@ -66,18 +71,35 @@ public class GenBankToFasta {
 		} else {
 			
 			try {
-				List<GenBankRecord> a = GenBankReader.readFile(in);
 				
-				for (GenBankRecord genBankRecord : a) {
-					out.println(">" + genBankRecord.getHeader().getDefinition());
-					out.println(genBankRecord.getOrigin().getSequence());
+				BufferedReader br = new BufferedReader(new FileReader(in));
+				
+				GenBankReaderAsync gbreader = new GenBankReaderAsync(br);
+				
+				GenBankRecord record = null;
+				
+				while((record = gbreader.readGenBankRecord())!=null) {
+					
+					if (giOpt.isPresent()) {
+						
+						out.println(">" + record.getHeader().getGi());
+						
+					} else {
+						
+						out.println(">" + record.getHeader().getDefinition());
+						
+					}
+					
+					out.println(record.getOrigin().getSequence());
 
 				}
 				
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			} catch (GenBankFormatException e) {
-				e.printStackTrace();
+			} catch (Exception e) {
+				
+				System.err.println("There was an error: " + e.getMessage());
+				
+				System.exit(1);	
+				
 			}
 			
 			
