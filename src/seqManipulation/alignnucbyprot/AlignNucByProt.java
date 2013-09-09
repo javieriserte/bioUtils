@@ -138,9 +138,15 @@ public class AlignNucByProt {
 		for (Pair<String, String> pair : msa) {
 			// Iterates over each protein in the input MSA
 			
-			result.add(this.generateOneAlignmentRow(nuc_hash, pair));
-				// Generates a new aligned nucleic acid sequence and
-			 	// adds it into the new growing alignment
+			Pair<String, String> row = this.generateOneAlignmentRow(nuc_hash, pair);
+			
+			if (row!=null) {
+					
+				result.add(row);
+					// Generates a new aligned nucleic acid sequence and
+					// adds it into the new growing alignment
+			
+			}
 		}
 		
 		return result;
@@ -188,18 +194,22 @@ public class AlignNucByProt {
 			int prot_len = pair.getSecond().replaceAll("-", "").length();
 				// Calculates the length of the protein in amino acid residues
 			
-			int nuc_len = nuc_hash.get(pair.getFirst()).length();
+			if (nuc_hash.containsKey (pair.getFirst()) ) {
+				
+				int nuc_len = nuc_hash.get(pair.getFirst()).length();
 				// Calculates the length of the nucleic acid sequence in bases 
 			
-			if (prot_len*CODON_LENGTH != nuc_len) {
-				// If the lengths of the protein sequence do not correspond the 
-				// the lengths of the nucleic acid sequence...
-				
-				System.err.println("Length mismatch for "+pair.getFirst()+": prot: "+ prot_len + "("+(3*prot_len)+")" + ", nuc: "+ nuc_len+".");
-					// ...logs the mismatch
-				
-				mismatch = true;
-					// and mark the mismatch for tracking
+				if (prot_len*CODON_LENGTH != nuc_len) {
+					// If the lengths of the protein sequence do not correspond the 
+					// the lengths of the nucleic acid sequence...
+					
+					System.err.println("Length mismatch for "+pair.getFirst()+": prot: "+ prot_len + "("+(3*prot_len)+")" + ", nuc: "+ nuc_len+".");
+						// ...logs the mismatch
+					
+					mismatch = true;
+						// and mark the mismatch for tracking
+					
+				}
 				
 			}
 			
@@ -222,6 +232,8 @@ public class AlignNucByProt {
 	 * @return a row for the alignment
 	 */
 	private Pair<String, String> generateOneAlignmentRow( Map<String, String> nuc_hash, Pair<String, String> pair) {
+		
+		if (nuc_hash.containsKey(pair.getFirst())) {
 		
 		String currentAlignmentSeq = pair.getSecond();
 			// Gets the amino acid sequence of the alignment
@@ -267,7 +279,11 @@ public class AlignNucByProt {
 		
 		return new Pair<String, String>(">"+pair.getFirst(), newNucAlignSeq.toString());
 			// Returns the new sequence
-		
+		} else {
+			
+			return null;
+			
+		}
 	}
 
 	/**
