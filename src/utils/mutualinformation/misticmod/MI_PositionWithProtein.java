@@ -5,17 +5,25 @@ import java.util.List;
 public class MI_PositionWithProtein extends MI_Position {
 
 	////////////////////////
-	// Instance
+	// Instance Variables
 	private int protein_1;
 
 	private int protein_2;
 	
+	///////////////////////////////////////
+	// Constructors
 	public MI_PositionWithProtein(int pos1, int pos2, char aa1, char aa2, Double mi) {
 
 		super(pos1, pos2, aa1, aa2, mi);
 		
 	}
 
+	private MI_PositionWithProtein() {
+		super();
+	}
+
+	//////////////////////////////////////
+	// Public Interface
 	public int getProtein_1() {
 		return protein_1;
 	}
@@ -33,17 +41,18 @@ public class MI_PositionWithProtein extends MI_Position {
 	}
 	
 	/**
-	 * Parses MI output from MISTIC
+	 * Parses MI output from MISTIC and MN soft
 	 * 
-	 * @param positionLine
+	 * @param positionLine each line of the output mi calculation
 	 * @return
 	 */
 	public static MI_PositionWithProtein valueOf(String positionLine) { 
-		
-		String[] data = positionLine.split("\t");
 
-		return new MI_PositionWithProtein(Integer.valueOf(data[0]), Integer.valueOf(data[2]), data[1].charAt(0), data[3].charAt(0), Double.valueOf(data[4]));
+		MI_PositionWithProtein new_pos = new MI_PositionWithProtein();
 		
+		MI_Position.fillPosition(new_pos,positionLine);
+		
+		return new_pos;
 		
 	}
 	
@@ -54,12 +63,14 @@ public class MI_PositionWithProtein extends MI_Position {
 	 */
 	public void assignProteinNumber(List<Integer> lengths) {
 		
-		this.setProtein_1(this.getProteinNumberFromPos(this.pos1,lengths));
+		this.setProtein_1(this.getProteinNumberFromPos(this.getPos1(),lengths));
 		
-		this.setProtein_2(this.getProteinNumberFromPos(this.pos2,lengths));
+		this.setProtein_2(this.getProteinNumberFromPos(this.getPos2(),lengths));
 		
 	}
 
+	/////////////////////////////////////////
+	// Private methods
 	/**
 	 * Get the protein value from the position
 	 * 

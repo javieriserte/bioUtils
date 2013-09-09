@@ -94,9 +94,9 @@ public void filter(PrintStream out, List<Double> values, List<MI_Position> MI_Da
 		
 		for (MI_Position pos : MI_Data_Lines) {
 			
-			if (pos.mi<top_cutoff) {
+			if (pos.getMi()<top_cutoff) {
 	
-				pos.mi = -999.99d;
+				pos.setMi(-999.99d);
 				
 			}
 			

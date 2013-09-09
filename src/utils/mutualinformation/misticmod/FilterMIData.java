@@ -118,7 +118,7 @@ public abstract class FilterMIData {
 		
 		for (MI_Position pos : mI_Data_Lines) {
 			
-			result.add(pos.mi);
+			result.add(pos.getMi());
 			
 		}
 		

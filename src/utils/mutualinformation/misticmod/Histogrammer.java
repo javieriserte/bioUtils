@@ -235,6 +235,16 @@ public class Histogrammer {
 
 			System.err.println("There was an error trying to read input data:"+e.getMessage());
 			
+			System.exit(1);
+			
+		} catch (NumberFormatException e1) {
+
+			System.err.println("There was an error trying to read input data:"+e1.getMessage());
+			
+			System.err.println("line:"+currentLine);
+			
+			System.exit(1);
+			
 		}
 		
 		return result;

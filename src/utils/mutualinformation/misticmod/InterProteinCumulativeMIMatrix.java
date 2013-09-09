@@ -1,5 +1,7 @@
 package utils.mutualinformation.misticmod;
 
+import io.bufferreaders.UncommenterBufferedReader;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -149,7 +151,7 @@ public class InterProteinCumulativeMIMatrix {
 		
 		for (MI_PositionWithProtein pos : data) {
 			
-			double cv = pos.mi>0?pos.mi:0;
+			double cv = pos.getMi()>0?pos.getMi():0;
 
 			results[pos.getProtein_1()][pos.getProtein_2()] = results[pos.getProtein_1()][pos.getProtein_2()] + cv ;
 			
@@ -170,9 +172,9 @@ public class InterProteinCumulativeMIMatrix {
 		
 		for (MI_PositionWithProtein pos : this.data) {
 			
-			pos.setProtein_1(this.getProteinNumberFromPos(pos.pos1,lengths));
+			pos.setProtein_1(this.getProteinNumberFromPos(pos.getPos1(),lengths));
 			
-			pos.setProtein_2(this.getProteinNumberFromPos(pos.pos2,lengths));
+			pos.setProtein_2(this.getProteinNumberFromPos(pos.getPos2(),lengths));
 			
 		}
 		
@@ -232,16 +234,20 @@ public class InterProteinCumulativeMIMatrix {
 		
 		String currentLine = null;
 		
-		BufferedReader inb = new BufferedReader(new InputStreamReader(in));
+		BufferedReader inb = new UncommenterBufferedReader(new InputStreamReader(in));
 		
 		this.data = new ArrayList<MI_PositionWithProtein>();
 		
 		try {
 			while((currentLine = inb.readLine())!=null) {
-			
-				String[] data = currentLine.split("\t");
+
+				MI_PositionWithProtein mi_pos = MI_PositionWithProtein.valueOf(currentLine);
 				
-				this.data.add(new MI_PositionWithProtein(Integer.valueOf(data[0]), Integer.valueOf(data[2]), data[1].charAt(0), data[3].charAt(0), Double.valueOf(data[4])));
+				this.data.add(mi_pos);
+
+//				String[] data = currentLine.split("\t");
+				
+//				this.data.add(new MI_PositionWithProtein(Integer.valueOf(data[0]), Integer.valueOf(data[2]), data[1].charAt(0), data[3].charAt(0), Double.valueOf(data[4])));
 				
 			}
 		} catch (IOException e) {
@@ -320,7 +326,7 @@ public class InterProteinCumulativeMIMatrix {
 			/// (usually MI>0 implies MI>6.5 due to previous filters)
 			for (MI_PositionWithProtein pos : data) {
 				
-				double nv = pos.mi>0?1:0;
+				double nv = pos.getMi()>0?1:0;
 				
 				normalize[pos.getProtein_1()][pos.getProtein_2()] = normalize[pos.getProtein_1()][pos.getProtein_2()] + nv ;
 				

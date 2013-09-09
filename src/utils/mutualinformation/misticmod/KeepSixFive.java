@@ -28,9 +28,9 @@ public class KeepSixFive {
 	public MI_Position filter(MI_Position pos) {
 
 
-		if (pos.mi < this.cut_off) {
+		if (pos.getMi() < this.cut_off) {
 		
-			pos.mi = -999.99d;
+			pos.setMi(-999.99d);
 
 		}
 		

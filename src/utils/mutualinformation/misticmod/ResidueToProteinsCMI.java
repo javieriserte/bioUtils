@@ -167,7 +167,7 @@ public class ResidueToProteinsCMI {
 			if(proteinNumberIsFirstProtein || proteinNumberIsSecondProtein) {
 				
 				// Gets the resiude from the current MI position that belongs to the selected protein
-				int currentResidueNumber = proteinNumberIsFirstProtein?mi_PositionWithProtein.pos1:mi_PositionWithProtein.pos2;
+				int currentResidueNumber = proteinNumberIsFirstProtein?mi_PositionWithProtein.getPos1():mi_PositionWithProtein.getPos2();
 				
 				// Gets the number of the other protein
 				int otherProtein = proteinNumberIsFirstProtein?mi_PositionWithProtein.getProtein_2():mi_PositionWithProtein.getProtein_1();
@@ -175,7 +175,7 @@ public class ResidueToProteinsCMI {
 				// Sums the MI
 				if (residuesCMI.containsKey(currentResidueNumber)) {
 					
-					Double mi = mi_PositionWithProtein.mi;
+					Double mi = mi_PositionWithProtein.getMi();
 					
 					if (mi > cutoff) {
 					

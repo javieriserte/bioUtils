@@ -151,11 +151,11 @@ public class MIOnePixelMap {
 		
 		for (MI_PositionWithProtein mi_PositionWithProtein : positions) {
 			
-			int rgb = calculateRGB(mi_PositionWithProtein.mi, maxMIValue, minMIValue);
+			int rgb = calculateRGB(mi_PositionWithProtein.getMi(), maxMIValue, minMIValue);
 			
-			bi.setRGB(mi_PositionWithProtein.pos1-1 + mi_PositionWithProtein.getProtein_1(), mi_PositionWithProtein.pos2-1  + mi_PositionWithProtein.getProtein_2(), rgb);
+			bi.setRGB(mi_PositionWithProtein.getPos1()-1 + mi_PositionWithProtein.getProtein_1(), mi_PositionWithProtein.getPos2()-1  + mi_PositionWithProtein.getProtein_2(), rgb);
 			
-			bi.setRGB(mi_PositionWithProtein.pos2-1  + mi_PositionWithProtein.getProtein_2(), mi_PositionWithProtein.pos1-1  + mi_PositionWithProtein.getProtein_1(), rgb);
+			bi.setRGB(mi_PositionWithProtein.getPos2()-1  + mi_PositionWithProtein.getProtein_2(), mi_PositionWithProtein.getPos1()-1  + mi_PositionWithProtein.getProtein_1(), rgb);
 			
 		}
 		
@@ -189,7 +189,7 @@ public class MIOnePixelMap {
 
 		for (MI_PositionWithProtein mi_PositionWithProtein : positions) {
 			
-			max = Math.max(max, mi_PositionWithProtein.mi);
+			max = Math.max(max, mi_PositionWithProtein.getMi());
 			
 		}
 		
@@ -202,7 +202,7 @@ public class MIOnePixelMap {
 
 		for (MI_PositionWithProtein mi_PositionWithProtein : positions) {
 			
-			Double current_MI = mi_PositionWithProtein.mi;
+			Double current_MI = mi_PositionWithProtein.getMi();
 			
 			if (current_MI>-900) {
 
@@ -222,9 +222,9 @@ public class MIOnePixelMap {
 		
 		for (MI_PositionWithProtein mi_PositionWithProtein : positions) {
 			
-			max= Math.max(mi_PositionWithProtein.pos1, max);
+			max= Math.max(mi_PositionWithProtein.getPos1(), max);
 			
-			max= Math.max(mi_PositionWithProtein.pos2, max);
+			max= Math.max(mi_PositionWithProtein.getPos2(), max);
 			
 		}
 		
