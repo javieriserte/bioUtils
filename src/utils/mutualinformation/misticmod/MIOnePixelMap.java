@@ -1,12 +1,12 @@
 package utils.mutualinformation.misticmod;
 
 import graphics.profile.PngWriter;
+import io.bufferreaders.UncommenterBufferedReader;
 import io.onelinelister.OneLineListReader;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -75,7 +75,7 @@ public class MIOnePixelMap {
 		
 		try {
 			
-			List<MI_PositionWithProtein> positions = reader.read(new BufferedReader(new InputStreamReader(in)));
+			List<MI_PositionWithProtein> positions = reader.read(new UncommenterBufferedReader(new InputStreamReader(in)));
 
 			int max = getMaxResidueNumber(positions);
 			
