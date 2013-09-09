@@ -5,7 +5,6 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.Polygon;
 import java.awt.RenderingHints;
 import java.awt.Shape;
@@ -15,14 +14,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.Buffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
-import org.w3c.dom.css.CSSPrimitiveValue;
-import org.w3c.dom.css.RGBColor;
 
 import com.sun.image.codec.jpeg.JPEGCodec;
 import com.sun.image.codec.jpeg.JPEGEncodeParam;
@@ -383,7 +378,7 @@ public class DrawGraphForBet {
 		BufferedImage drawOneMutation;
 		
 		
-		int sp = (segment_length - labels.size()*50)/(labels.size()-1);
+//		int sp = (segment_length - labels.size()*50)/(labels.size()-1);
 
 		AffineTransform aft = new AffineTransform();
 
@@ -584,7 +579,6 @@ public class DrawGraphForBet {
 		return bi; 
 	}
 	
-	@SuppressWarnings("restriction")
 	public void 				exportJPG							(File outfile, BufferedImage bi) throws FileNotFoundException, IOException {
 		FileOutputStream out = new FileOutputStream(outfile);
 		JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(out);
