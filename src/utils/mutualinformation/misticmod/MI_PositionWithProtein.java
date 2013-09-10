@@ -17,6 +17,11 @@ public class MI_PositionWithProtein extends MI_Position {
 		super(pos1, pos2, aa1, aa2, mi);
 		
 	}
+	public MI_PositionWithProtein(int pos1, int pos2, char aa1, char aa2, Double mi, Double raw_mi) {
+
+		super(pos1, pos2, aa1, aa2, mi, raw_mi);
+		
+	}
 
 	private MI_PositionWithProtein() {
 		super();

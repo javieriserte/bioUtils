@@ -37,6 +37,7 @@ public class MI_Position {
 	private char aa1;
 	private char aa2;
 	private Double mi;
+	private Double raw_mi;
 
 	//////////////////////////////////
 	// Constructor
@@ -47,6 +48,15 @@ public class MI_Position {
 		this.setAa1(aa1);
 		this.setAa2(aa2);
 		this.setMi(mi);
+	}
+	public MI_Position(int pos1, int pos2, char aa1, char aa2, Double mi, Double raw_mi) {
+		super();
+		this.setPos1(pos1);
+		this.setPos2(pos2);
+		this.setAa1(aa1);
+		this.setAa2(aa2);
+		this.setMi(mi);
+		this.setRaw_mi(raw_mi);
 	}
 	protected MI_Position() {
 		super();
@@ -97,6 +107,9 @@ public class MI_Position {
 	protected void setMi(Double mi) {
 		this.mi = mi;
 	}
+	protected void setRaw_mi(Double raw_mi) {
+		this.raw_mi = raw_mi;
+	}
 
 	public int getPos1() {
 		return pos1;
@@ -117,6 +130,9 @@ public class MI_Position {
 	public Double getMi() {
 		return mi;
 	}
+	public Double getRaw_mi() {
+		return raw_mi;
+	}
 	
 	///////////////////////////////
 	// Protected static Methods
@@ -128,6 +144,7 @@ public class MI_Position {
 		char aa1;
 		char aa2;
 		double mi;
+		double raw_mi;
 
 		//////////////////////////////////
 		// Must Choose between MN format and
@@ -142,6 +159,7 @@ public class MI_Position {
 			aa1 = data[1].charAt(0);
 			aa2 = data[3].charAt(0);
 			mi = Double.valueOf(data[4]);
+			raw_mi = 0;
 			
 		} else if (Pattern.matches(MI_Position.MN_FORMAT_LINE, positionLine)) {
 		// If input line matches with Mortem Nielsen format
@@ -153,6 +171,7 @@ public class MI_Position {
 			aa1 = data[2].charAt(0);
 			aa2 = data[5].charAt(0);
 			mi = Double.valueOf(data[11]);
+			raw_mi = Double.valueOf(data[8]);
 
 		} else {
 		
@@ -165,6 +184,7 @@ public class MI_Position {
 		pos.setAa1(aa1);
 		pos.setAa2(aa2);
 		pos.setMi(mi);
+		pos.setRaw_mi(raw_mi);
 
 	}
 	
