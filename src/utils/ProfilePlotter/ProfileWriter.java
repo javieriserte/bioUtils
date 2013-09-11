@@ -76,7 +76,7 @@ public class ProfileWriter {
 		
 		int[] lengths = null;
 		
-		Color[] colors = new Color[]{Color.red,Color.green};
+		Color[] colors = new Color[]{Color.red , Color.green};
 		
 		try {
 			lengths = readLengths(lengthsFile);
@@ -93,16 +93,18 @@ public class ProfileWriter {
 		
 		g.drawImage(profile, 0, 0, null);
 		
-		
-		int lastx = 0;
-		
-		for(int i=0;i<lengths.length;i++) {
+		if (lengthsOpt.isPresent()) {
+			int lastx = 0;
 			
-			g.setColor(colors[i % 2]);
-			
-			g.fillRect(lastx, 200, lengths[i], 20);
-			
-			lastx = lastx + lengths[i];
+			for(int i=0;i<lengths.length;i++) {
+				
+				g.setColor(colors[i % 2]);
+				
+				g.fillRect(lastx, 200, lengths[i], 20);
+				
+				lastx = lastx + lengths[i];
+				
+			}
 			
 		}
 		
