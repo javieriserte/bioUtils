@@ -7,5 +7,7 @@ OPTIONS:
   -infile 'path'   Path to the input MSA.
   -out 'path'      Path to the output 'png' file.
   -isprotein       Use coloring scheme for proteins (DNA is default).
+  -square          Tries to break up a image in regions and accommodate
+                   them to draw a squared image.   
   -help            Shows this help.
   -v               Verbose mode. 

@@ -1,6 +1,7 @@
 package utils.onepixelalignmentdrawer;
 
 import java.awt.Color;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
@@ -37,6 +38,7 @@ import fileformats.fastaIO.Pair;
  *
  */
 public class OnePixel {
+	private static final int ColumnsBreak = 30;
 
 	public static void main(String[] args) {
 		
@@ -51,6 +53,8 @@ public class OnePixel {
 		SingleOption outOpt = new SingleOption(parser, null, "-out", OutFileParameter.getParameter());
 		
 		NoOption isprotOpt = new NoOption(parser, "-isprotein");
+		
+		NoOption squareOpt = new NoOption(parser, "-square");
 		
 		NoOption helpOpt = new NoOption(parser, "-help");
 		
@@ -148,6 +152,10 @@ public class OnePixel {
 		}
 		
 		//////////////////////////////
+		// Make the image Squared
+		onePixelAlignmentImage = getSquaredImage(squareOpt, onePixelAlignmentImage);
+		
+		//////////////////////////////
 		// Export Image
 		try {
 			before = System.currentTimeMillis();
@@ -165,6 +173,40 @@ public class OnePixel {
 			
 		}
 		
+	}
+
+
+	private static BufferedImage getSquaredImage(NoOption squareOpt,
+			BufferedImage onePixelAlignmentImage) {
+		if (squareOpt.isPresent()) {
+			int length = onePixelAlignmentImage.getHeight();
+			int width =  onePixelAlignmentImage.getWidth();
+			int numberOfRegions = (int) Math.round(Math.sqrt(length/width));
+			
+			if (numberOfRegions>1) {
+				
+				int height  =  ((int) length /numberOfRegions) -1;
+				
+				BufferedImage newImage = new BufferedImage(width * numberOfRegions +  OnePixel.ColumnsBreak*(numberOfRegions-1), height, BufferedImage.TYPE_INT_RGB);
+				
+				for (int i = 0; i<numberOfRegions; i++) {
+					
+					BufferedImage temp = new BufferedImage(width, Math.min(height, length - i*height),  BufferedImage.TYPE_INT_RGB);
+		
+					((Graphics2D) temp.getGraphics()).drawImage(onePixelAlignmentImage, 0, -i*height, null);
+					
+					((Graphics2D) temp.getGraphics()).dispose();
+					
+					newImage.getGraphics().drawImage(temp, i* (width+OnePixel.ColumnsBreak), 0,null);
+					
+				}
+				
+				onePixelAlignmentImage = newImage;
+				
+			}
+			
+		}
+		return onePixelAlignmentImage;
 	}
 
 
