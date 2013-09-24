@@ -1,6 +1,7 @@
 package utils.mutualinformation.misticmod;
 
-import java.io.BufferedReader;
+import io.bufferreaders.UncommenterBufferedReader;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -63,7 +64,7 @@ public class KeepSixFive {
 			
 		}
 
-		BufferedReader in = new BufferedReader(new InputStreamReader((InputStream) inOpt.getValue()));
+		UncommenterBufferedReader in = new UncommenterBufferedReader(new InputStreamReader((InputStream) inOpt.getValue()));
 		
 		PrintStream out = (PrintStream) outopt.getValue();
 		
@@ -82,6 +83,8 @@ public class KeepSixFive {
 			out.println(pos);
 			
 		}
+		
+		in.close();
 		
 	}
 

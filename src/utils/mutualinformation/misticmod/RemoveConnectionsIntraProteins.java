@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import cmdGA.MultipleOption;
 import cmdGA.NoOption;
@@ -56,9 +58,21 @@ public class RemoveConnectionsIntraProteins {
 				
 			}
 			
+			///////////////////////////////
+			// Validate Command Line Arguments
+			if (!prot_len_opt.isPresent()) {
+
+				System.err.println("-lengths option is mandatory.");
+				
+				printHelp(out);
+				
+				System.exit(1);
+				
+			}
+			
 			BufferedReader in = new UncommenterBufferedReader(new InputStreamReader((InputStream) inOpt.getValue()));
 			
-			int[] lengths = getProtLengths(prot_len_opt);
+			 List<Integer> lengths = getProtLengths(prot_len_opt);
 			
 			///////////////////////////////////////
 			// Remove Connections
@@ -73,27 +87,33 @@ public class RemoveConnectionsIntraProteins {
 	}
 
 
-	public static void removeConnections(PrintStream out, BufferedReader in, 	int[] lengths) throws IOException {
+	public static void removeConnections(PrintStream out, BufferedReader in, 	List<Integer> lengths) throws IOException {
 		
 		String currentLine = null;
 		
 		while((currentLine = in.readLine())!= null) {
 			
-			String data[] = currentLine.split("\t");
+			MI_PositionWithProtein currentPosition = MI_PositionWithProtein.valueOf(currentLine);
 			
-			int p_1 = getProteinFromPosition(Integer.valueOf(data[0]),lengths);
+			currentPosition.assignProteinNumber(lengths);
+			
+//			String data[] = currentLine.split("\t");
+			
+//			int p_1 = getProteinFromPosition(Integer.valueOf(data[0]),lengths);
 
-			int p_2 = getProteinFromPosition(Integer.valueOf(data[2]),lengths);
+//			int p_2 = getProteinFromPosition(Integer.valueOf(data[2]),lengths);
 			
-			if (p_1!=p_2) {
+			int p_1 = currentPosition.getProtein_1();
+
+			int p_2 = currentPosition.getProtein_2();
+			
+			if (p_1==p_2) {
 				
-				out.println(currentLine);
-				
-			} else {
-				
-				out.println(data[0]+"\t"+data[1]+"\t"+data[2]+"\t"+data[3]+"\t"+"-999.99");
+				currentPosition.setMi(-999.99);
 				
 			}
+			
+			out.println(currentPosition);
 			
 		}
 	}
@@ -108,14 +128,13 @@ public class RemoveConnectionsIntraProteins {
 	}
 
 
-	public static int[] getProtLengths(MultipleOption prot_len_opt) {
-		int[] lengths = new int[prot_len_opt.count()];
-
-		int c = 0;
+	public static List<Integer> getProtLengths(MultipleOption prot_len_opt) {
 		
+		List<Integer> lengths = new ArrayList<>();
+
 		for (Object o : prot_len_opt.getValues()) {
 			
-			lengths[c++] = (Integer) o;
+			lengths.add((Integer) o);
 			
 		}
 		return lengths;
