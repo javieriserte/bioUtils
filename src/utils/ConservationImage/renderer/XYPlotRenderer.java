@@ -7,7 +7,10 @@ import java.awt.BasicStroke;
 import java.awt.Font;
 import java.awt.GradientPaint;
 import java.awt.Graphics2D;
+import java.awt.font.TextLayout;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.util.Locale;
 
 import utils.ConservationImage.color.ColoringStrategy;
 
@@ -88,7 +91,9 @@ public class XYPlotRenderer implements Renderer {
 		// Set Color for Line Drawing
 		g.setColor(Color.BLACK);
 		
-		drawRuler(paddingV, paddingW, plotHeight, space_1, rulerLinesVspace, rulerNumbersVspace, lineWidth, g);
+		drawHorizontalRuler(paddingV, paddingW, plotHeight, space_1, rulerLinesVspace, rulerNumbersVspace, lineWidth, g);
+		
+		drawVerticalRuler(paddingV, paddingW, plotHeight, space_1, rulerLinesVspace, rulerNumbersVspace, lineWidth, g);
 		
 		return bi;
 		
@@ -98,7 +103,76 @@ public class XYPlotRenderer implements Renderer {
 	///////////////////////////
 	// Private Methods
 	
-	private void drawRuler(int paddingV, int paddingW, int plotHeight,
+	private void drawVerticalRuler(int paddingV, int paddingW, int plotHeight,
+			int space_1, int rulerLinesVspace, int rulerNumbersVspace,
+			int lineWidth, Graphics2D g) {
+		
+		double minRuleDiv = 0.05;
+		double maxRuleDiv = 0.2;
+		double midRuleDiv = 0.1;
+		
+		g.setStroke(new BasicStroke(2));
+
+		g.drawLine( paddingW -20, 
+			        paddingV , 
+			        paddingW -20, 
+			        paddingV + plotHeight);
+		
+		g.setStroke(new BasicStroke(1));
+		
+		// Draw Minor Marks
+		for (double i=0;i <= 1 ;i = i + minRuleDiv) {
+			
+			int xPosR = paddingW-20;
+
+			int yPosR = (paddingV + (int)Math.round(plotHeight * i)); 
+			
+			g.drawLine(xPosR , yPosR, xPosR +5 , yPosR);
+		}
+		
+		// Draw Mid Marks
+		for (double i=0;i <= 1 ;i = i + midRuleDiv) {
+			
+			int xPosR = paddingW-20;
+
+			int yPosR = (paddingV + (int)Math.round(plotHeight * i));
+			
+			g.drawLine(xPosR , yPosR, xPosR +10 , yPosR);
+		}
+
+		// Draw Major Marks
+		g.setStroke(new BasicStroke(2));
+		for (double i=0;i <= 1 ;i = i + maxRuleDiv) {
+			
+			int xPosR = paddingW-20;
+
+			int yPosR = (paddingV +(int)Math.round(plotHeight * i));
+			
+			g.drawLine(xPosR , yPosR, xPosR +15 , yPosR);
+		}
+		
+	
+		g.setFont(new Font("Verdana", Font.BOLD, 18));
+		
+		for (double i=0;i<=1;i=i+maxRuleDiv) {
+
+			int xPosR = paddingW - 70;
+		
+			String numberString = String.format(Locale.US,"%.1f", i);
+						
+			TextLayout a = new TextLayout(numberString,g.getFont(), g.getFontRenderContext());
+			
+			Rectangle2D bounds = (Rectangle2D) a.getBounds().clone();
+			
+			int yPosR = (int) (paddingV + plotHeight * (1-i) + bounds.getHeight() /2 );
+			
+			g.drawString( numberString, xPosR , yPosR);
+			
+		}
+		
+	}
+	
+	private void drawHorizontalRuler(int paddingV, int paddingW, int plotHeight,
 			int space_1, int rulerLinesVspace, int rulerNumbersVspace,
 			int lineWidth, Graphics2D g) {
 
@@ -169,6 +243,10 @@ public class XYPlotRenderer implements Renderer {
 			g.drawString( numberString, xPosR - (h/2) , yPosR + rulerNumbersVspace);
 			
 		}
+		
+		
+		
+		
 	}
 
 	private void drawSingleLineOnPlot(Graphics2D g, double lastValue, double newValue, int xPos, ColoringStrategy color, int plotHeight, int yTop, int xLeft) {

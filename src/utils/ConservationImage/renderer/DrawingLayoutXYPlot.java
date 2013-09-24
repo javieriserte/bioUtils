@@ -62,7 +62,7 @@ public class DrawingLayoutXYPlot implements DrawingLayout {
 	public DrawingLayoutXYPlot() {
 		super();
 		this.paddingV = 30;
-		this.paddingW = 50;
+		this.paddingW = 80;
 		this.plotHeight = 200;
 		this.space_1 = 10;
 		this.rulerHeight = 35;
