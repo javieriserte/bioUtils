@@ -57,7 +57,7 @@ public class CmiCalculator {
 		PrintStream out = outOpt.getValue();
 		
 		double cutoff = noCutOff.isPresent()           ?
-				CmiCalculator.NEGATIVE_INFINITY                :
+				CmiCalculator.NEGATIVE_INFINITY         :
 				CmiCalculator.MISTIC_Z_SCORE_CUTOFF;
 		
 		//////////////////////////////////////////////////
@@ -72,7 +72,7 @@ public class CmiCalculator {
 			
 			Map<Integer, Double> cmi_values = getCmiValues(positions, cutoff);
 			
-			List<Integer> order = genetareOutputOrderList(cmi_values);
+			List<Integer> order = generateOutputOrderList(cmi_values);
 			
 			printOut(out, cmi_values, order);
 			
@@ -86,6 +86,12 @@ public class CmiCalculator {
 
 	////////////////////////////////
 	// Private static methods
+	/**
+	 * Accumulate MI values for each position
+	 * @param positions
+	 * @param cutoff
+	 * @return
+	 */
 	private static Map<Integer, Double> getCmiValues(List<MI_Position> positions, double cutoff) {
 		Map<Integer, Double> cmi_values = new HashMap<>();
 		
@@ -99,7 +105,7 @@ public class CmiCalculator {
 		return cmi_values;
 	}
 
-	private static List<Integer> genetareOutputOrderList(
+	private static List<Integer> generateOutputOrderList(
 			Map<Integer, Double> cmi_values) {
 		List<Integer> order = new ArrayList<>();
 		
