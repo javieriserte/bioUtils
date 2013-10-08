@@ -1,0 +1,28 @@
+Gapstripper.
+
+  This program is intended to perform three common pre-processing
+  features in alignments before MI calculation.
+ 
+   * Maximum frequency filter.
+   * Strip with a reference sequence.
+   * Remove rows (sequences) with more than a given fraction of gaps.
+ 
+Usage:
+  gapstripper.jar <Options>  
+ 
+Options:
+  --infile      Path file to input alignment. If omitted standard input is used.
+  --outfile     Path file to output alignment. If omitted standard output 
+                is used.
+  --maxfreq     Real number. Keeps the columns whose maximum frequency is less 
+                than or equal to a given value. If omitted all positions are 
+                included.
+  --refId       String. Sets reference sequence by its title or description.
+  --refNum      Integer. Sets reference sequence by the position in the 
+                alignment. The counting starts with 1, not zero.
+                If neither --refId or --refNum are indicated, then stripping
+                is not performed. 
+  --gapsInRows  Real Number. Removes rows whose gap fraction is more than or 
+                equal to a given value. If omitted, 0.5 is used. 
+  --ref_file    Path File to out reference map file. If omitted reference is not
+                printed.
