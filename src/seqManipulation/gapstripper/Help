@@ -23,6 +23,9 @@ Options:
                 If neither --refId or --refNum are indicated, then stripping
                 is not performed. 
   --gapsInRows  Real Number. Removes rows whose gap fraction is more than or 
-                equal to a given value. If omitted, 0.5 is used. 
+                equal to a given value. If omitted, 0.5 is used. Zero is treated 
+                as a special value, and only are accepted value without any gap.
+                (comparison by equals is overridden). This is to try to respect
+                the original implementation. 
   --ref_file    Path File to out reference map file. If omitted reference is not
                 printed.

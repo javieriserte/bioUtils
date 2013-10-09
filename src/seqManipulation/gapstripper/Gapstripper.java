@@ -25,7 +25,7 @@ import fileformats.fastaIO.Pair;
 
 /**
  * This program is intended to perform three common pre-processing
- * features in alignments for MI calculation.
+ * features in alignments before MI calculation.
  * 
  * <ol>
  * <li> Maximum frequency filter</li>
@@ -97,7 +97,6 @@ public class Gapstripper {
 		
 		///////////////////////////////
 		// Validate Command Line Options
-		
 		if (refIdOpt.isPresent() && refNumOpt.isPresent()) {
 			
 			System.err.println("--refId and --refNum can not be present at the same time.");
@@ -111,13 +110,9 @@ public class Gapstripper {
 		//////////////////////////////
 		// Get Values From Command Line
 		BufferedReader in = new BufferedReader(new InputStreamReader(inOpt.getValue()));
-		
 		PrintStream out = outOpt.getValue();
-		
 		Double maxfreq = maxfreqOpt.getValue();
-		
 		Double gapsInRows = gapsInRowsOpt.getValue();
-		
 		File refFile = refFileOpt.getValue();
 		
 		/////////////////////////////
@@ -135,16 +130,25 @@ public class Gapstripper {
 		////////////////////////////////
 		// Get Reference Sequence Description
 		boolean[] gapstripMask;
+		// Create data structure to store logical mask for
+		// gap stripping by reference sequence
 		
 		boolean useReferenceSequence = refIdOpt.isPresent() || refNumOpt.isPresent();
+		// Check if a reference sequence is given
 		
 		if (useReferenceSequence) {
+		// If a reference sequence is given then ...
+
 		
 			String refSequence = stripper.getReferenceSequence(refIdOpt, refNumOpt, refFileOpt, sequences);
+			// ... retrieves the description as an id
 			
 			gapstripMask = stripper.getReferenceSequenceMask(sequences, refSequence);
+			// ... perform the gap stripping and gets the logical mask
 			
 			mask = stripper.MaskAnd(mask,gapstripMask);
+			// ... and combines the gaps stripping mask with 
+			// the maximum frequency mask
 		
 		}
 
@@ -313,9 +317,20 @@ public class Gapstripper {
 			double gapFreq = this.calculateGapFrequency(newSequence);
 			// Calculates the fraction of gaps in a single row of the alignment
 			
-			if (gapFreq<gapsInRows) {
+			if (gapFreq<gapsInRows || (gapsInRows==0 && gapFreq==0) ) {
 				// If the fraction of gap is above the threshold
+				// or is equal to zero, that means no gap allowed
 				// then that sequence is skipped from the final results.
+				// The original implementation compares only by 'lesser than', 
+				// do not take into account the case of 'gapsInRows==0'. But 
+				// i think this is a bug.
+				// Also, it could be expressed as: 'gapFreq<=gapsInRows', 
+				// but this is the exact behavior of the
+				// original implementation.
+				// In addition, original implementation has another bug,
+				// it doesn't count well the number of gaps in a sequence, it is
+				// always one less than the real number. It's not a big 
+				// difference in big alignments.
 				
 				result.add(new Pair<String, String>(description, newSequence));
 				// else it is added into the final result alignment.

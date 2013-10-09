@@ -11,6 +11,8 @@ import java.util.Set;
  * @author Javier Iserte
  *
  */
+// TODO join this profiler with profiler objects in 'utils.ConservationImage'
+// package.
 public class MaximumFrequencyProfiler {
 	
 	/////////////////////////////////
@@ -38,7 +40,7 @@ public class MaximumFrequencyProfiler {
 		double[] profile = new double[AlignmentLength];
 		// Creates a data structure to hold and return the profile.
 
-		for (int i = 1; i<AlignmentLength; i++) {
+		for (int i = 0; i<AlignmentLength; i++) {
 		// iterates over each column of the alignment
 		
 			getColumnMaxFreq(sequences, descriptions, profile, i);
