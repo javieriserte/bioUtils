@@ -1,0 +1,14 @@
+SequenceShuffler.
+
+  This program reads a fasta alignment and generates a new one 
+  with each sequence shuffled.
+ 
+Usage:
+  seqshuffler.jar <Options>  
+ 
+Options:
+  --infile      Path file to input alignment. If omitted standard input is used.
+  --outfile     Path file to output alignment. If omitted standard output 
+                is used.
+  --help        Prints this help and exits. 
+  --fixedGaps   Every symbol except gaps are shuffled.
