@@ -80,7 +80,7 @@ public class IndentityMatrixCalculator {
 	 * @param s2
 	 * @return
 	 */
-	private static double calculateIdentity(String s1, String s2) {
+	public static double calculateIdentity(String s1, String s2) {
 
 		double result = 0;
 		
