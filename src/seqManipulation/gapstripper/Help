@@ -12,20 +12,34 @@ Usage:
  
 Options:
   --infile      Path file to input alignment. If omitted standard input is used.
+  
   --outfile     Path file to output alignment. If omitted standard output 
                 is used.
+                
   --maxfreq     Real number. Keeps the columns whose maximum frequency is less 
                 than or equal to a given value. If omitted all positions are 
                 included.
+                
   --refId       String. Sets reference sequence by its title or description.
+  
   --refNum      Integer. Sets reference sequence by the position in the 
                 alignment. The counting starts with 1, not zero.
                 If neither --refId or --refNum are indicated, then stripping
                 is not performed. 
+                
   --gapsInRows  Real Number. Removes rows whose gap fraction is more than or 
                 equal to a given value. If omitted, 0.5 is used. Zero is treated 
                 as a special value, and only are accepted value without any gap.
                 (comparison by equals is overridden). This is to try to respect
-                the original implementation. 
+                the original implementation.
+                 
   --ref_file    Path File to out reference map file. If omitted reference is not
-                printed.
+                printed. The first column is the position in the output alignment,
+		        the second column is the corresponding position in the original
+		        alignment.
+		        
+  --cluster     Perform clustering before maximum frequency filter. By defult, 
+                clustering is not performed.
+                
+  --clusterId   Real Number. Identity fraction threshold for sequence clustering. 
+                By default 0.62 is used.

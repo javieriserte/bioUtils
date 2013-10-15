@@ -24,6 +24,8 @@ import fileformats.fastaIO.Pair;
 
 
 /**
+ * TODO test if this class work properly after introducing clustering.
+ * 
  * This program is intended to perform three common pre-processing
  * features in alignments before MI calculation.
  * 
@@ -63,7 +65,13 @@ public class Gapstripper {
 		
 		SingleArgumentOption<Double> maxfreqOpt = OptionsFactory.createBasicDoubleArgument(cmdline, "--maxfreq", 1d); 
 		// Keeps the columns whose maximum frequency 
-		// is less than or equal to a given value 
+		// is less than or equal to a given value
+		
+		NoArgumentOption clusterOpt = new NoArgumentOption(cmdline, "--cluster");
+		// Perform clustering before maximum frequency filter
+		
+		SingleArgumentOption<Double> clusterIdOpt = OptionsFactory.createBasicDoubleArgument(cmdline, "--clusterId", 0.62); 
+		// Identity fraction threshold for sequence clustering 
 		
 		SingleArgumentOption<String> refIdOpt = OptionsFactory.createBasicStringArgument(cmdline, "--refId", null);
 		// Sets reference sequence by its title or description
@@ -125,7 +133,7 @@ public class Gapstripper {
 
 		//////////////////////////////
 		// Get Maximum Frequencies Mask
-		boolean[] mask = stripper.getMaxFreqMask(sequences, maxfreq);
+		boolean[] mask = stripper.getMaxFreqMask(sequences, maxfreq, clusterOpt.isPresent(), clusterIdOpt.getValue());
 		
 		////////////////////////////////
 		// Get Reference Sequence Description
@@ -184,6 +192,10 @@ public class Gapstripper {
 	}
 	////////////////////////////////////
 	// Private Class methods
+	/**
+	 * Prints the help into the standard error buffer.
+	 * Help is read from a resource file.
+	 */
 	private static void printHelp() {
 		
 		InputStream helpStream = Gapstripper.class.getResourceAsStream("Help");
@@ -199,6 +211,10 @@ public class Gapstripper {
 				ps.write(current);
 			
 			}
+		
+		ps.flush();
+		
+		ps.close();
 			
 		} catch (IOException e) {
 			
@@ -207,49 +223,8 @@ public class Gapstripper {
 		}
 		
 	}
-	////////////////////////////////
-	// Private methods
 
-	/**
-	 * Prints out the reference map file
-	 * The first column is the position in the output alignment,
-	 * the second column is the corresponding position in the original
-	 * alignment.
-	 * 
-	 * @param refFile
-	 * @param removedPositionsReferenceMap
-	 */
-	private static void printReferenceMapFile(File refFile,
-			LinkedHashMap<Integer, Integer> removedPositionsReferenceMap) {
-		
-		// Prints out the reference map file
-		// The first column is the position in the output alignment,
-		// the second column is the corresponding position in the original
-		// alignment.
-		
-		try {
-			
-			PrintStream outRef = new PrintStream(refFile);
-			
-			for (Integer newValue : removedPositionsReferenceMap.keySet()) {
-				
-				outRef.println(newValue + "\t" + removedPositionsReferenceMap.get(newValue));
-				
-			}
-			
-			outRef.flush();
-			
-			outRef.close();
-			
-		} catch (FileNotFoundException e) {
-			
-			System.err.println("There was a problem while writing reference file: " + e.getMessage());
-			
-			System.exit(1);
-			
-		}
-	}
-
+	
 	/**
 	 * Process an alignment and removes some columns by a given logical mask
 	 * and some rows by the fraction of gaps present.
@@ -262,7 +237,7 @@ public class Gapstripper {
 	 * @param removedPositionsReferenceMap
 	 * @return
 	 */
-	private List<Pair<String, String>> removeColumnsAndRows(boolean[] mask,
+	public List<Pair<String, String>> removeColumnsAndRows(boolean[] mask,
 			LinkedHashMap<String, String> sequences, Double gapsInRows,
 			LinkedHashMap<Integer, Integer> removedPositionsReferenceMap) {
 
@@ -296,15 +271,24 @@ public class Gapstripper {
 					newSequenceBuilder.append(currentSequence.charAt(i));
 					// then this positions is added to the new growing sequence 
 					
-					removedPositionsReferenceMap.put(maskedPositionCounter+1, i+1);
-					// Also...
-					// updates the reference Map
-					// The '+1' is just because is more common count the sequences
-					// starting from 1 than 0.
-					// maskedPositionCounter counts the positions in the new alignment
-					// i counts the positions in the old alignment
+					if (removedPositionsReferenceMap != null) {
+					// Check if a reference map that links
+					// positions before and after removing columns
+					// if asked.
+						
 					
-					maskedPositionCounter++;
+						removedPositionsReferenceMap.put(maskedPositionCounter+1, i+1);
+						// if so...
+						// updates the reference Map
+						// The '+1' is just because is more common count the sequences
+						// starting from 1 than 0.
+						// maskedPositionCounter counts the positions in the new alignment
+						// i counts the positions in the old alignment
+					
+						maskedPositionCounter++;
+						
+					}
+					
 					
 				}
 				
@@ -349,7 +333,7 @@ public class Gapstripper {
 	 * @param newSequence
 	 * @return the fraction of gaps.
 	 */
-	private double calculateGapFrequency(String newSequence) {
+	public double calculateGapFrequency(String newSequence) {
 		
 		int gapCount =0;
 		
@@ -371,7 +355,7 @@ public class Gapstripper {
 	 * @param mask2
 	 * @return
 	 */
-	private boolean[] MaskAnd(boolean[] mask1, boolean[] mask2) {
+	public boolean[] MaskAnd(boolean[] mask1, boolean[] mask2) {
 		
 		for (int i = 0; i < mask2.length; i++) {
 			
@@ -389,7 +373,7 @@ public class Gapstripper {
 	 * @param refSequence
 	 * @return
 	 */
-	private boolean[] getReferenceSequenceMask(
+	public boolean[] getReferenceSequenceMask(
 			LinkedHashMap<String, String> sequences, String refSequence) {
 		
 		String currentSequence = sequences.get(refSequence);
@@ -425,53 +409,83 @@ public class Gapstripper {
 		
 		if ( refIdOpt.isPresent() ) {
 
-			String currentDescription = refIdOpt.getValue();
-			
-			if (sequences.containsKey(currentDescription)) {
-			
-				return currentDescription; 
-			
-			} else {
-
-				System.err.println("Description: "+ currentDescription + " was not found.");
-				
-				System.err.println("Search is case sensitive");
-				
-				System.exit(1);
-				
-				return null;
-			}
+			return getReferenceSequenceById(refIdOpt.getValue(), sequences);
 			
 		} else {
 			
-			Iterator<String> iterator = sequences.keySet().iterator();
+			int index = refNumOpt.getValue();
 			
-			Integer counter = refNumOpt.getValue();
-
-			if (counter>sequences.size()) {
-				
-				System.err.println("Asked for sequence at position " + counter);
-				
-				System.err.println("And alignment has "+sequences.size()+" sequences.");
-
-				System.exit(1);
-				
-			}
-			
-			while (counter>1) {
-			// Iterates the key set until the ith value is
-			// reached
-
-				counter--;
-			
-				iterator.next();
-				
-			}
-			
-			return iterator.next();
+			return getReferenceSequenceByIndex(index, sequences);
 			
 		}
 		
+	}
+	
+	/**
+	 * Gets the reference sequence by its position (or index)
+	 * in the alignment.
+	 * 
+	 * @param index is the position of the desired reference sequence
+	 * @param sequences is a LinkedHashMap of all the sequence, that can be 
+	 *         iterated in the same order that the original alignment. 
+	 * @return the description of the reference sequence.
+	 */
+	public String getReferenceSequenceByIndex(
+			int index,
+			LinkedHashMap<String, String> sequences) {
+		
+		Iterator<String> iterator = sequences.keySet().iterator();
+
+		if (index>sequences.size()) {
+			
+			System.err.println("Asked for sequence at position " + index);
+			
+			System.err.println("And alignment has "+sequences.size()+" sequences.");
+
+			System.exit(1);
+			
+		}
+		
+		while (index>1) {
+		// Iterates the key set until the ith value is
+		// reached
+
+			index--;
+		
+			iterator.next();
+			
+		}
+		
+		return iterator.next();
+	}
+	
+	
+	/**
+	 * Dummy method to retrieve the reference sequence by its 
+	 * description. If found gets the same description as result.
+	 *  
+	 * @param refIdOpt
+	 * @param sequences
+	 * @return
+	 */
+	public String getReferenceSequenceById(
+			String currentDescription ,
+			LinkedHashMap<String, String> sequences) {
+		
+		if (sequences.containsKey(currentDescription)) {
+		
+			return currentDescription; 
+		
+		} else {
+
+			System.err.println("Description: "+ currentDescription + " was not found.");
+			
+			System.err.println("Search is case sensitive");
+			
+			System.exit(1);
+			
+			return null;
+		}
 	}
 
 
@@ -483,12 +497,23 @@ public class Gapstripper {
 	 * @return an array that represents a logical mask of which column passes 
 	 * the maximum frequency filter. 
 	 */
-	private boolean[] getMaxFreqMask(LinkedHashMap<String, String> sequences, double maxfreq) {
+	public boolean[] getMaxFreqMask(LinkedHashMap<String, String> sequences, double maxfreq, boolean performClustering, double thresholdId) {
 		
 		MaximumFrequencyProfiler maxFreqProfiler = new  MaximumFrequencyProfiler();
 		// Creates the object tha can calculate the profile
 		
-		double[] profile = maxFreqProfiler.calculateProfile(sequences);
+		double[] profile = null;
+		
+		if (performClustering) {
+			
+			profile = maxFreqProfiler.calculateProfileUsingClustering(sequences,thresholdId);
+			
+		} else {
+			
+			profile = maxFreqProfiler.calculateProfileWithoutClustering(sequences);
+		}
+		
+		 
 		// Creates the profile
 		
 		boolean[] mask = new boolean[profile.length];
@@ -518,7 +543,7 @@ public class Gapstripper {
 	 * @param in a BufferedReader to be read.
 	 * @return a LinkedHashMap with the sequences.
 	 */
-	private LinkedHashMap<String, String> loadFasta(BufferedReader in) {
+	public LinkedHashMap<String, String> loadFasta(BufferedReader in) {
 		
 		FastaMultipleReader fmr = new FastaMultipleReader();
 		
@@ -535,5 +560,47 @@ public class Gapstripper {
 		return sequences;
 		
 	}
+	/////////////////////////////////////////
+	// Private methods
+	/**
+	 * Prints out the reference map file
+	 * The first column is the position in the output alignment,
+	 * the second column is the corresponding position in the original
+	 * alignment.
+	 * 
+	 * @param refFile
+	 * @param removedPositionsReferenceMap
+	 */
+	private static void printReferenceMapFile(File refFile,
+			LinkedHashMap<Integer, Integer> removedPositionsReferenceMap) {
+		
+		// Prints out the reference map file
+		// The first column is the position in the output alignment,
+		// the second column is the corresponding position in the original
+		// alignment.
+		
+		try {
+			
+			PrintStream outRef = new PrintStream(refFile);
+			
+			for (Integer newValue : removedPositionsReferenceMap.keySet()) {
+				
+				outRef.println(newValue + "\t" + removedPositionsReferenceMap.get(newValue));
+				
+			}
+			
+			outRef.flush();
+			
+			outRef.close();
+			
+		} catch (FileNotFoundException e) {
+			
+			System.err.println("There was a problem while writing reference file: " + e.getMessage());
+			
+			System.exit(1);
+			
+		}
+	}
+
 
 }
