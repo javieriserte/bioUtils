@@ -3,14 +3,61 @@ package seqManipulation.gapstripper;
 import static org.junit.Assert.*;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 
 import org.junit.Test;
+
+import fileformats.fastaIO.Pair;
 
 public class GapstripperTest extends Gapstripper {
 
 	@Test
 	public void testRemoveColumnsAndRows() {
-		fail("Not yet implemented");
+
+		Gapstripper stripper = new Gapstripper();
+		
+		String s1 ="AAAAAAAAAA";
+		String s2 ="AAAAAAAA--";
+		String s3 ="AAAAAA----";
+		String s4 ="AAAA------";
+		String s5 ="AA--------";
+		String s6 ="----------";
+		
+		LinkedHashMap<String, String> sequences = new LinkedHashMap<>();
+		
+		sequences.put("s1", s1);
+		sequences.put("s2", s2);
+		sequences.put("s3", s3);
+		sequences.put("s4", s4);
+		sequences.put("s5", s5);
+		sequences.put("s6", s6);
+		
+		List<Pair<String, String>> a1 = stripper.removeColumnsAndRows(new boolean[]{true,true,true,true,true,true,true,true,true,true}, sequences, 0.5 , null);
+
+		assertEquals(3, a1.size());
+		assertEquals("AAAAAAAAAA", a1.get(0).getSecond());
+		assertEquals("AAAAAAAA--", a1.get(1).getSecond());
+		assertEquals("AAAAAA----", a1.get(2).getSecond());
+		
+		LinkedHashMap<Integer,Integer> map = new LinkedHashMap<>();
+		
+		List<Pair<String, String>> a2 = stripper.removeColumnsAndRows(new boolean[]{false,false,true,true,true,true,true,true,true,true}, sequences, 0.5 , map);
+		
+		assertEquals(2, a2.size());
+		assertEquals("AAAAAAAA", a2.get(0).getSecond());
+		assertEquals("AAAAAA--", a2.get(1).getSecond());
+		assertEquals(3, (int)map.get(1));
+		assertEquals(4, (int)map.get(2));
+		assertEquals(5, (int)map.get(3));
+		assertEquals(6, (int)map.get(4));
+		assertEquals(7, (int)map.get(5));
+		assertEquals(8, (int)map.get(6));
+		assertEquals(9, (int)map.get(7));
+		assertEquals(10, (int)map.get(8));
+		
+
+		
+		
 	}
 
 	@Test
@@ -117,17 +164,153 @@ public class GapstripperTest extends Gapstripper {
 
 	@Test
 	public void testGetReferenceSequenceByIndex() {
-		fail("Not yet implemented");
+		Gapstripper stripper = new Gapstripper();
+		
+		String s1 ="AAAAAAAAAA";
+		String s2 ="AAAAAAAA--";
+		String s3 ="AAAAAA----";
+		String s4 ="AAAA------";
+		String s5 ="AA--------";
+		String s6 ="----------";
+		
+		LinkedHashMap<String, String> sequences = new LinkedHashMap<>();
+		
+		sequences.put("s1", s1);
+		sequences.put("s2", s2);
+		sequences.put("s3", s3);
+		sequences.put("s4", s4);
+		sequences.put("s5", s5);
+		sequences.put("s6", s6);
+		
+		String d1 = stripper.getReferenceSequenceByIndex(1, sequences);
+		String d2 = stripper.getReferenceSequenceByIndex(2, sequences);
+		String d3 = stripper.getReferenceSequenceByIndex(3, sequences);
+		String d4 = stripper.getReferenceSequenceByIndex(4, sequences);
+		String d5 = stripper.getReferenceSequenceByIndex(5, sequences);
+		String d6 = stripper.getReferenceSequenceByIndex(6, sequences);
+		
+		assertEquals(d1, "s1");
+		assertEquals(d2, "s2");
+		assertEquals(d3, "s3");
+		assertEquals(d4, "s4");
+		assertEquals(d5, "s5");
+		assertEquals(d6, "s6");
+		
+		
+		
 	}
 
 	@Test
 	public void testGetReferenceSequenceById() {
-		fail("Not yet implemented");
+		Gapstripper stripper = new Gapstripper();
+		
+		String s1 ="AAAAAAAAAA";
+		String s2 ="AAAAAAAA--";
+		String s3 ="AAAAAA----";
+		String s4 ="AAAA------";
+		String s5 ="AA--------";
+		String s6 ="----------";
+		
+		LinkedHashMap<String, String> sequences = new LinkedHashMap<>();
+		
+		sequences.put("s1", s1);
+		sequences.put("s2", s2);
+		sequences.put("s3", s3);
+		sequences.put("s4", s4);
+		sequences.put("s5", s5);
+		sequences.put("s6", s6);
+		
+		String d1 = stripper.getReferenceSequenceById("s1", sequences);
+		String d2 = stripper.getReferenceSequenceById("s2", sequences);
+		String d3 = stripper.getReferenceSequenceById("s3", sequences);
+		String d4 = stripper.getReferenceSequenceById("s4", sequences);
+		String d5 = stripper.getReferenceSequenceById("s5", sequences);
+		String d6 = stripper.getReferenceSequenceById("s6", sequences);
+		
+		assertEquals(d1, "s1");
+		assertEquals(d2, "s2");
+		assertEquals(d3, "s3");
+		assertEquals(d4, "s4");
+		assertEquals(d5, "s5");
+		assertEquals(d6, "s6");
 	}
 
 	@Test
 	public void testGetMaxFreqMask() {
-		fail("Not yet implemented");
+
+		Gapstripper stripper = new Gapstripper();
+		
+		String s1 ="AAAAAAAAAA";
+		String s2 ="AAAAAAAAAF";
+		String s3 ="AAAAAAAADF";
+		String s4 ="AAAAAAACDF";
+		String s5 ="BBBBBBBCDF";
+		String s6 ="BBBBBBBCDF";
+		
+		LinkedHashMap<String, String> sequences = new LinkedHashMap<>();
+		
+		sequences.put("s1", s1);
+		sequences.put("s2", s2);
+		sequences.put("s3", s3);
+		sequences.put("s4", s4);
+		sequences.put("s5", s5);
+		sequences.put("s6", s6);
+
+		
+		
+		boolean[] noCl = stripper.getMaxFreqMask(sequences, 0.85, false, 0);
+		
+		assertArrayEquals(new Boolean[]{true,true,true,true,true,true,true,true,true,true},
+				          new Boolean[]{noCl[0],noCl[1],noCl[2],noCl[3],noCl[4],noCl[5],noCl[6],noCl[7],noCl[8],noCl[9]});
+		
+		noCl = stripper.getMaxFreqMask(sequences, 0.8, false, 0);
+		
+		assertArrayEquals(new Boolean[]{true,true,true,true,true,true,true,true,true,false},
+				          new Boolean[]{noCl[0],noCl[1],noCl[2],noCl[3],noCl[4],noCl[5],noCl[6],noCl[7],noCl[8],noCl[9]});
+
+		noCl = stripper.getMaxFreqMask(sequences, 0.6, false, 0);
+		
+		assertArrayEquals(new Boolean[]{false,false,false,false,false,false,false,true,false,false},
+				          new Boolean[]{noCl[0],noCl[1],noCl[2],noCl[3],noCl[4],noCl[5],noCl[6],noCl[7],noCl[8],noCl[9]});
+
+		noCl = stripper.getMaxFreqMask(sequences, 0.45, false, 0);
+		
+		assertArrayEquals(new Boolean[]{false,false,false,false,false,false,false,false,false,false},
+				          new Boolean[]{noCl[0],noCl[1],noCl[2],noCl[3],noCl[4],noCl[5],noCl[6],noCl[7],noCl[8],noCl[9]});
+
+		
+		
+		boolean[] cl = stripper.getMaxFreqMask(sequences, 0.88, true, 0.7);
+		
+		assertArrayEquals(new Boolean[]{true,true,true,true,true,true,true,true,true,true},
+				          new Boolean[]{cl[0],cl[1],cl[2],cl[3],cl[4],cl[5],cl[6],cl[7],cl[8],cl[9]});
+
+		cl = stripper.getMaxFreqMask(sequences, 0.85, true, 0.7);
+		
+		assertArrayEquals(new Boolean[]{true,true,true,true,true,true,true,true,true,false},
+				          new Boolean[]{cl[0],cl[1],cl[2],cl[3],cl[4],cl[5],cl[6],cl[7],cl[8],cl[9]});
+		
+		
+		cl = stripper.getMaxFreqMask(sequences, 0.8, true, 0.7);
+		
+		assertArrayEquals(new Boolean[]{true,true,true,true,true,true,true,true,true,false},
+				          new Boolean[]{cl[0],cl[1],cl[2],cl[3],cl[4],cl[5],cl[6],cl[7],cl[8],cl[9]});
+		
+		cl = stripper.getMaxFreqMask(sequences, 0.6, true, 0.7);
+		
+		assertArrayEquals(new Boolean[]{true,true,true,true,true,true,true,false,false,false},
+				          new Boolean[]{cl[0],cl[1],cl[2],cl[3],cl[4],cl[5],cl[6],cl[7],cl[8],cl[9]});
+		
+		cl = stripper.getMaxFreqMask(sequences, 0.5, true, 0.7);
+		
+		assertArrayEquals(new Boolean[]{true,true,true,true,true,true,true,false,false,false},
+				          new Boolean[]{cl[0],cl[1],cl[2],cl[3],cl[4],cl[5],cl[6],cl[7],cl[8],cl[9]});
+
+		cl = stripper.getMaxFreqMask(sequences, 0.49, true, 0.7);
+		
+		assertArrayEquals(new Boolean[]{false,false,false,false,false,false,false,false,false,false},
+				          new Boolean[]{cl[0],cl[1],cl[2],cl[3],cl[4],cl[5],cl[6],cl[7],cl[8],cl[9]});
+		
 	}
 
 }

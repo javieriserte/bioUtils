@@ -24,8 +24,6 @@ import fileformats.fastaIO.Pair;
 
 
 /**
- * TODO test if this class work properly after introducing clustering.
- * 
  * This program is intended to perform three common pre-processing
  * features in alignments before MI calculation.
  * 
