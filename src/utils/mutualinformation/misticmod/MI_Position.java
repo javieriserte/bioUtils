@@ -19,7 +19,7 @@ public class MI_Position {
 	 *  1	M	2	A	12.182070
 	 *  </pre>
 	 */
-	protected final static String MISTIC_FORMAT_LINE = "\\d+\\t[A-Z]\\t\\d+\\t[A-Z]\\t-*\\d+\\.?\\d*[eE]*[-+]*\\d*$";
+	protected final static String MISTIC_FORMAT_LINE = "\\d+\\t[A-Z\\-]\\t\\d+\\t[A-Z\\-]\\t-*\\d+\\.?\\d*[eE]*[-+]*\\d*$";
 
 	/**
 	 * Pattern to match the output from Mortem Nielsen soft<br>
@@ -28,7 +28,7 @@ public class MI_Position {
 	 * MI[ 1 G ][ 6 Q ] = -0.029194 0.003595 0.016705 -1.962794
 	 * </pre>
 	 */
-	protected final static String MN_FORMAT_LINE = "MI\\[ \\d+ [A-Z] \\]\\[ \\d+ [A-Z] \\] = -*\\d+\\.?\\d*[eE]*[-+]*\\d* -*\\d+\\.?\\d*[eE]*[-+]*\\d* -*\\d+\\.?\\d*[eE]*[-+]*\\d* -*\\d+\\.?\\d*[eE]*[-+]*\\d*$";
+	protected final static String MN_FORMAT_LINE = "MI\\[ \\d+ [A-Z\\-] \\]\\[ \\d+ [A-Z\\-] \\] = -*\\d+\\.?\\d*[eE]*[-+]*\\d* -*\\d+\\.?\\d*[eE]*[-+]*\\d* -*\\d+\\.?\\d*[eE]*[-+]*\\d* -*\\d+\\.?\\d*[eE]*[-+]*\\d*$";
 
 	////////////////////////
 	// Instance Variables

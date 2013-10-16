@@ -31,9 +31,9 @@ public class MIOnePixelMap {
 		// Add Command Line Options
 		SingleArgumentOption<InputStream> inOpt = OptionsFactory.createBasicInputStreamArgument(cmd);
 		
-		SingleArgumentOption<File> outOpt = new SingleArgumentOption<File>(cmd, "-out", new OutfileValue() , null);
+		SingleArgumentOption<File> outOpt = new SingleArgumentOption<File>(cmd, "--out", new OutfileValue() , null);
 		
-		MultipleArgumentOption<Integer> lenOpt = OptionsFactory.createBasicCommaSeparatedIntegersArgument(cmd, "-lengths");
+		MultipleArgumentOption<Integer> lenOpt = OptionsFactory.createBasicCommaSeparatedIntegersArgument(cmd, "--lengths");
 
 		////////////////////////////////
 		// Parse Command Line
