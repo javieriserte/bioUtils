@@ -12,18 +12,25 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.CategoryAxis;
+import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.IntervalMarker;
 import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.renderer.category.BoxAndWhiskerRenderer;
+import org.jfree.data.statistics.DefaultBoxAndWhiskerCategoryDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.ui.Layer;
 import org.jfree.ui.RectangleAnchor;
 import org.jfree.ui.TextAnchor;
 
+import cmdGA.NoOption;
 import cmdGA.Parser;
 import cmdGA.SingleOption;
 import cmdGA.exceptions.IncorrectParameterTypeException;
@@ -69,6 +76,8 @@ public class ProfileWriter {
 		
 		SingleOption labelFontOpt = new SingleOption(parser, new Font("Arial", Font.BOLD, 24) , "-font", FontParameter.getParameter());
 		
+		NoOption boxplotOpt = new NoOption(parser, "-box");
+		
 		//Font parameter accepts: "[fontname, fontstyle, size]" or "[fontname, fontstyle]" or "[fontname]".
 		
 		//////////////////////////////
@@ -111,17 +120,94 @@ public class ProfileWriter {
 		Color[] colors = new Color[]{new Color(255,0, 0, 50) , new Color(0, 255, 0, 50)};
 		Color plotLinesColor = Color.black;
 		
-		//////////////////////////////
-		// Create Chart and add profile
-		JFreeChart chart = createBasicChart(title, data, plotLinesColor);
-
-		/////////////////////////////////////
-		// Add region markers 
-		addMarkerRegions(lengthsFile, namesFile, colors, plotLabelFont,	chart);
+		BufferedImage profileImage = null;
 		
-		/////////////////////////////////////
-		// Export Image
-		BufferedImage profileImage = chart.createBufferedImage( data.length, 300);
+		if (!boxplotOpt.isPresent()) {
+		
+			//////////////////////////////
+			// Create Chart and add profile
+			JFreeChart chart = createBasicChart(title, data, plotLinesColor);
+
+			/////////////////////////////////////
+			// Add region markers 
+			addMarkerRegions(lengthsFile, namesFile, colors, plotLabelFont,	chart);
+		
+			/////////////////////////////////////
+			// Export Image
+			profileImage = chart.createBufferedImage( data.length, 300);
+		
+		} else {
+
+			List<List<Double>> regionsData = splitDataByRegion(lengthsFile, data);
+	        
+	        DefaultBoxAndWhiskerCategoryDataset dataset = new DefaultBoxAndWhiskerCategoryDataset();
+	        
+	        String[] names = null;
+	        
+			try {
+				names = readNames(namesFile);
+			} catch (NumberFormatException | IOException e) {
+				e.printStackTrace();
+			}
+	        
+	        int nameCounter = 0;
+	        String name = "";
+	        
+	        for (List<Double> regionData : regionsData) {
+	        	
+	        	if (names!= null) {
+	        	
+	        		name = names[nameCounter];
+	        				
+	        	} else {
+	        		
+	        		name = "Region " + String.valueOf(nameCounter+1);
+	        		
+	        	}
+
+	        	dataset.add(regionData, name, "");
+	        	
+	        	nameCounter++;
+	        }
+	        
+	        
+	        
+	        final CategoryAxis xAxis = new CategoryAxis("Regions");
+	        final NumberAxis yAxis = new NumberAxis("Conservation");
+	        yAxis.setAutoRangeIncludesZero(false);
+	        final BoxAndWhiskerRenderer renderer = new BoxAndWhiskerRenderer();
+	        renderer.setFillBox(false);
+	        
+	        for (int i= 0; i<dataset.getRowCount(); i++) {
+	        	
+	        	Color currentColor = new Color(
+	        			colors[i % colors.length].getRed(),
+	        			colors[i % colors.length].getGreen(),
+	        			colors[i % colors.length].getBlue(),
+	        			200);
+	        	
+	        	renderer.setSeriesPaint(i, currentColor);
+	        	
+	        	renderer.setBasePaint(currentColor);
+	        	
+	        }
+	        
+	        renderer.setWhiskerWidth(0.8);
+	        
+	        renderer.setItemMargin(0.5);
+	        
+	        final CategoryPlot plot = new CategoryPlot(dataset, xAxis, yAxis, renderer);
+
+	        final JFreeChart chart = new JFreeChart(
+	            title,
+	            plotLabelFont,
+	            plot,
+	            true
+	        );
+	        
+	        profileImage = chart.createBufferedImage( 1500, 600);
+	        
+		}
 		
 		try {
 			
@@ -137,6 +223,40 @@ public class ProfileWriter {
 		/////////////////////////
 		// End of Main Code
 		/////////////////////////
+	}
+
+	private static List<List<Double>> splitDataByRegion(File lengthsFile, double[] data) {
+
+		List<List<Double>> result = new ArrayList<>();
+		
+		try {
+			
+			int[] lengths = readLengths(lengthsFile);
+			
+			int dataCounter = 0 ;
+			
+			for (int i=0 ; i< lengths.length; i++) {
+				
+				List<Double> regionData = new ArrayList<>();
+				
+				for (int j=0 ; j<lengths[i] ; j++) {
+					
+					regionData.add(data[dataCounter]);
+					
+					dataCounter++;
+					
+				}
+				
+				result.add(regionData);
+				
+			}
+			
+		} catch (NumberFormatException | IOException e) {
+			e.printStackTrace();
+		}
+		
+		return result;
+		
 	}
 
 	/////////////////////////////////////////
