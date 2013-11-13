@@ -5,12 +5,17 @@ import io.bufferreaders.UncommenterBufferedReader;
 import io.onelinelister.OneLineListReader;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.List;
 
 import cmdGA2.CommandLine;
@@ -18,6 +23,7 @@ import cmdGA2.MultipleArgumentOption;
 import cmdGA2.OptionsFactory;
 import cmdGA2.SingleArgumentOption;
 import cmdGA2.returnvalues.OutfileValue;
+import cmdGA2.returnvalues.StringValue;
 
 public class MIOnePixelMap {
 	
@@ -34,6 +40,8 @@ public class MIOnePixelMap {
 		SingleArgumentOption<File> outOpt = new SingleArgumentOption<File>(cmd, "--out", new OutfileValue() , null);
 		
 		MultipleArgumentOption<Integer> lenOpt = OptionsFactory.createBasicCommaSeparatedIntegersArgument(cmd, "--lengths");
+		
+		MultipleArgumentOption<String> namesOpt = new MultipleArgumentOption<>(cmd, "--names", ',', new ArrayList<String>(), new StringValue());
 
 		////////////////////////////////
 		// Parse Command Line
@@ -46,7 +54,9 @@ public class MIOnePixelMap {
 		File out = outOpt.getValue();
 		
 		List<Integer> lengths = lenOpt.getValues();
-
+		
+		List<String> names = namesOpt.getValues();
+		
 		////////////////////////////////
 		// Validate Options
 		if (!outOpt.isPresent() || out==null) {
@@ -60,6 +70,14 @@ public class MIOnePixelMap {
 		if (!lenOpt.isPresent() || lengths.isEmpty()) {
 			
 			System.err.println("There was an error with the protein lengths");
+			
+			System.exit(1);
+			
+		}
+		
+		if (namesOpt.isPresent() && (names.size() != lengths.size()) ) {
+
+			System.err.println("There must be the same number of name labels that region lengths");
 			
 			System.exit(1);
 			
@@ -83,7 +101,7 @@ public class MIOnePixelMap {
 			
 			double minMIValue = getMinValue(positions);
 			
-			BufferedImage bi = getImage(lengths, positions, max, maxMIValue, minMIValue);
+			BufferedImage bi = getImage(lengths, names,  positions, max, maxMIValue, minMIValue);
 			
 			PngWriter writer = new PngWriter();
 			
@@ -99,7 +117,7 @@ public class MIOnePixelMap {
 		
 	}
 
-	public static BufferedImage getImage(List<Integer> lengths, List<MI_PositionWithProtein> positions, int max, double maxMIValue, double minMIValue) {
+	public static BufferedImage getImage(List<Integer> lengths, List<String> names, List<MI_PositionWithProtein> positions, int max, double maxMIValue, double minMIValue) {
 		
 		BufferedImage bi = new BufferedImage(max+lengths.size()-1, max + lengths.size()-1, BufferedImage.TYPE_INT_RGB);
 		
@@ -109,36 +127,82 @@ public class MIOnePixelMap {
 		
 		drawMI_Points(positions, maxMIValue, minMIValue, bi);
 		
-		return drawProteinRegions(lengths, max, bi);
+		return drawProteinRegions(lengths, names, max, bi);
 	}
 
-	public static BufferedImage drawProteinRegions(List<Integer> lengths, int max, BufferedImage bi) {
+	public static BufferedImage drawProteinRegions(List<Integer> lengths, List<String> names, int max, BufferedImage bi) {
 
 		BufferedImage bli = new BufferedImage(max + 50 + lengths.size()-1, max+50 + lengths.size()-1, BufferedImage.TYPE_INT_RGB);
 		
 		Graphics2D graphics = (Graphics2D) bli.getGraphics();
+		
+		graphics.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+		
+		graphics.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 
 		int offset = 50;
 		
-		Color[] colors = new Color[]{Color.red, Color.green}; 
+		Color[] colors = new Color[]{new Color(255, 0, 0, 150), new Color(0 , 255, 0, 150)}; 
 		
 		int i =0;
 		
 		int region_counter = 0;
 		
+		int markerRegionWidth = 50;
+		
 		for (int len : lengths) {
 		
+			graphics.setColor(Color.white);
+			
+			graphics.fillRect(offset + region_counter , 0 , len, markerRegionWidth);	
+			
+			graphics.fillRect(0 ,offset+region_counter , markerRegionWidth , len);
+			
 			graphics.setColor(colors[i]);
 			
-			graphics.fillRect(offset + region_counter , 0 , len, 50);	
+			graphics.fillRect(offset + region_counter , 0 , len, markerRegionWidth);	
 			
-			graphics.fillRect(0 ,offset+region_counter , 50 , len);
-			
+			graphics.fillRect(0 ,offset+region_counter , markerRegionWidth , len);
+
 			offset = offset + len;
 			
 			region_counter = region_counter+1;
 			
 			i=1-i;
+			
+		}
+		
+		offset = 50;
+		
+		region_counter = 0;
+		
+		graphics.setFont(new Font("Arial", 1, 45));
+		
+		graphics.setColor(new Color(50,50,170));
+		
+		for (int len : lengths) {
+			
+			Rectangle2D textBounds = graphics.getFont().createGlyphVector(graphics.getFontRenderContext(), names.get(region_counter).trim()).getVisualBounds();
+			
+			int textAdv = (int)(len - textBounds.getWidth() ) / 2; 
+			
+			int textHeight = (int) (markerRegionWidth + textBounds.getHeight())/2;
+			
+			graphics.drawString( names.get(region_counter).trim(), (int) (offset + region_counter + textAdv - textBounds.getMinX()/2), textHeight );
+			
+			AffineTransform transformOrig = graphics.getTransform();
+			
+			graphics.setColor(new Color(50,50,170));
+			
+			graphics.rotate(Math.PI/2,markerRegionWidth/2,markerRegionWidth/2);
+			
+			graphics.drawString( names.get(region_counter).trim(), (int) (offset + region_counter + textAdv - textBounds.getMinX()/2), textHeight );
+			
+			graphics.setTransform(transformOrig);
+			
+			offset = offset + len;
+			
+			region_counter = region_counter + 1;
 			
 		}
 		
