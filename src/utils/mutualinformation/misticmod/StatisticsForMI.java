@@ -246,7 +246,19 @@ public class StatisticsForMI {
 		
 		List<MI_Position> result = new ArrayList<>();
 		
+		int counter = 0;
+		
 		for (MI_Position position : positions) {
+			
+			counter++;
+			
+			if (position.getMi() == null) {
+				
+				System.out.println(counter);
+				
+				System.out.println(position);
+				
+			}
 			
 			if (position.getMi() >= cutoff ) {
 				
