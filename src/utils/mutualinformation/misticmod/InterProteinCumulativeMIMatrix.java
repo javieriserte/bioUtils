@@ -59,6 +59,10 @@ public class InterProteinCumulativeMIMatrix {
 		ipcm.readMiData((InputStream) inOpt.getValue());
 		
 		ipcm.assignProteinNumber(lengths);
+		
+		// TODO check if the number of residues in data
+		// is equal to the sum of the lengths passed as 
+		// argument.
 
 		Normalizer normalizer = countAllPairsOpt.isPresent()?(ipcm.new NormalizeWithAll(lengths)):(ipcm.new NormalizeWithPositives(lengths.length, ipcm.data, lengths));
 		
