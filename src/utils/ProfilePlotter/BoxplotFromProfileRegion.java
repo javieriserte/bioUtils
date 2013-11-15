@@ -163,22 +163,38 @@ public class BoxplotFromProfileRegion {
         	
         	renderer.setBasePaint(currentColor);
         	
+        	renderer.setSeriesItemLabelFont(i, new Font("Arial", 1, 30));
+        	
         }
         
         renderer.setWhiskerWidth(0.8);
         
         renderer.setItemMargin(0.5);
         
+        yAxis.setLabelFont(new Font("Arial", 1, 35));
+        
+        xAxis.setLabel("");
+        
+        xAxis.setTickLabelFont(new Font("Arial", 1, 35));
+        
+        yAxis.setTickLabelFont(new Font("Arial", 1, 20));
+        
         final CategoryPlot plot = new CategoryPlot(dataset, xAxis, yAxis, renderer);
+        
+        plot.setBackgroundPaint(new Color(225,225,225));
 
         final JFreeChart chart = new JFreeChart(
             "",
-            new Font("Arial", 1, 15),
+            new Font("Arial", 1, 45),
             plot,
             true
         );
-		
-		return chart.createBufferedImage(1500, 600);
+        
+        
+        
+        renderer.setBaseLegendTextFont(new Font("Arial", 1, 25));
+        
+		return chart.createBufferedImage(3000, 1200);
 		
 	}
 
