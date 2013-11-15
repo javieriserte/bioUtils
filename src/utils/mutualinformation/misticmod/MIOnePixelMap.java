@@ -139,7 +139,7 @@ public class MIOnePixelMap {
 		graphics.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
 		
 		graphics.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-
+		
 		int offset = 50;
 		
 		Color[] colors = new Color[]{new Color(255, 0, 0, 150), new Color(0 , 255, 0, 150)}; 
@@ -172,40 +172,43 @@ public class MIOnePixelMap {
 			
 		}
 		
-		offset = 50;
+		if (names.size()==lengths.size()) {
 		
-		region_counter = 0;
-		
-		graphics.setFont(new Font("Arial", 1, 45));
-		
-		graphics.setColor(new Color(50,50,170));
-		
-		for (int len : lengths) {
+			offset = 50;
 			
-			Rectangle2D textBounds = graphics.getFont().createGlyphVector(graphics.getFontRenderContext(), names.get(region_counter).trim()).getVisualBounds();
+			region_counter = 0;
 			
-			int textAdv = (int)(len - textBounds.getWidth() ) / 2; 
-			
-			int textHeight = (int) (markerRegionWidth + textBounds.getHeight())/2;
-			
-			graphics.drawString( names.get(region_counter).trim(), (int) (offset + region_counter + textAdv - textBounds.getMinX()/2), textHeight );
-			
-			AffineTransform transformOrig = graphics.getTransform();
+			graphics.setFont(new Font("Arial", 1, 45));
 			
 			graphics.setColor(new Color(50,50,170));
 			
-			graphics.rotate(Math.PI/2,markerRegionWidth/2,markerRegionWidth/2);
-			
-			graphics.drawString( names.get(region_counter).trim(), (int) (offset + region_counter + textAdv - textBounds.getMinX()/2), textHeight );
-			
-			graphics.setTransform(transformOrig);
-			
-			offset = offset + len;
-			
-			region_counter = region_counter + 1;
-			
-		}
+			for (int len : lengths) {
+				
+				Rectangle2D textBounds = graphics.getFont().createGlyphVector(graphics.getFontRenderContext(), names.get(region_counter).trim()).getVisualBounds();
+				
+				int textAdv = (int)(len - textBounds.getWidth() ) / 2; 
+				
+				int textHeight = (int) (markerRegionWidth + textBounds.getHeight())/2;
+				
+				graphics.drawString( names.get(region_counter).trim(), (int) (offset + region_counter + textAdv - textBounds.getMinX()/2), textHeight );
+				
+				AffineTransform transformOrig = graphics.getTransform();
+				
+				graphics.setColor(new Color(50,50,170));
+				
+				graphics.rotate(Math.PI/2,markerRegionWidth/2,markerRegionWidth/2);
+				
+				graphics.drawString( names.get(region_counter).trim(), (int) (offset + region_counter + textAdv - textBounds.getMinX()/2), textHeight );
+				
+				graphics.setTransform(transformOrig);
+				
+				offset = offset + len;
+				
+				region_counter = region_counter + 1;
+				
+			}
 		
+		}
 		graphics.drawImage(bi, null, 50, 50);
 		
 		return bli;
