@@ -1,5 +1,10 @@
 package pdb;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 public abstract class SpacePoint {
 
 	///////////////////////////
@@ -43,6 +48,56 @@ public abstract class SpacePoint {
     			 , (1d/2) ) ;
     	
     }
+    
+    /**
+     * Given a list of SpacePoint object that represents a PDB structure, separates
+     * it by the chain that each atom belongs.
+     *
+     * @param pdb
+     * @return
+     */
+    public static Map<Character, List<SpacePoint>> separateByChainIdentifier(List<SpacePoint> pdb) {
+    	Map<Character,List<SpacePoint>> chainsInPDB = new HashMap<Character, List<SpacePoint>>();
+    	
+    	for (SpacePoint point : pdb) {
+    		
+    		char currentChain = point.getChainIdentifier();
+    		
+    		if (!chainsInPDB.containsKey(currentChain)) {
+    			
+    			chainsInPDB.put(currentChain, new ArrayList<SpacePoint>());
+    			
+    		}
+    		
+    		chainsInPDB.get(currentChain).add(point);
+   		
+    	}
+    	
+    	return chainsInPDB;
+    	    	
+    }
+    
+	public static Map<Integer,List<SpacePoint>> separateByResidueNumber(List<SpacePoint> pdb) {
+
+		Map<Integer, List<SpacePoint>> results = new HashMap<>();
+		
+		for (SpacePoint point : pdb) {
+			
+			Integer resNumber = point.getResidueSequenceNumber();
+			
+			if (!results.containsKey(resNumber)) {
+				
+				results.put(resNumber, new ArrayList<SpacePoint>());
+	
+			}
+			
+			results.get(resNumber).add(point);
+			
+		}
+		
+		return results;
+		
+	}
     
     ///////////////////////////////////
     // Getters and Setters
