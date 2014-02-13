@@ -26,6 +26,8 @@ public class DrawTatRevOverlap {
 	
 	private final static int LABELWIDTH = 40;
 	private final static int SQUAREWIDTH = 15;
+	private final static int REVOVERLAPLASTPOS = 25; 
+	private final static int TATOVERLAPFIRSTPOS = 42;
 	// Width and height oh each position.
 
 	public static void main(String[] args) {
@@ -34,31 +36,33 @@ public class DrawTatRevOverlap {
 		int rev_end = 1296;
 		int tat_ini = 1297;
 		int tat_end = 1351;
-//		double cutoff = 6.5;
-		double cutoff = 10;
+		double[] cutoff = {6.5,10};
 		
 		String mimatrix_pathfile = "/home/javier/Dropbox/Posdoc/HIV.Segundo.Analisis/mi_mf_cl/mi_cl_lc_data";
 		String ref_file = "/home/javier/Dropbox/Posdoc/HIV.Segundo.Analisis/mi_mf_cl/solap.tat.rev/ref_seq_EF158040";
-		String outfileimage = "/home/javier/Dropbox/Posdoc/HIV.Segundo.Analisis/mi_mf_cl/solap.tat.rev/mi_map_10.png";
+		String[] outfileimage = {"/home/javier/Dropbox/Posdoc/HIV.Segundo.Analisis/mi_mf_cl/solap.tat.rev/overlapTatRev0065.png",
+				                 "/home/javier/Dropbox/Posdoc/HIV.Segundo.Analisis/mi_mf_cl/solap.tat.rev/overlapTatRev0100.png"};
 		
 		char[] tat_ref = load_ref_file(ref_file, tat_ini,tat_end);
 		char[] rev_ref = load_ref_file(ref_file, rev_ini,rev_end);
 		
-		boolean[][] highMIValuesMatrix = loadMIMatrix(mimatrix_pathfile,rev_ini,rev_end,tat_ini,tat_end,cutoff);
+		for(int i=0;i<2;i++) {
 		
-		BufferedImage miMatrix = createMIMatrixImage(highMIValuesMatrix);
+			boolean[][] highMIValuesMatrix = loadMIMatrix(mimatrix_pathfile,rev_ini,rev_end,tat_ini,tat_end,cutoff[i]);
+			
+			BufferedImage miMatrix = createMIMatrixImage(highMIValuesMatrix);
+			
+			miMatrix = decorateMIMatrix(miMatrix, rev_ini,rev_end,tat_ini,tat_end, rev_ref, tat_ref);
+			
+			PngWriter png = new PngWriter();
+			
+			try {
+				png.write(new File(outfileimage[i]), miMatrix);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		
-		miMatrix = decorateMIMatrix(miMatrix, rev_ini,rev_end,tat_ini,tat_end, rev_ref, tat_ref);
-		
-		PngWriter png = new PngWriter();
-		
-		try {
-			png.write(new File(outfileimage), miMatrix);
-		} catch (IOException e) {
-			e.printStackTrace();
 		}
-		
-		
 	}
 	
 	
@@ -138,7 +142,9 @@ public class DrawTatRevOverlap {
 			
 			for (int j = 0; j < vPos; j++) {
 				
-				Color c = highMIValuesMatrix[i][j]?Color.black:Color.white;
+				Color backColor = (j>=vPos-TATOVERLAPFIRSTPOS && i<REVOVERLAPLASTPOS)?new Color(200,200,200):Color.white;
+				
+				Color c = highMIValuesMatrix[i][j]?Color.black:backColor;
 				graphics.setColor(c);
 				graphics.fillRect(i * (SQUAREWIDTH+1) , j * (SQUAREWIDTH+1), SQUAREWIDTH, SQUAREWIDTH);
 				
