@@ -1,17 +1,20 @@
 package utils.mutualinformation.mimatrixviewer;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Graphics2D;
 import java.awt.Insets;
+import java.io.File;
 
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.WindowConstants;
+
 
 public class MIMatrixViewer extends JFrame{
 
@@ -27,7 +30,7 @@ public class MIMatrixViewer extends JFrame{
 				inst.setVisible(true);
 				inst.setTitle("Mi Matrix Viewer");
 				inst.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-				inst.pack();
+				
 				
 				Graphics2D graphics = (Graphics2D) inst.getContentPane().getGraphics();
 				
@@ -37,7 +40,22 @@ public class MIMatrixViewer extends JFrame{
 				inst.getContentPane().repaint();
 			
 				inst.setLayout(new FlowLayout());
-				inst.getContentPane().add(new JLabel("HOLA"));
+				
+				File infile = new File("/home/javier/Dropbox/Posdoc/HIV.Segundo.Analisis/mi_mf_cl/mi_cl_lc_data");
+				
+				MI_Matrix matrix = MI_Matrix.loadFromFile(infile);
+				
+				MIMatrixPane matrixPane = new MIMatrixPane();
+				MatrixColoringStrategy color = new RedAndBlueMatrixColoringStrategy(-10,50);
+				
+				matrixPane.setColor(color);
+				matrixPane.setMatrix(matrix);
+				matrixPane.setSize(matrix.getSize(), matrix.getSize());
+				matrixPane.setPreferredSize(new Dimension(matrix.getSize(), matrix.getSize()));
+				JScrollPane jsp1 = new JScrollPane(matrixPane, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+				inst.setLayout(new BorderLayout());
+				inst.getContentPane().add(jsp1, BorderLayout.CENTER);
+				inst.pack();
 				
 					// set swing properties of MainFASDPD
 			}
