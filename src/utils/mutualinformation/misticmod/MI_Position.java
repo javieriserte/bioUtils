@@ -29,6 +29,18 @@ public class MI_Position {
 	 * </pre>
 	 */
 	protected final static String MN_FORMAT_LINE = "MI\\[ \\d+ [A-Z\\-] \\]\\[ \\d+ [A-Z\\-] \\] = -*\\d+\\.?\\d*[eE]*[-+]*\\d* -*\\d+\\.?\\d*[eE]*[-+]*\\d* -*\\d+\\.?\\d*[eE]*[-+]*\\d* -*\\d+\\.?\\d*[eE]*[-+]*\\d*$";
+	
+	protected static MI_Position_Printer printer = new MI_Position_MisticPrinter();
+	
+	/////////////////////////
+	// Class methods
+	public static void activateMisticPrinter(){
+		MI_Position.printer = new MI_Position_MisticPrinter();
+	}
+	
+	public static void activateMortemPrinter(){
+		MI_Position.printer = new MI_Position_MortemPrinter();
+	}
 
 	////////////////////////
 	// Instance Variables
@@ -38,6 +50,8 @@ public class MI_Position {
 	private char aa2;
 	private Double mi;
 	private Double raw_mi;
+	private double mean_mi;
+	private double sd_mi;
 
 	//////////////////////////////////
 	// Constructor
@@ -67,7 +81,7 @@ public class MI_Position {
 	// Public Interface 
 	@Override
 	public String toString() {
-		return this.getPos1() + "\t" + this.getAa1() + "\t" + this.getPos2() + "\t" + this.getAa2()+ "\t" + this.getMi();
+		return printer.print(this);
 	}
 	
 	/**
@@ -133,7 +147,18 @@ public class MI_Position {
 	public Double getRaw_mi() {
 		return raw_mi;
 	}
-	
+	public double getMean_mi() {
+		return mean_mi;
+	}
+	protected void setMean_mi(double mean_mi) {
+		this.mean_mi = mean_mi;
+	}
+	public double getSd_mi() {
+		return sd_mi;
+	}
+	protected void setSd_mi(double sd_mi) {
+		this.sd_mi = sd_mi;
+	}
 	///////////////////////////////
 	// Protected static Methods
 	
@@ -145,6 +170,8 @@ public class MI_Position {
 		char aa2;
 		double mi;
 		double raw_mi;
+		double mean_mi;
+		double sd_mi;
 
 		//////////////////////////////////
 		// Must Choose between MN format and
@@ -160,6 +187,8 @@ public class MI_Position {
 			aa2 = data[3].charAt(0);
 			mi = Double.valueOf(data[4]);
 			raw_mi = 0;
+			mean_mi = Double.valueOf(0); 
+			sd_mi = Double.valueOf(0);
 			
 		} else if (Pattern.matches(MI_Position.MN_FORMAT_LINE, positionLine)) {
 		// If input line matches with Mortem Nielsen format
@@ -172,6 +201,8 @@ public class MI_Position {
 			aa2 = data[5].charAt(0);
 			mi = Double.valueOf(data[11]);
 			raw_mi = Double.valueOf(data[8]);
+			mean_mi = Double.valueOf(data[9]); 
+			sd_mi = Double.valueOf(data[10]);
 
 		} else {
 		
@@ -185,6 +216,8 @@ public class MI_Position {
 		pos.setAa2(aa2);
 		pos.setMi(mi);
 		pos.setRaw_mi(raw_mi);
+		pos.setMean_mi(mean_mi);
+		pos.setSd_mi(sd_mi);
 
 	}
 	

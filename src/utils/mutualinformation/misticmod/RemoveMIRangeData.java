@@ -115,6 +115,7 @@ public class RemoveMIRangeData {
 		// Iterate over each mi position element,
 		// check if it is in the ranges and
 		// prints result.
+		MI_Position.activateMortemPrinter();
 		for (MI_Position mi_Position : miData) {
 			
 			int p1 = mi_Position.getPos1();
