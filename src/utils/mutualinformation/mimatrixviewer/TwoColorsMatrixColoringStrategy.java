@@ -48,11 +48,11 @@ public class TwoColorsMatrixColoringStrategy implements MatrixColoringStrategy{
 	public void setHighValuesColor(Color highValuesColor) {
 		this.highValuesColor = highValuesColor;
 	}
-	private void setLowerValue(double lowerValue) {
+	protected void setLowerValue(double lowerValue) {
 		this.lowerValue = lowerValue;
 		
 	}
-	private void setHigherValue(double higherValue) {
+	protected void setHigherValue(double higherValue) {
 		this.higherValue = higherValue;
 		
 	}
@@ -69,7 +69,7 @@ public class TwoColorsMatrixColoringStrategy implements MatrixColoringStrategy{
 	public Color getUndefinedValueColor() {
 		return this.undefinedValueColor;
 	}
-	private void setMeanValue(double meanValue) {
+	protected void setMeanValue(double meanValue) {
 		this.meanValue = meanValue;
 	}
 	public double getMeanValue(){
@@ -79,10 +79,10 @@ public class TwoColorsMatrixColoringStrategy implements MatrixColoringStrategy{
 		return this.midRange;
 	}
 
-	private void setMidRange(double midRange) {
+	protected void setMidRange(double midRange) {
 		this.midRange = midRange;
 	}
-	private void setDiagonalColor(Color diagonalColor) {
+	protected void setDiagonalColor(Color diagonalColor) {
 		this.diagonalColor = diagonalColor;
 	}
 	public Color getDiagonalColor() {
@@ -106,21 +106,21 @@ public class TwoColorsMatrixColoringStrategy implements MatrixColoringStrategy{
 		}
 		
 		double c = Math.abs( (this.getMeanValue()- position.getMi()) / (this.getMidRange()));
-		int r = (int) (usedColor.getRed()   * c);
-		int g = (int) (usedColor.getGreen() * c);
-		int b = (int) (usedColor.getBlue()  * c);
-//		System.err.println(r +" " + g+ " " + b + " - " + c + " " + this.getMeanValue() + " " + position.getMi() + " " + this.getMidRange());
+		
+		int r = (int) (Math.min(usedColor.getRed()   * c,255));
+		int g = (int) (Math.min(usedColor.getGreen() * c,255));
+		int b = (int) (Math.min(usedColor.getBlue()  * c,255));
 		return new Color (r,g,b );
 		
 	}
 	
 	//////////////////////////////////////
-	// Private Methods
-	private void calculateMeanValue() {
+	// protected Methods
+	protected void calculateMeanValue() {
 		this.setMeanValue((this.getHigherValue() + this.getLowerValue())/2);
 		
 	}
-	private void calculateMidRange() {
+	protected void calculateMidRange() {
 		this.setMidRange((this.getHigherValue()-this.getLowerValue())/2);
 	}
 	
