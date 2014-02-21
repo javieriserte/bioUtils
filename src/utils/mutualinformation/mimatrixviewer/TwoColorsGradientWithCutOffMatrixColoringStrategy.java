@@ -4,7 +4,7 @@ import java.awt.Color;
 
 import utils.mutualinformation.misticmod.MI_Position;
 
-public class TwoColorsWithCutOffMatrixColoringStrategy extends TwoColorsMatrixColoringStrategy {
+public class TwoColorsGradientWithCutOffMatrixColoringStrategy extends TwoColorsGradientMatrixColoringStrategy {
 
 	//////////////////////////////
 	// Instance Variables
@@ -13,14 +13,14 @@ public class TwoColorsWithCutOffMatrixColoringStrategy extends TwoColorsMatrixCo
 
 	//////////////////////////////
 	// Constructors
-	private TwoColorsWithCutOffMatrixColoringStrategy(Color lowValues, 
+	private TwoColorsGradientWithCutOffMatrixColoringStrategy(Color lowValues, 
 			Color highValues, Color undefinedValue, Color diagonalColor,
 			double lowerValue, double higherValue) {
 		super(lowValues, highValues, undefinedValue, diagonalColor, lowerValue,
 				higherValue);
 	}
 	
-	public TwoColorsWithCutOffMatrixColoringStrategy(Color lowValues, 
+	public TwoColorsGradientWithCutOffMatrixColoringStrategy(Color lowValues, 
 			Color highValues, Color undefinedValue, Color diagonalColor,
 			double lowerValue, double higherValue, double cutOffValue) {
 		super(lowValues, highValues, undefinedValue, diagonalColor, lowerValue, higherValue);

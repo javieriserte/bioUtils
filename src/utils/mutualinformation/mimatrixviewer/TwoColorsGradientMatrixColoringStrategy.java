@@ -4,7 +4,7 @@ import java.awt.Color;
 
 import utils.mutualinformation.misticmod.MI_Position;
 
-public class TwoColorsMatrixColoringStrategy implements MatrixColoringStrategy{
+public class TwoColorsGradientMatrixColoringStrategy implements MatrixColoringStrategy{
 	////////////////////////////////
 	// Instance Variables
 	private Color lowValuesColor;
@@ -18,7 +18,7 @@ public class TwoColorsMatrixColoringStrategy implements MatrixColoringStrategy{
 
 	/////////////////////////////////
 	// Constructor
-	public TwoColorsMatrixColoringStrategy(Color lowValues, Color highValues, Color undefinedValue, Color diagonalColor, double lowerValue, double higherValue) {
+	public TwoColorsGradientMatrixColoringStrategy(Color lowValues, Color highValues, Color undefinedValue, Color diagonalColor, double lowerValue, double higherValue) {
 		
 		this.setLowValuesColor(lowValues);
 		this.setHighValuesColor(highValues);

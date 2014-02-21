@@ -42,7 +42,7 @@ public class MIMatrixViewer extends JFrame{
 				MIMatrixPane matrixPane = new MIMatrixPane();
 				inst.setMatrixPane(matrixPane);
 				inst.getMatrixPane().setProteinLengths(protLengths);
-				MatrixColoringStrategy color = new RedAndBlueMatrixColoringStrategy(-10,50,6.5);
+				MatrixColoringStrategy color = new RedBlueGradientMatrixColoringStrategy(-10,50,6.5);
 				
 				inst.getMatrixPane().setColor(color);
 				inst.getMatrixPane().setMatrix(matrix);
