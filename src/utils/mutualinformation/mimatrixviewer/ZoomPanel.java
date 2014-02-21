@@ -47,19 +47,14 @@ public class ZoomPanel extends JScrollPane {
 	// Constructor
 	public ZoomPanel() {
 		super();
+		this.setImagePanel(new ZoomImagePanel());
+		this.getImagePanel().setOpaque(true);
+		this.setViewportView(this.getImagePanel());
 	}
 	////////////////////////////////
 	
 	////////////////////////////////
 	// Public Interface
-	@Override
-	public void paintComponent(Graphics g) {
-		super.paintComponent(g);
-		if (this.getImage()==null) {
-			this.createImage();
-		}
-		g.drawImage(this.getImage(), 0, 0,null);
-	}
 	/**
 	 * This methods erases the current image setting it to null.
 	 * This should be used to indicate that a new image must be generated.
@@ -87,6 +82,8 @@ public class ZoomPanel extends JScrollPane {
 	 */
 	public void renderImage(double[][] subMatrix, char[] aaSeqHor, char[] aaSeqVer) {
 		this.setSubMatrix(subMatrix);
+		this.setAaSeqHor(aaSeqHor);
+		this.setAaSeqVer(aaSeqVer);
 		this.resetImage();
 		this.acomodateSize();
 		this.getImagePanel().updateUI();
@@ -144,6 +141,11 @@ public class ZoomPanel extends JScrollPane {
 	///////////////////////////////
 	// Protected and private methods
 	protected void createImage() {
+		if (this.getSubMatrix()==null) {
+			return;
+		}
+		System.err.println("CreatingImage");
+		
 		int hSize = this.getSubMatrix()[0].length * (ZoomPanel.CELL_SIZE + ZoomPanel.CELL_SEP) + ZoomPanel.CELL_SEP + ZoomPanel.HEADER_SIZE;
 		int vSize = this.getSubMatrix().length * (ZoomPanel.CELL_SIZE + ZoomPanel.CELL_SEP) + ZoomPanel.CELL_SEP + ZoomPanel.HEADER_SIZE;
 		this.setImage(new BufferedImage(hSize, vSize, BufferedImage.TYPE_INT_RGB));
@@ -156,16 +158,16 @@ public class ZoomPanel extends JScrollPane {
 		cellsGraphics.setColor(Color.black);
 		for (int i = 0; i< this.getSubMatrix()[0].length; i++ ) {
 			for (int j = 0; j< this.getSubMatrix().length; j++ ) {
-				Color color = this.getColoringStrategy().getColor(this.subMatrix[i+1][j+1]);
+				Color color = this.getColoringStrategy().getColor(this.subMatrix[i][j]);
 				cellsGraphics.setColor(color);
 				cellsGraphics.fillRect(
 						i*(ZoomPanel.CELL_SIZE+ZoomPanel.CELL_SEP) + ZoomPanel.CELL_SEP, 
-						i*(ZoomPanel.CELL_SIZE+ZoomPanel.CELL_SEP) + ZoomPanel.CELL_SEP,
+						j*(ZoomPanel.CELL_SIZE+ZoomPanel.CELL_SEP) + ZoomPanel.CELL_SEP,
 						ZoomPanel.CELL_SIZE, ZoomPanel.CELL_SIZE);
 				
 			}
 		}
-		this.getImage().getGraphics().drawImage(cells, ZoomPanel.HEADER_SIZE, ZoomPanel.HEADER_SIZE, null);
+		((Graphics2D)this.getImage().getGraphics()).drawImage(cells, ZoomPanel.HEADER_SIZE, ZoomPanel.HEADER_SIZE, null);
 		////////////////////////////
 		
 		////////////////////////////
@@ -207,7 +209,31 @@ public class ZoomPanel extends JScrollPane {
 			vhGraphics.drawString( currentChar, (int) (textAdv - textBounds.getMinX()), (int) (ZoomPanel.CELL_SIZE - textHeight + textBounds.getMinY() + i * (ZoomPanel.CELL_SIZE+ZoomPanel.CELL_SEP)));
 			
 		}
+		this.getImage().getGraphics().drawImage(horHeader, ZoomPanel.HEADER_SIZE, 0, null);
+		this.getImage().getGraphics().drawImage(verHeader, 0, ZoomPanel.HEADER_SIZE, null);
 		////////////////////////////
 	}
 	///////////////////////////////
+	/////////////////////////////////
+	// Auxiliary Classes
+	private class ZoomImagePanel extends JPanel {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = -7709385439488238368L;
+
+		@Override
+		public void paintComponent(Graphics g) {
+			super.paintComponent(g);
+			if (ZoomPanel.this.getImage()==null) {
+				ZoomPanel.this.createImage();
+				System.err.println("Paint null Component");
+			}
+			Graphics2D graphics2d = (Graphics2D)g;
+			graphics2d.drawImage(ZoomPanel.this.getImage(), 0, 0,null);
+			graphics2d.setColor(Color.red);
+			
+		}
+	}
+	/////////////////////////////////
 }

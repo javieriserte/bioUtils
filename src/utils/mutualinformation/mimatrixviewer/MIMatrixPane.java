@@ -5,7 +5,11 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.RenderingHints;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
@@ -13,11 +17,15 @@ import java.awt.image.BufferedImage;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+import utils.mutualinformation.misticmod.MI_Position;
+
 public class MIMatrixPane extends JScrollPane {
 	
 	///////////////////////////////
-	// Class Variables
+	// Class Constants
 	private static final long serialVersionUID = 1L;
+	private static final int ZOOM_SIZE = 100;
+	///////////////////////////////
 	
 	//////////////////////////////
 	//  Instance Variables
@@ -35,18 +43,24 @@ public class MIMatrixPane extends JScrollPane {
 	// The generated map image
 	private ImagePanel imagePane = null;
 	// Component to store the image
+	private MIMatrixViewer viewer;
 	
 	///////////////////////////////
 	// Constructor
-	public MIMatrixPane() {
+	public MIMatrixPane(MIMatrixViewer viewer) {
 		super();
-		this.setImagePane(new ImagePanel());
+		ImagePanel imagePanel = new ImagePanel();
+		GetValuesFromPointMouseListener l = new GetValuesFromPointMouseListener();
+		imagePanel.addMouseListener(l);
+		imagePanel.addMouseMotionListener(l);
+		this.setImagePane(imagePanel);
 		this.setViewportView(this.getImagePane());
 		this.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 		this.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		this.getImagePane().setOpaque(true);
 		this.getImagePane().setDoubleBuffered(true);
 		this.setOpaque(true);
+		this.setViewer(viewer);
 		
 	}
 
@@ -63,7 +77,11 @@ public class MIMatrixPane extends JScrollPane {
 		this.getImagePane().setSize(matrixSize);
 		this.getImagePane().setPreferredSize(matrixSize);
 	}
-	
+	public double[] getValuesFromPoint(int x, int y) {
+		
+		return null;
+		
+	}
 	////////////////////////////////
 	// Private and protected 
 	// methods
@@ -276,6 +294,14 @@ public class MIMatrixPane extends JScrollPane {
 		this.names = names;
 	}
 	
+	public MIMatrixViewer getViewer() {
+		return viewer;
+	}
+
+	public void setViewer(MIMatrixViewer viewer) {
+		this.viewer = viewer;
+	}
+
 	///////////////////////////////////////
 	// Auxiliary Classes
 	private class ImagePanel extends JPanel {
@@ -295,6 +321,75 @@ public class MIMatrixPane extends JScrollPane {
 			
 		}
 	}
+	
+	private class GetValuesFromPointMouseListener implements MouseListener, MouseMotionListener {
+
+		@Override
+		public void mouseClicked(MouseEvent e) {
+//			if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount()==2) {
+//				int mpx = e.getX();
+//				int mpy = e.getY();
+//				
+//				exportData(mpx,mpy);
+//			}
+		}
+
+		private void exportData(int mpx,int mpy) {
+			Rectangle rect = new Rectangle();
+			int px = mpx - 30;
+			int py = mpy - 30;
+			px = Math.min(MIMatrixPane.this.getMatrix().getSize() - MIMatrixPane.ZOOM_SIZE, px);
+			py = Math.min(MIMatrixPane.this.getMatrix().getSize() - MIMatrixPane.ZOOM_SIZE, py);
+			px = Math.max(0, px);
+			py = Math.max(0, py);
+			int w = Math.min(MIMatrixPane.ZOOM_SIZE, MIMatrixPane.this.getMatrix().getSize() - px);
+			int h = Math.min(MIMatrixPane.ZOOM_SIZE, MIMatrixPane.this.getMatrix().getSize() - py);
+			rect.setBounds(px, py, w, h);
+			double[][] values = new double[w][h];
+			char[] hChars = new char[w];
+			char[] vChars = new char[h];
+			for (int i = 0; i< w;i++) {
+				for (int j =0 ; j<h;j++) {
+					MI_Position position = MIMatrixPane.this.getMatrix().getValue(1+px+i, 1 + py + j);
+					double value = 0;
+					if (position!=null) {
+						value = position.getMi();
+						hChars[i] = position.getAa1();
+						vChars[j] = position.getAa2();
+					} else {
+						value = -999;
+					}
+					values[i][j] = value;
+				}
+			}
+			MIMatrixPane.this.getViewer().zoomArea(rect,values,hChars,vChars);
+		}
+
+		@Override
+		public void mousePressed(MouseEvent e) {}
+
+		@Override
+		public void mouseReleased(MouseEvent e) {}
+
+		@Override
+		public void mouseEntered(MouseEvent e) {}
+
+		@Override
+		public void mouseExited(MouseEvent e) {}
+
+		@Override
+		public void mouseDragged(MouseEvent e) {}
+
+		@Override
+		public void mouseMoved(MouseEvent e) {
+			int mpx = e.getX();
+			int mpy = e.getY();
+			
+			exportData(mpx,mpy);
+		}
+		
+	}
+	
 
 
 }

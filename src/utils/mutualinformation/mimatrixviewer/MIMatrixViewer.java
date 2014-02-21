@@ -3,10 +3,12 @@ package utils.mutualinformation.mimatrixviewer;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Insets;
+import java.awt.Rectangle;
 import java.io.File;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JSplitPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.WindowConstants;
@@ -14,12 +16,16 @@ import javax.swing.WindowConstants;
 
 public class MIMatrixViewer extends JFrame{
 
+	////////////////////////////////
+	// Class Constants
 	private static final long serialVersionUID = -4648080458360903060L;
+	////////////////////////////////
 	
 	////////////////////////////////
 	// Components
 	private OptionsPane optionPane;
 	private MIMatrixPane matrixPane;
+	private ZoomPanel zoomPanel;
 	////////////////////////////////
 
 	public static void main(String[] args) {
@@ -34,12 +40,16 @@ public class MIMatrixViewer extends JFrame{
 				inst.setOptionPane(new OptionsPane(inst));
 				inst.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 				
-				File infile = new File("/home/javier/Dropbox/Posdoc/HIV.Segundo.Analisis/mi_mf_cl/mi_cl_lc_data");
+				//File infile = new File("/home/javier/Dropbox/Posdoc/HIV.Segundo.Analisis/mi_mf_cl/mi_cl_lc_data");
+				File infile = new File("b:\\javier\\Dropbox\\Posdoc\\HIV.Segundo.Analisis\\mi_mf_cl\\mi_cl_lc_data");
 				int[] protLengths = new int[]{578, 211, 106, 334, 67, 55, 103, 38, 68};
 				
 				MI_Matrix matrix = MI_Matrix.loadFromFile(infile);
 				
-				MIMatrixPane matrixPane = new MIMatrixPane();
+				MIMatrixPane matrixPane = new MIMatrixPane(inst);
+				
+				inst.setZoomPanel(new ZoomPanel());
+				
 				inst.setMatrixPane(matrixPane);
 				inst.getMatrixPane().setProteinLengths(protLengths);
 				MatrixColoringStrategy color = new RedBlueGradientMatrixColoringStrategy(-10,50,6.5);
@@ -48,7 +58,14 @@ public class MIMatrixViewer extends JFrame{
 				inst.getMatrixPane().setMatrix(matrix);
 				inst.getMatrixPane().setPreferredSize(inst.getMatrixPane().getMinimumSize());
 				inst.setLayout(new BorderLayout());
-				inst.getContentPane().add(inst.getMatrixPane(), BorderLayout.CENTER);
+				
+				JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+				splitPane.add(inst.getZoomPanel());
+				splitPane.add(inst.getMatrixPane());
+				inst.getZoomPanel().setColoringStrategy(new BlackAndWhiteZoomMatrixColoringStrategy());
+				splitPane.setDividerLocation(0.5);
+				
+				inst.getContentPane().add(splitPane, BorderLayout.CENTER);
 				inst.getContentPane().add(inst.getOptionPane(), BorderLayout.NORTH);
 				inst.pack();
 				
@@ -80,34 +97,11 @@ public class MIMatrixViewer extends JFrame{
 
 		
 	}
+	////////////////////////////
 
-	private void loadMainPane() {
-	    this.setContentPane(new JPanel());
-		Insets cpinsets = getContentPane().getInsets();
-		this.getContentPane().setSize(800, 600);
-		setSize(400, 300);
-		Insets frameinsets = this.getInsets();
-		this.setMinimumSize(new Dimension(1024 + cpinsets.left   + frameinsets.left  + 
-				                                cpinsets.right  + frameinsets.right  
-				                         ,768 + cpinsets.top    + frameinsets.top   +
-				                                cpinsets.bottom + frameinsets.bottom));
-		
-	}
 
-	public OptionsPane getOptionPane() {
-		return optionPane;
-	}
 
-	public void setOptionPane(OptionsPane optionPane) {
-		this.optionPane = optionPane;
-	}
-	public MIMatrixPane getMatrixPane() {
-		return matrixPane;
-	}
 
-	public void setMatrixPane(MIMatrixPane matrixPane) {
-		this.matrixPane = matrixPane;
-	}
 	///////////////////////////////
 	// Public interface
 	public void processFile(File file) {
@@ -119,5 +113,50 @@ public class MIMatrixViewer extends JFrame{
 		this.getMatrixPane().resetImage();
 		this.getMatrixPane().updateUI();
 	}
+	
+	
+	//////////////////////////////////////
+	// Getters and Setters
+	public OptionsPane getOptionPane() {
+		return optionPane;
+	}
+	public void setOptionPane(OptionsPane optionPane) {
+		this.optionPane = optionPane;
+	}
+	public MIMatrixPane getMatrixPane() {
+		return matrixPane;
+	}
 
+	public void setMatrixPane(MIMatrixPane matrixPane) {
+		this.matrixPane = matrixPane;
+	}
+
+	
+	public ZoomPanel getZoomPanel() {
+		return zoomPanel;
+	}
+
+	public void setZoomPanel(ZoomPanel zoomPanel) {
+		this.zoomPanel = zoomPanel;
+	}
+
+	/////////////////////////////////////
+	// protected and private methods
+	private void loadMainPane() {
+	    this.setContentPane(new JPanel());
+		Insets cpinsets = getContentPane().getInsets();
+		this.getContentPane().setSize(800, 600);
+		setSize(400, 300);
+		Insets frameinsets = this.getInsets();
+		this.setMinimumSize(new Dimension(1024 + cpinsets.left   + frameinsets.left  + 
+				                                 cpinsets.right  + frameinsets.right  
+				                          ,768 + cpinsets.top    + frameinsets.top   +
+				                                 cpinsets.bottom + frameinsets.bottom));
+		
+	}
+
+	public void zoomArea(Rectangle rect, double[][] values, char[] hChars, char[] vChars) {
+		this.getZoomPanel().renderImage(values, hChars, vChars);
+		
+	}
 }
