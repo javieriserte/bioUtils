@@ -233,7 +233,6 @@ public class ZoomPanel extends JScrollPane {
 			Graphics2D graphics2d = (Graphics2D)g;
 			graphics2d.drawImage(ZoomPanel.this.getImage(), 0, 0,null);
 			graphics2d.setColor(Color.red);
-			
 		}
 	}
 	/////////////////////////////////

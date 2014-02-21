@@ -70,6 +70,7 @@ public class MIMatrixViewer extends JFrame{
 				inst.getContentPane().add(inst.getOptionPane(), BorderLayout.NORTH);
 				splitPane.setDividerLocation(200);
 				inst.pack();
+				inst.getGlassPane();
 				
 					// set swing properties of MainFASDPD
 			}
