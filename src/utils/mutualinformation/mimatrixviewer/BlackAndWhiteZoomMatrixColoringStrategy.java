@@ -11,7 +11,7 @@ public class BlackAndWhiteZoomMatrixColoringStrategy implements
 		if(miValue<-900) {
 			return Color.green;			
 		} else {
-			return (miValue>=6.5)?Color.black:Color.white;
+			return (miValue>=10)?Color.black:Color.white;
 		}
 		
 	}

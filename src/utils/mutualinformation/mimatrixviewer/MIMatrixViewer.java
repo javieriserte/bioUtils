@@ -40,33 +40,35 @@ public class MIMatrixViewer extends JFrame{
 				inst.setOptionPane(new OptionsPane(inst));
 				inst.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 				
-				//File infile = new File("/home/javier/Dropbox/Posdoc/HIV.Segundo.Analisis/mi_mf_cl/mi_cl_lc_data");
-				File infile = new File("b:\\javier\\Dropbox\\Posdoc\\HIV.Segundo.Analisis\\mi_mf_cl\\mi_cl_lc_data");
-				int[] protLengths = new int[]{578, 211, 106, 334, 67, 55, 103, 38, 68};
+//				File infile = new File("/home/javier/Dropbox/Posdoc/HIV.Segundo.Analisis/mi_mf_cl/mi_cl_lc_data");
+//				MI_Matrix matrix = MI_Matrix.loadFromFile(infile);
+
+//				File infile = new File("b:\\javier\\Dropbox\\Posdoc\\HIV.Segundo.Analisis\\mi_mf_cl\\mi_cl_lc_data");
+//				int[] protLengths = new int[]{578, 211, 106, 334, 67, 55, 103, 38, 68};
 				
-				MI_Matrix matrix = MI_Matrix.loadFromFile(infile);
 				
 				MIMatrixPane matrixPane = new MIMatrixPane(inst);
 				
 				inst.setZoomPanel(new ZoomPanel());
 				
 				inst.setMatrixPane(matrixPane);
-				inst.getMatrixPane().setProteinLengths(protLengths);
+//				inst.getMatrixPane().setProteinLengths(protLengths);
 				MatrixColoringStrategy color = new RedBlueGradientMatrixColoringStrategy(-10,50,6.5);
 				
 				inst.getMatrixPane().setColor(color);
-				inst.getMatrixPane().setMatrix(matrix);
-				inst.getMatrixPane().setPreferredSize(inst.getMatrixPane().getMinimumSize());
+				
+//				inst.getMatrixPane().setMatrix(matrix);
+//				inst.getMatrixPane().setPreferredSize(inst.getMatrixPane().getMinimumSize());
+				
 				inst.setLayout(new BorderLayout());
 				
 				JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 				splitPane.add(inst.getZoomPanel());
 				splitPane.add(inst.getMatrixPane());
 				inst.getZoomPanel().setColoringStrategy(new BlackAndWhiteZoomMatrixColoringStrategy());
-				splitPane.setDividerLocation(0.5);
-				
 				inst.getContentPane().add(splitPane, BorderLayout.CENTER);
 				inst.getContentPane().add(inst.getOptionPane(), BorderLayout.NORTH);
+				splitPane.setDividerLocation(200);
 				inst.pack();
 				
 					// set swing properties of MainFASDPD

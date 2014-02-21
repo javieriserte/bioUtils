@@ -22,11 +22,11 @@ public class ZoomPanel extends JScrollPane {
 	////////////////////////////////
 	// Class Constants
 	private static final long serialVersionUID = -5691536429438522274L;
-	private static final int CELL_SIZE = 5;
+	private static final int CELL_SIZE = 10;
 	private static final int CELL_SEP = 1;
-	private static final int HEADER_SIZE = 15;
-	private static final int FONT_SIZE = 10;
-	private static final String FONT_NAME = "ARIAL";
+	private static final int HEADER_SIZE = 25;
+	private static final int FONT_SIZE = 12;
+	private static final String FONT_NAME = "Verdana";
 	////////////////////////////////
 	
 	////////////////////////////////
@@ -144,18 +144,18 @@ public class ZoomPanel extends JScrollPane {
 		if (this.getSubMatrix()==null) {
 			return;
 		}
-		System.err.println("CreatingImage");
 		
 		int hSize = this.getSubMatrix()[0].length * (ZoomPanel.CELL_SIZE + ZoomPanel.CELL_SEP) + ZoomPanel.CELL_SEP + ZoomPanel.HEADER_SIZE;
 		int vSize = this.getSubMatrix().length * (ZoomPanel.CELL_SIZE + ZoomPanel.CELL_SEP) + ZoomPanel.CELL_SEP + ZoomPanel.HEADER_SIZE;
 		this.setImage(new BufferedImage(hSize, vSize, BufferedImage.TYPE_INT_RGB));
-		
+		((Graphics2D)this.getImage().getGraphics()).setColor(Color.white);
+		((Graphics2D)this.getImage().getGraphics()).fillRect(0, 0, hSize, vSize);
 		////////////////////////////
 		// Draw cells
 		BufferedImage cells = new BufferedImage(hSize - ZoomPanel.HEADER_SIZE, hSize - ZoomPanel.HEADER_SIZE, BufferedImage.TYPE_INT_RGB);
 		Graphics2D cellsGraphics = (Graphics2D) cells.getGraphics();
+		cellsGraphics.setColor(Color.gray);
 		cellsGraphics.fillRect(0, 0, cells.getWidth(), cells.getHeight());
-		cellsGraphics.setColor(Color.black);
 		for (int i = 0; i< this.getSubMatrix()[0].length; i++ ) {
 			for (int j = 0; j< this.getSubMatrix().length; j++ ) {
 				Color color = this.getColoringStrategy().getColor(this.subMatrix[i][j]);
@@ -185,18 +185,20 @@ public class ZoomPanel extends JScrollPane {
 		hhGraphics.setColor(Color.white);
 		hhGraphics.fillRect(0, 0, horHeader.getWidth(), horHeader.getHeight());
 		vhGraphics.setColor(Color.white);
-		vhGraphics.fillRect(0, 0, horHeader.getWidth(), horHeader.getHeight());
+		vhGraphics.fillRect(0, 0, verHeader.getWidth(), verHeader.getHeight());
 		
-		hhGraphics.setFont(new Font(ZoomPanel.FONT_NAME, 1, ZoomPanel.FONT_SIZE));
+		hhGraphics.setFont(new Font(ZoomPanel.FONT_NAME, 0, ZoomPanel.FONT_SIZE));
 		hhGraphics.setColor(Color.black);
+		vhGraphics.setFont(new Font(ZoomPanel.FONT_NAME, 0, ZoomPanel.FONT_SIZE));
+		vhGraphics.setColor(Color.black);
 		
 		for (int i = 0; i < this.getSubMatrix()[0].length; i++) {
 			
 			String currentChar = String.valueOf(this.getAaSeqHor()[i]);
 			Rectangle2D textBounds = hhGraphics.getFont().createGlyphVector(hhGraphics.getFontRenderContext(),currentChar).getVisualBounds();
-			int textAdv = (int)(ZoomPanel.CELL_SIZE - textBounds.getWidth() ) / 2;
-			int textHeight = (int) (ZoomPanel.CELL_SIZE - textBounds.getHeight()) / 2;
-			hhGraphics.drawString( currentChar, (int) (i * (ZoomPanel.CELL_SIZE+ZoomPanel.CELL_SEP) + textAdv - textBounds.getMinX()), (int) (ZoomPanel.CELL_SIZE - textHeight - textBounds.getMinY()));
+			long posX = Math.round ((i * (ZoomPanel.CELL_SIZE + ZoomPanel.CELL_SEP) + ZoomPanel.CELL_SEP + (ZoomPanel.CELL_SIZE - textBounds.getWidth()) / 2 - textBounds.getMinX()));
+			long posY = Math.round(ZoomPanel.HEADER_SIZE - textBounds.getMaxY() - ZoomPanel.HEADER_SIZE / 2 + textBounds.getHeight()/2);
+            hhGraphics.drawString( currentChar, (int) posX, (int) (posY));
 			
 		}
 		
@@ -204,9 +206,9 @@ public class ZoomPanel extends JScrollPane {
 			
 			String currentChar = String.valueOf(this.getAaSeqVer()[i]);
 			Rectangle2D textBounds = vhGraphics.getFont().createGlyphVector(vhGraphics.getFontRenderContext(),currentChar).getVisualBounds();
-			int textAdv = (int)(ZoomPanel.CELL_SIZE - textBounds.getWidth() ) / 2;
-			int textHeight = (int) (ZoomPanel.CELL_SIZE - textBounds.getHeight()) / 2;
-			vhGraphics.drawString( currentChar, (int) (textAdv - textBounds.getMinX()), (int) (ZoomPanel.CELL_SIZE - textHeight + textBounds.getMinY() + i * (ZoomPanel.CELL_SIZE+ZoomPanel.CELL_SEP)));
+			long posX = Math.round((ZoomPanel.HEADER_SIZE - textBounds.getWidth() ) / 2 - textBounds.getMinX());
+			long posY = Math.round(i * (ZoomPanel.CELL_SIZE+ZoomPanel.CELL_SEP)  - textBounds.getMaxY() + ZoomPanel.CELL_SIZE / 2 + textBounds.getHeight()/2);
+			vhGraphics.drawString( currentChar, (int)posX, (int) posY);
 			
 		}
 		this.getImage().getGraphics().drawImage(horHeader, ZoomPanel.HEADER_SIZE, 0, null);
@@ -227,7 +229,6 @@ public class ZoomPanel extends JScrollPane {
 			super.paintComponent(g);
 			if (ZoomPanel.this.getImage()==null) {
 				ZoomPanel.this.createImage();
-				System.err.println("Paint null Component");
 			}
 			Graphics2D graphics2d = (Graphics2D)g;
 			graphics2d.drawImage(ZoomPanel.this.getImage(), 0, 0,null);

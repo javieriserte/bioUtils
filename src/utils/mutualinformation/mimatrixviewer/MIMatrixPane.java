@@ -13,6 +13,7 @@ import java.awt.event.MouseMotionListener;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.util.Arrays;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -24,7 +25,7 @@ public class MIMatrixPane extends JScrollPane {
 	///////////////////////////////
 	// Class Constants
 	private static final long serialVersionUID = 1L;
-	private static final int ZOOM_SIZE = 100;
+	private static final int ZOOM_SIZE = 75;
 	///////////////////////////////
 	
 	//////////////////////////////
@@ -44,6 +45,9 @@ public class MIMatrixPane extends JScrollPane {
 	private ImagePanel imagePane = null;
 	// Component to store the image
 	private MIMatrixViewer viewer;
+	// Parent MI Matrix Viewer
+	private char[] aminoAcids;
+	// Amino acid from whole MI Data
 	
 	///////////////////////////////
 	// Constructor
@@ -243,6 +247,13 @@ public class MIMatrixPane extends JScrollPane {
 		if (this.proteinLengths == null) {
 			this.proteinLengths =  new int[]{this.matrix.getSize()};
 		}
+		char[] aa = new char[this.matrix.getSize()];
+		
+		for (int i =0 ;i<this.matrix.getSize()-1;i++) {
+			aa[i] = this.getMatrix().getValue(i+1, i+2).getAa1();			
+		}
+		aa[this.matrix.getSize()-1] = this.getMatrix().getValue(this.matrix.getSize()-1, this.matrix.getSize()).getAa2();
+		this.setAminoAcids(aa);
 		this.accomodateSize();
 	}
 
@@ -301,7 +312,13 @@ public class MIMatrixPane extends JScrollPane {
 	public void setViewer(MIMatrixViewer viewer) {
 		this.viewer = viewer;
 	}
+	public char[] getAminoAcids() {
+		return aminoAcids;
+	}
 
+	public void setAminoAcids(char[] aminoAcids) {
+		this.aminoAcids = aminoAcids;
+	}
 	///////////////////////////////////////
 	// Auxiliary Classes
 	private class ImagePanel extends JPanel {
@@ -326,12 +343,7 @@ public class MIMatrixPane extends JScrollPane {
 
 		@Override
 		public void mouseClicked(MouseEvent e) {
-//			if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount()==2) {
-//				int mpx = e.getX();
-//				int mpy = e.getY();
-//				
-//				exportData(mpx,mpy);
-//			}
+
 		}
 
 		private void exportData(int mpx,int mpy) {
@@ -346,16 +358,14 @@ public class MIMatrixPane extends JScrollPane {
 			int h = Math.min(MIMatrixPane.ZOOM_SIZE, MIMatrixPane.this.getMatrix().getSize() - py);
 			rect.setBounds(px, py, w, h);
 			double[][] values = new double[w][h];
-			char[] hChars = new char[w];
-			char[] vChars = new char[h];
+			char[] hChars = Arrays.copyOfRange(MIMatrixPane.this.getAminoAcids(),px,px+w);
+			char[] vChars = Arrays.copyOfRange(MIMatrixPane.this.getAminoAcids(),py,py+h);
 			for (int i = 0; i< w;i++) {
 				for (int j =0 ; j<h;j++) {
 					MI_Position position = MIMatrixPane.this.getMatrix().getValue(1+px+i, 1 + py + j);
 					double value = 0;
 					if (position!=null) {
 						value = position.getMi();
-						hChars[i] = position.getAa1();
-						vChars[j] = position.getAa2();
 					} else {
 						value = -999;
 					}
@@ -384,8 +394,9 @@ public class MIMatrixPane extends JScrollPane {
 		public void mouseMoved(MouseEvent e) {
 			int mpx = e.getX();
 			int mpy = e.getY();
-			
-			exportData(mpx,mpy);
+			if (MIMatrixPane.this.getMatrix()!=null) {
+				exportData(mpx,mpy);
+			}
 		}
 		
 	}
