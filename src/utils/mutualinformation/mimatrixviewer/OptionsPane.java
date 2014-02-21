@@ -1,5 +1,6 @@
 package utils.mutualinformation.mimatrixviewer;
 
+import java.awt.FileDialog;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -10,7 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JButton;
-import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -116,15 +116,16 @@ public class OptionsPane extends JPanel {
 			
 			////////////////////////////////
 			// Shows FileChooser UI
-			JFileChooser fileChooser = new JFileChooser(new File(System.getProperty("user.dir")));
-			fileChooser.setMultiSelectionEnabled(false);
-			fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-			fileChooser.showOpenDialog(null);
+			FileDialog fileDialog = new FileDialog(OptionsPane.this.getMatrixViewer(),"Load MI Data", FileDialog.LOAD);
+			fileDialog.setDirectory(System.getProperty("user.dir"));
+			fileDialog.setMultipleMode(false);
+			fileDialog.setVisible(true);
+
 			/////////////////////////////////
 			
 			/////////////////////////////////
 			// Select file and process it
-			File file = fileChooser.getSelectedFile();
+			File file = fileDialog.getFiles()[0];
 			OptionsPane.this.getMatrixViewer().processFile(file);
 			/////////////////////////////////
 			
