@@ -1,18 +1,23 @@
 package utils.mutualinformation.mimatrixviewer;
 
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
+import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.awt.image.MemoryImageSource;
 import java.util.Arrays;
 
 import javax.swing.JPanel;
@@ -68,6 +73,10 @@ public class MIMatrixPane extends JScrollPane {
 		this.getImagePane().setDoubleBuffered(true);
 		this.setOpaque(true);
 		this.setViewer(viewer);
+		int[] pixels = new int[16 * 16];
+		Image image = Toolkit.getDefaultToolkit().createImage(new MemoryImageSource(16, 16, pixels, 0, 16));
+		Cursor transparentCursor = Toolkit.getDefaultToolkit().createCustomCursor(image, new Point(0, 0), "invisibleCursor");
+		this.getImagePane().setCursor(transparentCursor);
 		this.showArea = false;
 		
 	}
