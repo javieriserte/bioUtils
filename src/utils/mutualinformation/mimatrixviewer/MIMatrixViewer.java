@@ -26,6 +26,7 @@ public class MIMatrixViewer extends JFrame{
 	private OptionsPane optionPane;
 	private MIMatrixPane matrixPane;
 	private ZoomPanel zoomPanel;
+	private ColoringSelectionPane coloringPane;
 	////////////////////////////////
 
 	public static void main(String[] args) {
@@ -46,16 +47,15 @@ public class MIMatrixViewer extends JFrame{
 //				File infile = new File("b:\\javier\\Dropbox\\Posdoc\\HIV.Segundo.Analisis\\mi_mf_cl\\mi_cl_lc_data");
 //				int[] protLengths = new int[]{578, 211, 106, 334, 67, 55, 103, 38, 68};
 				
-				
 				MIMatrixPane matrixPane = new MIMatrixPane(inst);
 				
-				inst.setZoomPanel(new ZoomPanel());
+				inst.setZoomPanel(new ZoomPanel(inst));
 				
 				inst.setMatrixPane(matrixPane);
 //				inst.getMatrixPane().setProteinLengths(protLengths);
-				MatrixColoringStrategy color = new RedBlueGradientMatrixColoringStrategy(-10,50,6.5);
+//				MatrixColoringStrategy color = new RedBlueGradientMatrixColoringStrategy(-10,50,6.5);
 				
-				inst.getMatrixPane().setColor(color);
+//				inst.getMatrixPane().setColor(color);
 				
 //				inst.getMatrixPane().setMatrix(matrix);
 //				inst.getMatrixPane().setPreferredSize(inst.getMatrixPane().getMinimumSize());
@@ -65,10 +65,13 @@ public class MIMatrixViewer extends JFrame{
 				JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 				splitPane.add(inst.getZoomPanel());
 				splitPane.add(inst.getMatrixPane());
-				inst.getZoomPanel().setColoringStrategy(new BlackAndWhiteZoomMatrixColoringStrategy());
+				inst.getZoomPanel().setColoringStrategy(new BlackAndWhiteZoomMatrixColoringStrategy(10));
 				inst.getContentPane().add(splitPane, BorderLayout.CENTER);
 				inst.getContentPane().add(inst.getOptionPane(), BorderLayout.NORTH);
 				splitPane.setDividerLocation(200);
+				
+				inst.setColoringPane(new ColoringSelectionPane(inst));
+				inst.getContentPane().add(inst.getColoringPane(),BorderLayout.SOUTH);
 				inst.pack();
 				inst.getGlassPane();
 				
@@ -109,6 +112,16 @@ public class MIMatrixViewer extends JFrame{
 	// Public interface
 	public void processFile(File file) {
 		MI_Matrix matrix = MI_Matrix.loadFromFile(file);
+		
+		this.getColoringPane().getMatrixColoringModel().removeAllElements();
+		this.getColoringPane().addMatrixColoringStrategy(MatrixColoringStrategyFactory.createRedBlueGradient(matrix));
+		this.getColoringPane().addMatrixColoringStrategy(MatrixColoringStrategyFactory.createRedBlueGradientGt10(matrix));
+		this.getColoringPane().addMatrixColoringStrategy(MatrixColoringStrategyFactory.createRedBlueGradientNoCutOff(matrix));
+		
+		this.getColoringPane().getZoomMatrixColoringModel().removeAllElements();
+		this.getColoringPane().addZoomMatrixColoringStrategy(ZoomMatrixColoringStrategyFactory.BlackAndWhiteWithStdCutoff());
+		this.getColoringPane().addZoomMatrixColoringStrategy(ZoomMatrixColoringStrategyFactory.BlackAndWhiteWithCutoff10());
+		
 		int[] protLengths = new int[]{matrix.getSize()};
 		this.getMatrixPane().setMatrix(matrix);
 		this.getMatrixPane().setProteinLengths(protLengths);
@@ -143,6 +156,14 @@ public class MIMatrixViewer extends JFrame{
 		this.zoomPanel = zoomPanel;
 	}
 
+	protected ColoringSelectionPane getColoringPane() {
+		return coloringPane;
+	}
+
+	protected void setColoringPane(ColoringSelectionPane coloringPane) {
+		this.coloringPane = coloringPane;
+	}
+
 	/////////////////////////////////////
 	// protected and private methods
 	private void loadMainPane() {
@@ -160,6 +181,12 @@ public class MIMatrixViewer extends JFrame{
 
 	public void zoomArea(Rectangle rect, double[][] values, char[] hChars, char[] vChars) {
 		this.getZoomPanel().renderImage(values, hChars, vChars);
+		
+	}
+
+	public void ColorSelected() {
+		this.getMatrixPane().resetImage();
+		this.getMatrixPane().updateUI();
 		
 	}
 }

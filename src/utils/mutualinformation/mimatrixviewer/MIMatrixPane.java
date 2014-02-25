@@ -32,6 +32,7 @@ public class MIMatrixPane extends JScrollPane {
 	//  Instance Variables
 	private MI_Matrix matrix = null;
 	// Mi data values
+	@SuppressWarnings("unused")
 	private MatrixColoringStrategy color = null;
 	// The way that each pair of residues is colored on map.
 	private int numberOfProteins = 1;
@@ -48,6 +49,8 @@ public class MIMatrixPane extends JScrollPane {
 	// Parent MI Matrix Viewer
 	private char[] aminoAcids;
 	// Amino acid from whole MI Data
+	private Rectangle area;
+	private boolean showArea;
 	
 	///////////////////////////////
 	// Constructor
@@ -65,6 +68,7 @@ public class MIMatrixPane extends JScrollPane {
 		this.getImagePane().setDoubleBuffered(true);
 		this.setOpaque(true);
 		this.setViewer(viewer);
+		this.showArea = false;
 		
 	}
 
@@ -258,7 +262,8 @@ public class MIMatrixPane extends JScrollPane {
 	}
 
 	public MatrixColoringStrategy getColor() {
-		return color;
+		return (MatrixColoringStrategy) this.getViewer().getColoringPane().getMatrixColoringModel().getSelectedItem();
+//		return color;
 	}
 
 	public void setColor(MatrixColoringStrategy color) {
@@ -334,6 +339,14 @@ public class MIMatrixPane extends JScrollPane {
 					MIMatrixPane.this.setImage(MIMatrixPane.this.createMapImage());
 				}
 				g.drawImage(MIMatrixPane.this.getImage(), 0, 0, null);
+				
+				if (MIMatrixPane.this.showArea) {
+					
+					
+					((Graphics2D)g).setColor(Color.green);
+					((Graphics2D)g).draw(MIMatrixPane.this.area);
+					
+				}
 			}
 			
 		}
@@ -357,6 +370,7 @@ public class MIMatrixPane extends JScrollPane {
 			int w = Math.min(MIMatrixPane.ZOOM_SIZE, MIMatrixPane.this.getMatrix().getSize() - px);
 			int h = Math.min(MIMatrixPane.ZOOM_SIZE, MIMatrixPane.this.getMatrix().getSize() - py);
 			rect.setBounds(px, py, w, h);
+			
 			double[][] values = new double[w][h];
 			char[] hChars = Arrays.copyOfRange(MIMatrixPane.this.getAminoAcids(),px,px+w);
 			char[] vChars = Arrays.copyOfRange(MIMatrixPane.this.getAminoAcids(),py,py+h);
@@ -373,6 +387,14 @@ public class MIMatrixPane extends JScrollPane {
 				}
 			}
 			MIMatrixPane.this.getViewer().zoomArea(rect,values,hChars,vChars);
+			
+			Rectangle areaRect = new Rectangle();
+			areaRect.setBounds(rect.x+30, rect.y+30, w, h);
+			
+			
+			MIMatrixPane.this.area = areaRect;
+			MIMatrixPane.this.showArea = true;
+			MIMatrixPane.this.updateUI();
 		}
 
 		@Override

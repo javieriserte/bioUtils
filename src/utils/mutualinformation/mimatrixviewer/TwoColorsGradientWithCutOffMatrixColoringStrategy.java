@@ -66,6 +66,13 @@ public class TwoColorsGradientWithCutOffMatrixColoringStrategy extends TwoColors
 	@Deprecated
 	protected void calculateMidRange() {}
 	
+	
+	
+	@Override
+	public String toString() {
+		return "Two Color Gradient:"+ this.getHighValuesColor()+","+ this.getLowValuesColor()+"With CutOff:"+this.getMeanValue();
+	}
+
 	//////////////////////////////////
 	// Getters And Setters
 	public double getUpperRange() {

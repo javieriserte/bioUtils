@@ -36,17 +36,20 @@ public class ZoomPanel extends JScrollPane {
 
 	////////////////////////////////
 	// Instance Variables
+	@SuppressWarnings("unused")
 	private ZoomMatrixColoringStrategy coloringStrategy;
 	private BufferedImage image;
 	private double[][] subMatrix;
 	private char[] aaSeqHor;
 	private char[] aaSeqVer;
+	private MIMatrixViewer viewer;
 	////////////////////////////////
 	
 	////////////////////////////////
 	// Constructor
-	public ZoomPanel() {
+	public ZoomPanel(MIMatrixViewer viewer) {
 		super();
+		this.setViewer(viewer);
 		this.setImagePanel(new ZoomImagePanel());
 		this.getImagePanel().setOpaque(true);
 		this.setViewportView(this.getImagePanel());
@@ -93,7 +96,8 @@ public class ZoomPanel extends JScrollPane {
 	////////////////////////////////
 	// Getters and setters
 	public ZoomMatrixColoringStrategy getColoringStrategy() {
-		return coloringStrategy;
+		return (ZoomMatrixColoringStrategy) this.getViewer().getColoringPane().getZoomMatrixColoringModel().getSelectedItem();
+//		return coloringStrategy;
 	}
 
 	public void setColoringStrategy(ZoomMatrixColoringStrategy coloringStrategy) {
@@ -137,6 +141,14 @@ public class ZoomPanel extends JScrollPane {
 		this.aaSeqVer = aaSeqVer;
 	}
 	///////////////////////////////
+
+	protected MIMatrixViewer getViewer() {
+		return viewer;
+	}
+
+	protected void setViewer(MIMatrixViewer viewer) {
+		this.viewer = viewer;
+	}
 
 	///////////////////////////////
 	// Protected and private methods

@@ -114,6 +114,13 @@ public class TwoColorsGradientMatrixColoringStrategy implements MatrixColoringSt
 		
 	}
 	
+	
+	
+	@Override
+	public String toString() {
+		return "Two Color Gradient:"+this.getHighValuesColor()+","+this.getLowValuesColor();
+	}
+
 	//////////////////////////////////////
 	// protected Methods
 	protected void calculateMeanValue() {

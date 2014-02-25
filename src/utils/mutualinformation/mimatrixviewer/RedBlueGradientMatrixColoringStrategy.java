@@ -15,4 +15,14 @@ public class RedBlueGradientMatrixColoringStrategy extends TwoColorsGradientWith
 	public RedBlueGradientMatrixColoringStrategy(double lowerValue, double higherValue) {
 		super(new Color(0,0,150), Color.red, new Color(0,50,0), Color.white , lowerValue, higherValue, 6.5);
 	}
+	
+	//////////////////////////////
+	// Public Interface
+	@Override
+	public String toString() {
+		return "Red And Blue Gradient. With CutOff:"+this.getMeanValue();
+	}
+
+	
+	
 }
