@@ -3,7 +3,16 @@ package utils.mutualinformation.mimatrixviewer;
 import io.onelinelister.OneLineListReader;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Enumeration;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipException;
+import java.util.zip.ZipFile;
 
 import utils.mutualinformation.misticmod.MI_Position;
 import utils.mutualinformation.misticmod.MI_PositionLineParser;
@@ -87,5 +96,30 @@ public class MI_Matrix {
 			matrix.setValue(mi_Position.getPos1(), mi_Position.getPos2(), mi_Position);
 		}
 		return matrix;
+	}
+	
+	public static MI_Matrix loadFromZippedFile(File infile){
+		
+		ZipFile zf;
+		try {
+			
+			zf = new ZipFile(infile);
+			Enumeration<? extends ZipEntry> entries = zf.entries();
+			
+			InputStream fis = zf.getInputStream(entries.nextElement());
+			List<MI_Position> values = (new OneLineListReader<MI_Position>(new MI_PositionLineParser())).readZipped(fis);
+	
+			int matrixSize = (int)(Math.sqrt(values.size()*8+1)+1)/2;
+			MI_Matrix matrix = new MI_Matrix(matrixSize);
+			for (MI_Position mi_Position : values) {
+				matrix.setValue(mi_Position.getPos1(), mi_Position.getPos2(), mi_Position);
+			}
+			zf.close();
+			return matrix;
+			
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		} 
+		return null;
 	}
 }

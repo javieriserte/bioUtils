@@ -4,7 +4,12 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.Rectangle;
+import java.io.BufferedInputStream;
+import java.io.DataInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -105,13 +110,30 @@ public class MIMatrixViewer extends JFrame{
 	}
 	////////////////////////////
 
-
-
-
 	///////////////////////////////
 	// Public interface
 	public void processFile(File file) {
-		MI_Matrix matrix = MI_Matrix.loadFromFile(file);
+		
+		if(file.isDirectory() || !file.canRead() || file.length() < 4) {
+			return;
+		}
+		DataInputStream in;
+    	boolean isZipFile =  false;
+
+		try {
+			in = new DataInputStream(new BufferedInputStream(new FileInputStream(file)));
+			int test = in.readInt();
+		    in.close();
+		    isZipFile =  (test == 0x504b0304);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		MI_Matrix matrix = null;
+		if (isZipFile) {
+			matrix = MI_Matrix.loadFromZippedFile(file);
+		} else {
+			matrix = MI_Matrix.loadFromFile(file);
+		}
 		
 		this.getColoringPane().getMatrixColoringModel().removeAllElements();
 		this.getColoringPane().addMatrixColoringStrategy(MatrixColoringStrategyFactory.createRedBlueGradient(matrix));
