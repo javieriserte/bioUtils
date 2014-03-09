@@ -1,4 +1,4 @@
-package fileformats.clustal;
+package fileformats.readers.clustal;
 
 import java.io.BufferedReader;
 

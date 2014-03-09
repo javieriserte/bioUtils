@@ -3,7 +3,7 @@ package fileformats.genBankIO;
 import java.io.BufferedReader;
 import java.io.IOException;
 
-import fileformats.FileFormatChecker;
+import fileformats.readers.FileFormatChecker;
 
 public class GenBankFormatChecker implements FileFormatChecker {
 

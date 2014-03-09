@@ -3,7 +3,7 @@ package fileformats.fastaIO;
 import java.io.BufferedReader;
 import java.io.IOException;
 
-import fileformats.FileFormatChecker;
+import fileformats.readers.FileFormatChecker;
 
 public class FastaChecker implements FileFormatChecker{
 
