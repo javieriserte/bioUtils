@@ -51,7 +51,7 @@ import fileformats.readers.rules.ExceptionWhileReadingRule;
  * @author javier
  *
  */
-public class ClustalFormatReader implements FormattedAlignmentReader {
+public class ClustalFormattedAlignmentReader implements FormattedAlignmentReader {
 
 	private static final String SEQUENCE_LINE_REGEX = "^([^\\s]+)\\s+([^\\s]{1,60})(\\s[0-9]+)*$";
 	private static final String CONSERVATION_LINE_REGEX =  "^[\\s:.*]+$";
@@ -93,9 +93,9 @@ public class ClustalFormatReader implements FormattedAlignmentReader {
 			//  - blank line 
 			// conservation data lines and blank lines are ignored.
 			// sequence order or size is not checked.
-			Pattern paternSequenceLine = Pattern.compile(ClustalFormatReader.SEQUENCE_LINE_REGEX);
+			Pattern paternSequenceLine = Pattern.compile(ClustalFormattedAlignmentReader.SEQUENCE_LINE_REGEX);
 			
-			Pattern paternConservationLine = Pattern.compile(ClustalFormatReader.CONSERVATION_LINE_REGEX);
+			Pattern paternConservationLine = Pattern.compile(ClustalFormattedAlignmentReader.CONSERVATION_LINE_REGEX);
 			
 			while ((currentLine = in.readLine()) != null) {
 			
@@ -152,6 +152,11 @@ public class ClustalFormatReader implements FormattedAlignmentReader {
 
 	}
 
+	@Override
+	public String alignmentFormatName() {
+		return "Clustal";
+	}
+	
 	////////////////////////////////////
 	// Private methods
 	private AlignmentReadingResult getErrorOnFirstLineResult(AlignmentReadingResult result,

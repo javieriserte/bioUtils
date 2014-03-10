@@ -18,7 +18,7 @@ import fileformats.readers.rules.ExceptionWhileReadingRule;
  * A class for object readting Phylip format.
  * Phylip format has two flavors, interleaved and sequential.
  * 
- * Phylip format:<br>
+ * A sequence alignment in Phylip format consists of:<br>
  * <ol>
  *  <li>The first line in the file contains two numbers separated by spaces: number of sequence and length of alignment. In that order.</li>
  *  <li>One or more empty lines.</li>
@@ -38,7 +38,7 @@ import fileformats.readers.rules.ExceptionWhileReadingRule;
  * @author Javier Iserte
  *
  */
-public class PhylipFormatReader implements FormattedAlignmentReader {
+public class PhylipFormattedAlignmentReader implements FormattedAlignmentReader {
 
 	////////////////////////////
 	// Class Constants
@@ -57,7 +57,7 @@ public class PhylipFormatReader implements FormattedAlignmentReader {
 	
 	//////////////////////////////
 	// Constructor
-	public PhylipFormatReader() {
+	public PhylipFormattedAlignmentReader() {
 		super();
 		this.setResult(new AlignmentReadingResult());
 		this.setResultAlignmentBuilder(new ArrayList<Pair<String,StringBuilder>>());
@@ -81,7 +81,7 @@ public class PhylipFormatReader implements FormattedAlignmentReader {
 			// and process it in a different way
 			String currentLine = null;
 
-			Pattern pattern = Pattern.compile(PhylipFormatReader.FIRST_LINE_REGEX);
+			Pattern pattern = Pattern.compile(PhylipFormattedAlignmentReader.FIRST_LINE_REGEX);
 			
 			Matcher matcher ;
 			
@@ -118,7 +118,7 @@ public class PhylipFormatReader implements FormattedAlignmentReader {
 
 				if (!lineMatchesBlackLine) {
 					
-					pattern = Pattern.compile(PhylipFormatReader.FIRST_BLOCK_LINE_REGEX);
+					pattern = Pattern.compile(PhylipFormattedAlignmentReader.FIRST_BLOCK_LINE_REGEX);
 					
 					matcher = pattern.matcher(currentLine);
 					
@@ -167,7 +167,7 @@ public class PhylipFormatReader implements FormattedAlignmentReader {
 
 				if (!lineMatchesBlackLine) {
 					
-					pattern = Pattern.compile(PhylipFormatReader.COMMON_BLOCK_LINE_REGEX);
+					pattern = Pattern.compile(PhylipFormattedAlignmentReader.COMMON_BLOCK_LINE_REGEX);
 					
 					matcher = pattern.matcher(currentLine);
 					
@@ -227,6 +227,10 @@ public class PhylipFormatReader implements FormattedAlignmentReader {
 		
 	}
 
+	@Override
+	public String alignmentFormatName() {
+		return "Phylip";
+	}
 	
 	private AlignmentReadingResult getResultForUnmetRule(AlignmentRule unmetRule, int lineNumber, String lineContent) {
 		

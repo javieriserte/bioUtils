@@ -49,7 +49,7 @@ public class PhylipFormatReaderTest {
 				"             YFKMEMGKNM CAIATCASYP VVAA \n"+
 				"             YFLIERGKNM CGLAACASYP IPLV\n";
 		
-		PhylipFormatReader reader = new PhylipFormatReader();
+		PhylipFormattedAlignmentReader reader = new PhylipFormattedAlignmentReader();
 		
 		
 		AlignmentReadingResult result = reader.read(new BufferedReader(new StringReader(alstr01)));

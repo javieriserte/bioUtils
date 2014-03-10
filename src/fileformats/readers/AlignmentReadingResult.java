@@ -5,6 +5,16 @@ import java.util.List;
 import fileformats.readers.rules.AlignmentRule;
 import pair.Pair;
 
+/**
+ * Contains the result of attempting to read a sequence alignment.
+ * Is the reading was successful, the alignment can be retrieved, if not
+ * an AlignmentRule object containing the first error in the input data can be 
+ * retrieved. 
+ * @see #successfulRead()
+ * @see #getAlignment()
+ * @see #getUnmetRule()
+ * @author javier
+ */
 public class AlignmentReadingResult {
 
 	//////////////////////////////
@@ -16,9 +26,9 @@ public class AlignmentReadingResult {
 	///////////////////////////////
 	// Public Interface
 	/**
-	 * Verifies that the input alignment was succesfully read.
+	 * Verifies that the input alignment was successfully read.
 	 * 
-	 * @return <b>true</b> if the alignem was completely read.<br>
+	 * @return <b>true</b> if the alignment was completely read.<br>
 	 *         <b>false</b> otherwise
 	 */
 	public boolean successfulRead() {

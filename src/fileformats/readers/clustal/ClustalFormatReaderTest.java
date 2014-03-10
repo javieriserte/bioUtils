@@ -10,7 +10,7 @@ import org.junit.Test;
 import fileformats.readers.AlignmentReadingResult;
 import fileformats.readers.rules.BlankAlignmentRule;
 
-public class ClustalFormatReaderTest extends ClustalFormatReader {
+public class ClustalFormatReaderTest extends ClustalFormattedAlignmentReader {
 
 	@Test
 	public void testComplainsFormat() {
@@ -71,7 +71,7 @@ public class ClustalFormatReaderTest extends ClustalFormatReader {
 				"FOSB_HUMAN      TSSFVLTCPEVSAFAGAQRTSGSDQPSDPLNSPSLLAL 338\n"+
 				"                ***********************:**************";
 		
-		ClustalFormatReader a = new ClustalFormatReader();
+		ClustalFormattedAlignmentReader a = new ClustalFormattedAlignmentReader();
 		
 		AlignmentReadingResult al1 = a.read(new BufferedReader(new StringReader(clustalText01)));
 		AlignmentReadingResult al2 = a.read(new BufferedReader(new StringReader(clustalText02)));
