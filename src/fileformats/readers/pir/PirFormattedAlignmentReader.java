@@ -10,9 +10,9 @@ import java.util.regex.Pattern;
 import pair.Pair;
 import fileformats.readers.AlignmentReadingResult;
 import fileformats.readers.FormattedAlignmentReader;
-import fileformats.readers.rules.AlignmentRule;
-import fileformats.readers.rules.BlankAlignmentRule;
-import fileformats.readers.rules.ExceptionWhileReadingRule;
+import fileformats.readers.faults.AlignmentReadingFault;
+import fileformats.readers.faults.BlankAlignmentFault;
+import fileformats.readers.faults.ExceptionWhileReadingFault;
 
 /**
  * Reads alignments in Pir format.
@@ -97,6 +97,7 @@ public class PirFormattedAlignmentReader implements FormattedAlignmentReader {
 			
 			boolean nextIsFirstLine = true;			
 			boolean nextIsDescritionLine = false;
+			boolean nextIsCommentLine = false;
 			boolean nextIsSequenceLine = false;
 			
 			LineReadingLoop:
@@ -106,6 +107,7 @@ public class PirFormattedAlignmentReader implements FormattedAlignmentReader {
 				
 				boolean lineMatchEmptyLine = currentLine.trim().equals("");
 
+			
 				if (!lineMatchEmptyLine) {
 					
 					///////////////////////////////////////////
@@ -126,7 +128,18 @@ public class PirFormattedAlignmentReader implements FormattedAlignmentReader {
 						
 							continue LineReadingLoop;
 						
-						} 
+						}  else {
+							
+							if (nextIsCommentLine) {
+								
+								continue LineReadingLoop;
+								
+							} else {
+							
+								return this.getResultForFault(new PirFirstLineFault(), lineCounter, currentLine);
+							}
+							
+						}
 						
 					}
 					////////////////////////////////////////////
@@ -174,12 +187,14 @@ public class PirFormattedAlignmentReader implements FormattedAlignmentReader {
 							nextIsSequenceLine = false;
 							
 							nextIsFirstLine = true;
+							
+							nextIsCommentLine = true;
 						
 							continue LineReadingLoop;
 						
 						} else {
 							
-							return this.getResultForUnmetRule(new PirSequenceLineRule(), lineCounter, currentLine);
+							return this.getResultForFault(new PirSequenceLineFault(), lineCounter, currentLine);
 							
 						}
 						
@@ -194,7 +209,7 @@ public class PirFormattedAlignmentReader implements FormattedAlignmentReader {
 			// with no errors.
 			if (this.getResultAlignment().size()==0) {
 				
-				return getResultForUnmetRule(new BlankAlignmentRule(), lineCounter,"");
+				return getResultForFault(new BlankAlignmentFault(), lineCounter,"");
 				
 			} else { 
 			
@@ -207,7 +222,7 @@ public class PirFormattedAlignmentReader implements FormattedAlignmentReader {
 			
 		} catch (IOException e) {
 			
-			return this.getResultForUnmetRule(new ExceptionWhileReadingRule(e.getMessage()),lineCounter,"");
+			return this.getResultForFault(new ExceptionWhileReadingFault(e.getMessage()),lineCounter,"");
 			
 		}
 		
@@ -222,15 +237,18 @@ public class PirFormattedAlignmentReader implements FormattedAlignmentReader {
 	
 	/////////////////////////////////////
 	// Private Methods
-	private AlignmentReadingResult getResultForUnmetRule(AlignmentRule unmetRule, int lineNumber, String lineContent) {
+	private AlignmentReadingResult getResultForFault(AlignmentReadingFault fault, int lineNumber, String lineContent) {
 		
-		unmetRule.setWrongLineNumber(lineNumber);
+		fault.setWrongLineNumber(lineNumber);
 		
-		unmetRule.setWrongLineContent(lineContent);
+		fault.setWrongLineContent(lineContent);
+		
+		fault.setFaultProducerReader(this);
 
-		this.getResult().setUnmetRule(unmetRule);
+		this.getResult().setFault(fault);
 		
 		return this.getResult();
+		
 	}
 	// End of private methods
 	//////////////////////////////////////

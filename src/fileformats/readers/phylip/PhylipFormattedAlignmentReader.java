@@ -10,9 +10,9 @@ import java.util.regex.Pattern;
 import pair.Pair;
 import fileformats.readers.AlignmentReadingResult;
 import fileformats.readers.FormattedAlignmentReader;
-import fileformats.readers.rules.AlignmentRule;
-import fileformats.readers.rules.BlankAlignmentRule;
-import fileformats.readers.rules.ExceptionWhileReadingRule;
+import fileformats.readers.faults.AlignmentReadingFault;
+import fileformats.readers.faults.BlankAlignmentFault;
+import fileformats.readers.faults.ExceptionWhileReadingFault;
 
 /**
  * A class for object readting Phylip format.
@@ -44,7 +44,7 @@ public class PhylipFormattedAlignmentReader implements FormattedAlignmentReader 
 	// Class Constants
 	private static final String FIRST_LINE_REGEX = "^\\s*([0-9]+)\\s+([0-9]+)\\s*$";
 	private static final String FIRST_BLOCK_LINE_REGEX = "^(.{10})\\s*(.+)$";
-	private static final String COMMON_BLOCK_LINE_REGEX = "^\\s{10}\\s*(.+)$";
+	private static final String COMMON_BLOCK_LINE_REGEX = "^\\s{10}\\s*([^\\s].+)$";
 	/////////////////////////////
 	
 	/////////////////////////////
@@ -52,7 +52,7 @@ public class PhylipFormattedAlignmentReader implements FormattedAlignmentReader 
 	private AlignmentReadingResult result;
 	private List<Pair<String, StringBuilder>> resultAlignmentBuilder;
 	private List<Pair<String, String>> resultAlignment;
-	private AlignmentRule unmetRule;
+	private AlignmentReadingFault unmetRule;
 	/////////////////////////////
 	
 	//////////////////////////////
@@ -65,6 +65,8 @@ public class PhylipFormattedAlignmentReader implements FormattedAlignmentReader 
 	}
 	//////////////////////////////
 	
+	//////////////////////////////
+	// Public interface
 	@Override
 	public AlignmentReadingResult read(BufferedReader in) {
 		
@@ -87,7 +89,7 @@ public class PhylipFormattedAlignmentReader implements FormattedAlignmentReader 
 			
 			if ( (currentLine = in.readLine()) == null) {
 				
-				return this.getResultForUnmetRule(new BlankAlignmentRule(),lineCounter,"");
+				return this.getResultForFault(new BlankAlignmentFault(),lineCounter,"");
 				
 			} else  {
 				
@@ -99,7 +101,7 @@ public class PhylipFormattedAlignmentReader implements FormattedAlignmentReader 
 				
 				} else {
 				
-					return this.getResultForUnmetRule(new PhylipHeaderRule(),lineCounter,currentLine);
+					return this.getResultForFault(new PhylipHeaderFault(),lineCounter,currentLine);
 				
 				}
 				
@@ -140,14 +142,14 @@ public class PhylipFormattedAlignmentReader implements FormattedAlignmentReader 
 						
 						} else {
 							
-							return this.getResultForUnmetRule(new FirstBlockLinePhylipRule(),lineCounter,currentLine);
+							return this.getResultForFault(new FirstBlockLinePhylipFault(),lineCounter,currentLine);
 							
 						}
 						
 						
 					} else {
 						
-						return this.getResultForUnmetRule(new FirstBlockLinePhylipRule(),lineCounter,currentLine);
+						return this.getResultForFault(new FirstBlockLinePhylipFault(),lineCounter,currentLine);
 						
 					}
 					
@@ -185,7 +187,7 @@ public class PhylipFormattedAlignmentReader implements FormattedAlignmentReader 
 						
 					} else {
 						
-						return this.getResultForUnmetRule(new CommonBlockLinePhylipRule(),lineCounter,currentLine);
+						return this.getResultForFault(new CommonBlockLinePhylipFault(),lineCounter,currentLine);
 						
 					}
 					
@@ -199,7 +201,7 @@ public class PhylipFormattedAlignmentReader implements FormattedAlignmentReader 
 			
 			if (sequenceLineCounter==0) {
 				
-				return getResultForUnmetRule(new BlankAlignmentRule(), lineCounter,"");
+				return getResultForFault(new BlankAlignmentFault(), lineCounter,"");
 				
 			} else { 
 			
@@ -220,7 +222,7 @@ public class PhylipFormattedAlignmentReader implements FormattedAlignmentReader 
 			
 		} catch (IOException e) {
 			
-			return this.getResultForUnmetRule(new ExceptionWhileReadingRule(e.getMessage()),lineCounter,"");
+			return this.getResultForFault(new ExceptionWhileReadingFault(e.getMessage()),lineCounter,"");
 			
 		}
 
@@ -231,18 +233,25 @@ public class PhylipFormattedAlignmentReader implements FormattedAlignmentReader 
 	public String alignmentFormatName() {
 		return "Phylip";
 	}
+	// End of public interface
+	/////////////////////////////////
 	
-	private AlignmentReadingResult getResultForUnmetRule(AlignmentRule unmetRule, int lineNumber, String lineContent) {
+	/////////////////////////////////
+	// Private and protected methods
+	private AlignmentReadingResult getResultForFault(AlignmentReadingFault fault, int lineNumber, String lineContent) {
 		
-		unmetRule.setWrongLineNumber(lineNumber);
+		fault.setWrongLineNumber(lineNumber);
 		
-		unmetRule.setWrongLineContent(lineContent);
+		fault.setWrongLineContent(lineContent);
+		
+		fault.setFaultProducerReader(this);
 
-		this.getResult().setUnmetRule(unmetRule);
+		this.getResult().setFault(fault);
 		
 		return this.getResult();
 	}
-	
+	// End of private and protected methods
+	////////////////////////////////////
 
 
 
@@ -273,13 +282,15 @@ public class PhylipFormattedAlignmentReader implements FormattedAlignmentReader 
 		this.resultAlignment = resultAlignment;
 	}
 
-	protected AlignmentRule getUnmetRule() {
+	protected AlignmentReadingFault getUnmetRule() {
 		return unmetRule;
 	}
 
-	protected void setUnmetRule(AlignmentRule unmetRule) {
+	protected void setUnmetRule(AlignmentReadingFault unmetRule) {
 		this.unmetRule = unmetRule;
 	}
+	// End of getters and setters
+	//////////////////////////////////
 
 }
 

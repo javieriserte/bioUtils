@@ -82,12 +82,12 @@ public class NexusFormattedAlignmentReaderTest extends NexusFormattedAlignmentRe
 		
 		assertTrue(result_01.successfulRead());
 		assertNotNull(result_01.getAlignment());
-		assertNull(result_01.getUnmetRule());
+		assertNull(result_01.getFault());
 		assertEquals(10,result_01.getAlignment().size());
 
 		assertTrue(result_02.successfulRead());
 		assertNotNull(result_02.getAlignment());
-		assertNull(result_02.getUnmetRule());
+		assertNull(result_02.getFault());
 		assertEquals(1,result_02.getAlignment().size());
 
 	}

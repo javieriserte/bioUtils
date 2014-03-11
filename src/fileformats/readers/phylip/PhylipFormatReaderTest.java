@@ -58,7 +58,7 @@ public class PhylipFormatReaderTest {
 		
 		assertNotNull(result.getAlignment());
 		
-		assertNull(result.getUnmetRule());
+		assertNull(result.getFault());
 		
 		assertEquals(3, result.getAlignment().size());
 		

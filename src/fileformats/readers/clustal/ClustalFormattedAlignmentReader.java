@@ -11,9 +11,9 @@ import java.util.regex.Pattern;
 import pair.Pair;
 import fileformats.readers.AlignmentReadingResult;
 import fileformats.readers.FormattedAlignmentReader;
-import fileformats.readers.rules.AlignmentRule;
-import fileformats.readers.rules.BlankAlignmentRule;
-import fileformats.readers.rules.ExceptionWhileReadingRule;
+import fileformats.readers.faults.AlignmentReadingFault;
+import fileformats.readers.faults.BlankAlignmentFault;
+import fileformats.readers.faults.ExceptionWhileReadingFault;
 
 /**
  * Checks Clustal format.
@@ -56,6 +56,8 @@ public class ClustalFormattedAlignmentReader implements FormattedAlignmentReader
 	private static final String SEQUENCE_LINE_REGEX = "^([^\\s]+)\\s+([^\\s]{1,60})(\\s[0-9]+)*$";
 	private static final String CONSERVATION_LINE_REGEX =  "^[\\s:.*]+$";
 	
+	///////////////////////////////////////////
+	// Public Interface
 	@Override
 	public AlignmentReadingResult read(BufferedReader in) {
 
@@ -75,12 +77,12 @@ public class ClustalFormattedAlignmentReader implements FormattedAlignmentReader
 			// Read the first line of data
 			// and process it in a different way
 			if ( (currentLine = in.readLine()) == null || !currentLine.matches("^CLUSTAL.+$") ) {
-				
-				return getErrorOnFirstLineResult(result, lineCounter, currentLine);
+				lineCounter++;
+				return this.getResultForFault((currentLine == null)?new BlankAlignmentFault():new ClustalHeaderFault(),result,lineCounter,currentLine);
 				
 			}
 			
-			lineCounter++;
+			
 			////////////////////////////////
 
 
@@ -121,7 +123,7 @@ public class ClustalFormattedAlignmentReader implements FormattedAlignmentReader
 						
 					} else if (!lineMatchesConservationLine) {
 						
-						return getResultForUnrecongnizedLine(result, lineCounter, currentLine);
+						return getResultForFault(new SequenceOrConservationClustalFault(), result, lineCounter, currentLine);
 						
 					}
 
@@ -134,7 +136,7 @@ public class ClustalFormattedAlignmentReader implements FormattedAlignmentReader
 			// Reach end of data without any error.
 			if (numberOfSequenceLines==0) {
 				
-				return getResultForEmptyAlignment(result, lineCounter);
+				return getResultForFault(new BlankAlignmentFault(),result, lineCounter,"");
 				
 			} else { 
 			
@@ -146,47 +148,26 @@ public class ClustalFormattedAlignmentReader implements FormattedAlignmentReader
 			
 		} catch (IOException e) {
 			
-			return getResultForException(result, e);
+			return getResultForFault(new ExceptionWhileReadingFault(e.getMessage()),result, lineCounter, "" );
 			
 		}
 
 	}
-
+	
+	/**
+	 * Get the String identifying the reader.
+	 */
 	@Override
 	public String alignmentFormatName() {
+		
 		return "Clustal";
+		
 	}
+	// End of Public interface
+	////////////////////////////////////
 	
 	////////////////////////////////////
 	// Private methods
-	private AlignmentReadingResult getErrorOnFirstLineResult(AlignmentReadingResult result,
-			int lineCounter, String currentLine) {
-		AlignmentRule unmetRule;
-		unmetRule = (currentLine == null)?new BlankAlignmentRule():new ClustalHeaderRule();
-		
-		unmetRule.setWrongLineNumber(lineCounter);
-		
-		unmetRule.setWrongLineContent(currentLine);
-		
-		result.setUnmetRule(unmetRule);
-		
-		return result;
-	}
-	
-	private AlignmentReadingResult getResultForUnrecongnizedLine(
-			AlignmentReadingResult result, int lineCounter, String currentLine) {
-		AlignmentRule unmetRule;
-		unmetRule = new SequenceOrConservationClustalRule();
-		
-		unmetRule.setWrongLineNumber(lineCounter);
-		
-		unmetRule.setWrongLineContent(currentLine);
-		
-		result.setUnmetRule(unmetRule);
-		
-		return result;
-	}
-
 	private void addFragmentToSequence(
 			LinkedHashMap<String, StringBuilder> resultAlignmentMap,
 			Matcher matcherSequenceLine) {
@@ -202,21 +183,19 @@ public class ClustalFormattedAlignmentReader implements FormattedAlignmentReader
 		resultAlignmentMap.get(sequenceDescription).append(sequence);
 	}
 	
-	private AlignmentReadingResult getResultForEmptyAlignment(AlignmentReadingResult result, int lineCounter) {
-		AlignmentRule unmetRule;
+	private AlignmentReadingResult getResultForFault(AlignmentReadingFault fault, AlignmentReadingResult result, int lineCounter, String lineContent) {
 		
-		unmetRule = new BlankAlignmentRule();
+		fault.setFaultProducerReader(this);
 		
-		unmetRule.setWrongLineNumber(lineCounter);
+		fault.setWrongLineNumber(lineCounter);
 		
-		unmetRule.setWrongLineContent("");
+		fault.setWrongLineContent(lineContent);
 		
-		result.setUnmetRule(unmetRule);
+		result.setFault(fault);
 		
 		return result;
 	}
-
-
+	
 
 	private AlignmentReadingResult maptoListSequences(AlignmentReadingResult result,
 			LinkedHashMap<String, StringBuilder> resultAlignmentMap,
@@ -230,19 +209,6 @@ public class ClustalFormattedAlignmentReader implements FormattedAlignmentReader
 		}
 		
 		result.setAlignment(resultAlignmentPairList);
-		
-		return result;
-	}
-
-	private AlignmentReadingResult getResultForException( AlignmentReadingResult result, IOException exception) {
-		
-		AlignmentRule unmetRule = new ExceptionWhileReadingRule(exception.getMessage());
-		
-		unmetRule.setWrongLineNumber(0);
-		
-		unmetRule.setWrongLineContent("");
-		
-		result.setUnmetRule(unmetRule);
 		
 		return result;
 	}

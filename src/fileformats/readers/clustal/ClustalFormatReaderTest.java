@@ -8,7 +8,7 @@ import java.io.StringReader;
 import org.junit.Test;
 
 import fileformats.readers.AlignmentReadingResult;
-import fileformats.readers.rules.BlankAlignmentRule;
+import fileformats.readers.faults.BlankAlignmentFault;
 
 public class ClustalFormatReaderTest extends ClustalFormattedAlignmentReader {
 
@@ -101,9 +101,9 @@ public class ClustalFormatReaderTest extends ClustalFormattedAlignmentReader {
 		
 		assertNull(al2.getAlignment());
 		
-		assertNotNull(al2.getUnmetRule());
+		assertNotNull(al2.getFault());
 		
-		assertEquals((new BlankAlignmentRule()).getClass(), al2.getUnmetRule().getClass());
+		assertEquals((new BlankAlignmentFault()).getClass(), al2.getFault().getClass());
 		
 	
 		
@@ -111,11 +111,11 @@ public class ClustalFormatReaderTest extends ClustalFormattedAlignmentReader {
 		
 		assertNull(al3.getAlignment());
 		
-		assertNotNull(al3.getUnmetRule());
+		assertNotNull(al3.getFault());
 		
-		assertEquals((new SequenceOrConservationClustalRule()).getClass(), al3.getUnmetRule().getClass());
+		assertEquals((new SequenceOrConservationClustalFault()).getClass(), al3.getFault().getClass());
 		
-		assertEquals(11,al3.getUnmetRule().getWrongLineNumber());
+		assertEquals(11,al3.getFault().getWrongLineNumber());
 		
 		
 	}

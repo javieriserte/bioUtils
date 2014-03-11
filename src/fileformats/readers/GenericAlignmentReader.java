@@ -7,14 +7,15 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import fileformats.readers.clustal.ClustalFormattedAlignmentReader;
 import fileformats.readers.fasta.FastaFormattedAlignmentReader;
+import fileformats.readers.faults.ExceptionWhileReadingFault;
 import fileformats.readers.nexus.NexusFormattedAlignmentReader;
 import fileformats.readers.phylip.PhylipFormattedAlignmentReader;
 import fileformats.readers.pir.PirFormattedAlignmentReader;
-import fileformats.readers.rules.ExceptionWhileReadingRule;
 
 /**
  * Tries to read a input data from an alignment formatted in any of the standard 
@@ -33,7 +34,7 @@ public class GenericAlignmentReader {
 
 	///////////////////////////////////
 	// Public Interface
-	public AlignmentReadingResult read(File infile) {
+	public List<AlignmentReadingResult> read(File infile) {
 		try {
 			
 			return this.read(new BufferedReader(new FileReader(infile)));
@@ -46,7 +47,7 @@ public class GenericAlignmentReader {
 		
 	}
 	
-	public AlignmentReadingResult read(String input) {
+	public List<AlignmentReadingResult> read(String input) {
 		
 		List<AlignmentReadingResult> results = new ArrayList<AlignmentReadingResult>();
 		
@@ -72,16 +73,16 @@ public class GenericAlignmentReader {
 			
 		}
 		
-		return this.selectBestResult(results);
+		return this.sortResultByReadingDepth(results);
 		
 	}
 
 
-	public AlignmentReadingResult read(BufferedReader in) {
+	public List<AlignmentReadingResult> read(BufferedReader in) {
 		
 		if (in.markSupported()) {
 			
-			return this.selectBestResult(this.attemptToReadFromMarkedBuffer(in));
+			return this.sortResultByReadingDepth(this.attemptToReadFromMarkedBuffer(in));
 			
 		} else {
 			
@@ -101,6 +102,8 @@ public class GenericAlignmentReader {
 	// End of Public interface
 	///////////////////////////////////////////
 	
+	////////////////////////////////////////////
+	// Private and protected methods
 	private List<AlignmentReadingResult> attemptToReadFromMarkedBuffer( BufferedReader in) {
 		
 		List<AlignmentReadingResult> results = new ArrayList<AlignmentReadingResult>();
@@ -137,9 +140,7 @@ public class GenericAlignmentReader {
 		
 		} catch (IOException e) {
 			
-			results.add(getExeceptionReadingResult(e));
-			
-			return  results;
+			return  getExeceptionReadingResult(e);
 			
 		}
 	}
@@ -158,15 +159,23 @@ public class GenericAlignmentReader {
 		return entireContentBuilder.toString();
 	}
 
-	private AlignmentReadingResult getExeceptionReadingResult(IOException e) {
+	private List<AlignmentReadingResult> getExeceptionReadingResult(IOException e) {
+		
+		ArrayList<AlignmentReadingResult> listResult = new ArrayList<AlignmentReadingResult>();
+		
 		AlignmentReadingResult result = new AlignmentReadingResult();
 		
-		result.setUnmetRule(new ExceptionWhileReadingRule(e.getMessage()));
+		result.setFault(new ExceptionWhileReadingFault(e.getMessage()));
 		
-		result.getUnmetRule().setWrongLineNumber(0);
+		result.getFault().setWrongLineNumber(0);
 		
-		result.getUnmetRule().setWrongLineContent("");
-		return result;
+		result.getFault().setWrongLineContent("");
+		
+		result.getFault().setFaultProducerReader(null);
+		
+		listResult.add(result);
+		
+		return listResult;
 	}
 	
 	private List<FormattedAlignmentReader> getReaderList() {
@@ -186,32 +195,15 @@ public class GenericAlignmentReader {
 		return readers;
 	}
 	
-	private AlignmentReadingResult selectBestResult( List<AlignmentReadingResult> results) {
+	private List<AlignmentReadingResult> sortResultByReadingDepth( List<AlignmentReadingResult> results) {
 		
-		AlignmentReadingResult deepestResult = null;
+		Collections.sort(results, Collections.reverseOrder(new AlignmentReadingResultDepthComparator()));
 		
-		int deepestLine = 0;
-		
-		for (AlignmentReadingResult alignmentReadingResult : results) {
-			
-			if (alignmentReadingResult.successfulRead()) {
-				
-				return alignmentReadingResult;
-				
-			} else {
-				
-				if (alignmentReadingResult.getUnmetRule().getWrongLineNumber()>=deepestLine) {
-				
-					deepestResult = alignmentReadingResult;
-					
-				}
-				
-			}
-			
-		}
-		
-	return deepestResult;
+		return results;
 	
 	}
+	
+	// End of private and protected methods
+	///////////////////////////////////////////
 	
 }

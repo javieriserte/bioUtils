@@ -13,4 +13,5 @@ public interface FormattedAlignmentReader {
 	public AlignmentReadingResult read(BufferedReader in);
 	
 	public String alignmentFormatName();
+	
 }

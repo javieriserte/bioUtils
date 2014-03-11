@@ -1,10 +1,10 @@
 package fileformats.readers.phylip;
 
-import fileformats.readers.rules.AlignmentRule;
+import fileformats.readers.faults.AlignmentReadingFault;
 
-public class FirstBlockLinePhylipRule extends AlignmentRule {
+public class FirstBlockLinePhylipFault extends AlignmentReadingFault {
 
-	public FirstBlockLinePhylipRule() {
+	public FirstBlockLinePhylipFault() {
 
 		super();
 		

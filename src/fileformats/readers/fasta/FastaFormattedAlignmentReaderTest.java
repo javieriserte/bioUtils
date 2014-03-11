@@ -58,25 +58,25 @@ public class FastaFormattedAlignmentReaderTest extends
 		AlignmentReadingResult result_01 = reader.read(in_01);
 
 		assertTrue(result_01.successfulRead());
-		assertNull(result_01.getUnmetRule());
+		assertNull(result_01.getFault());
 		assertNotNull(result_01.getAlignment());
 		assertEquals(3, result_01.getAlignment().size());
 		
 		AlignmentReadingResult result_02 = reader.read(in_02);
 
 		assertFalse(result_02.successfulRead());
-		assertNotNull(result_02.getUnmetRule());
+		assertNotNull(result_02.getFault());
 		assertNull(result_02.getAlignment());
-		assertEquals(new FastaDescriptionLineRule().getClass(), result_02.getUnmetRule().getClass());
+		assertEquals(new FastaDescriptionLineFault().getClass(), result_02.getFault().getClass());
 		
 		AlignmentReadingResult result_03 = reader.read(in_03);
 
 		assertFalse(result_03.successfulRead());
-		assertNotNull(result_03.getUnmetRule());
+		assertNotNull(result_03.getFault());
 		assertNull(result_03.getAlignment());
-		assertEquals(new FastaDuplicateDescriptionRule().getClass(), result_03.getUnmetRule().getClass());
+		assertEquals(new FastaDuplicateDescriptionFault().getClass(), result_03.getFault().getClass());
 		
-		System.err.println(result_03.getUnmetRule().getDefaultMessage());
+		System.err.println(result_03.getFault().getDefaultMessage());
 	}
 
 }

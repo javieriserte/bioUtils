@@ -1,10 +1,10 @@
 package fileformats.readers.phylip;
 
-import fileformats.readers.rules.AlignmentRule;
+import fileformats.readers.faults.AlignmentReadingFault;
 
-public class CommonBlockLinePhylipRule extends AlignmentRule {
+public class CommonBlockLinePhylipFault extends AlignmentReadingFault {
 
-	public CommonBlockLinePhylipRule() {
+	public CommonBlockLinePhylipFault() {
 		super();
 		this.setMessage("Sequence from data blocks other than the first must contain the 10 first characters as white spaces, and the the sequence.");
 	}

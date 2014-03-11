@@ -2,7 +2,7 @@ package fileformats.readers;
 
 import java.util.List;
 
-import fileformats.readers.rules.AlignmentRule;
+import fileformats.readers.faults.AlignmentReadingFault;
 import pair.Pair;
 
 /**
@@ -12,7 +12,7 @@ import pair.Pair;
  * retrieved. 
  * @see #successfulRead()
  * @see #getAlignment()
- * @see #getUnmetRule()
+ * @see #getFault()
  * @author javier
  */
 public class AlignmentReadingResult {
@@ -20,7 +20,7 @@ public class AlignmentReadingResult {
 	//////////////////////////////
 	// Instance varibles 
 	private List<Pair<String,String>> alignment = null;
-	private AlignmentRule             unmetRule = null;
+	private AlignmentReadingFault             unmetRule = null;
 	
 	
 	///////////////////////////////
@@ -33,7 +33,7 @@ public class AlignmentReadingResult {
 	 */
 	public boolean successfulRead() {
 		
-		return this.getAlignment() != null && this.getUnmetRule() ==null;
+		return this.getAlignment() != null && this.getFault() ==null;
 		
 	}
 	
@@ -45,10 +45,10 @@ public class AlignmentReadingResult {
 	public void setAlignment(List<Pair<String, String>> alignment) {
 		this.alignment = alignment;
 	}
-	public AlignmentRule getUnmetRule() {
+	public AlignmentReadingFault getFault() {
 		return unmetRule;
 	}
-	public void setUnmetRule(AlignmentRule unmetRule) {
+	public void setFault(AlignmentReadingFault unmetRule) {
 		this.unmetRule = unmetRule;
 	}
 	

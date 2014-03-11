@@ -13,9 +13,9 @@ import java.util.regex.Pattern;
 import pair.Pair;
 import fileformats.readers.AlignmentReadingResult;
 import fileformats.readers.FormattedAlignmentReader;
-import fileformats.readers.rules.AlignmentRule;
-import fileformats.readers.rules.BlankAlignmentRule;
-import fileformats.readers.rules.ExceptionWhileReadingRule;
+import fileformats.readers.faults.AlignmentReadingFault;
+import fileformats.readers.faults.BlankAlignmentFault;
+import fileformats.readers.faults.ExceptionWhileReadingFault;
 
 /**
  * Attempts to read a Nexus formatted alignment.
@@ -62,6 +62,8 @@ public class NexusFormattedAlignmentReader implements FormattedAlignmentReader {
 	// End of Instance Variables
 	////////////////////////////
 	
+	///////////////////////////////
+	// Public Interface
 	@Override
 	public AlignmentReadingResult read(BufferedReader in) {
 		
@@ -127,7 +129,7 @@ public class NexusFormattedAlignmentReader implements FormattedAlignmentReader {
 							
 						} else {
 							
-							return this.getResultForUnmetRule(new NexusFirstLineRule(), lineCounter, currentLine);
+							return this.getResultForFault(new NexusFirstLineFault(), lineCounter, currentLine);
 							
 						}
 						
@@ -166,7 +168,7 @@ public class NexusFormattedAlignmentReader implements FormattedAlignmentReader {
 							
 						} else {
 							
-							return this.getResultForUnmetRule(new NexusBeginBlockRule(), lineCounter, currentLine);
+							return this.getResultForFault(new NexusBeginBlockFault(), lineCounter, currentLine);
 							
 						}
 						
@@ -219,7 +221,7 @@ public class NexusFormattedAlignmentReader implements FormattedAlignmentReader {
 							
 						} else {
 							
-							return this.getResultForUnmetRule(new NexusDataBlockHeaderRule(), lineCounter, currentLine);
+							return this.getResultForFault(new NexusDataBlockHeaderFault(), lineCounter, currentLine);
 							
 						}
 						
@@ -262,7 +264,7 @@ public class NexusFormattedAlignmentReader implements FormattedAlignmentReader {
 			// without errors
 			if (this.getAlignmentBuilder()==null || this.getAlignmentBuilder().size()==0) {
 				
-				return this.getResultForUnmetRule(new BlankAlignmentRule(), lineCounter, currentLine);
+				return this.getResultForFault(new BlankAlignmentFault(), lineCounter, currentLine);
 				
 			} else {
 				
@@ -275,7 +277,7 @@ public class NexusFormattedAlignmentReader implements FormattedAlignmentReader {
 			
 		} catch (Exception e) {
 
-			return this.getResultForUnmetRule(new ExceptionWhileReadingRule(e.getMessage()),lineCounter,"");
+			return this.getResultForFault(new ExceptionWhileReadingFault(e.getMessage()),lineCounter,"");
 
 		}
 		
@@ -285,7 +287,12 @@ public class NexusFormattedAlignmentReader implements FormattedAlignmentReader {
 	public String alignmentFormatName() {
 		return "Nexus";
 	}
+	// End of public interface
+	//////////////////////////////////
 
+	
+	////////////////////////////////////////
+	// Private and protected methods
 	private void mapToListAlignment() {
 		
 		List<Pair<String, String>> result = new ArrayList<Pair<String,String>>();
@@ -368,13 +375,15 @@ public class NexusFormattedAlignmentReader implements FormattedAlignmentReader {
 		this.result = alignmentReadingResult;
 	}
 	
-	private AlignmentReadingResult getResultForUnmetRule(AlignmentRule unmetRule, int lineNumber, String lineContent) {
+	private AlignmentReadingResult getResultForFault(AlignmentReadingFault fault, int lineNumber, String lineContent) {
 		
-		unmetRule.setWrongLineNumber(lineNumber);
+		fault.setWrongLineNumber(lineNumber);
 		
-		unmetRule.setWrongLineContent(lineContent);
+		fault.setWrongLineContent(lineContent);
+		
+		fault.setFaultProducerReader(this);
 
-		this.getResult().setUnmetRule(unmetRule);
+		this.getResult().setFault(fault);
 		
 		return this.getResult();
 	}

@@ -8,7 +8,7 @@ import java.io.StringReader;
 import org.junit.Test;
 
 import fileformats.readers.AlignmentReadingResult;
-import fileformats.readers.rules.BlankAlignmentRule;
+import fileformats.readers.faults.BlankAlignmentFault;
 
 public class PirReaderTest extends PirFormattedAlignmentReader {
 
@@ -72,19 +72,19 @@ public class PirReaderTest extends PirFormattedAlignmentReader {
 		AlignmentReadingResult result03 = reader.read(in03);
 		
 		assertTrue(result01.successfulRead());
-		assertNull(result01.getUnmetRule());
+		assertNull(result01.getFault());
 		assertNotNull(result01.getAlignment());
 		assertEquals(3,result01.getAlignment().size());
 		assertEquals(174,result01.getAlignment().get(0).getSecond().length());
 		assertEquals("CRAB_ANAPL",result01.getAlignment().get(0).getFirst());
 		
 		assertFalse(result02.successfulRead());
-		assertNotNull(result02.getUnmetRule());
+		assertNotNull(result02.getFault());
 		assertNull(result02.getAlignment());
-		assertEquals((new BlankAlignmentRule()).getClass(),result02.getUnmetRule().getClass());
+		assertEquals((new BlankAlignmentFault()).getClass(),result02.getFault().getClass());
 		
 		assertTrue(result03.successfulRead());
-		assertNull(result03.getUnmetRule());
+		assertNull(result03.getFault());
 		assertNotNull(result03.getAlignment());
 		assertEquals(2,result03.getAlignment().size());
 		assertEquals(175,result03.getAlignment().get(0).getSecond().length());

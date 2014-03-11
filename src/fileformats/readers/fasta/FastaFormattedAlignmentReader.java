@@ -11,9 +11,9 @@ import java.util.regex.Pattern;
 
 import fileformats.readers.AlignmentReadingResult;
 import fileformats.readers.FormattedAlignmentReader;
-import fileformats.readers.rules.AlignmentRule;
-import fileformats.readers.rules.BlankAlignmentRule;
-import fileformats.readers.rules.ExceptionWhileReadingRule;
+import fileformats.readers.faults.AlignmentReadingFault;
+import fileformats.readers.faults.BlankAlignmentFault;
+import fileformats.readers.faults.ExceptionWhileReadingFault;
 import pair.Pair;
 /**
  * Reads alignments in fasta format.
@@ -112,7 +112,7 @@ public class FastaFormattedAlignmentReader implements FormattedAlignmentReader {
 						
 						if (resultAlignmentMapBuilder.containsKey(lastId)) {
 							
-							return this.getResultForUnmetRule(new FastaDuplicateDescriptionRule(), lineCounter, currentLine);
+							return this.getResultForFault(new FastaDuplicateDescriptionFault(), lineCounter, currentLine);
 							
 						}
 						
@@ -136,14 +136,14 @@ public class FastaFormattedAlignmentReader implements FormattedAlignmentReader {
 
 						} else {
 							
-							return this.getResultForUnmetRule(new FastaSequenceLine(), lineCounter, currentLine);
+							return this.getResultForFault(new FastaSequenceLineFault(), lineCounter, currentLine);
 							
 						}
 						
 						
 					} else {
 						
-						return this.getResultForUnmetRule(new FastaDescriptionLineRule(), lineCounter, currentLine);
+						return this.getResultForFault(new FastaDescriptionLineFault(), lineCounter, currentLine);
 						
 					}
 					
@@ -157,7 +157,7 @@ public class FastaFormattedAlignmentReader implements FormattedAlignmentReader {
 			// with no errors.
 			if (resultAlignmentMapBuilder.size()==0) {
 				
-				return getResultForUnmetRule(new BlankAlignmentRule(), lineCounter,"");
+				return getResultForFault(new BlankAlignmentFault(), lineCounter,"");
 				
 			} else { 
 			
@@ -172,7 +172,7 @@ public class FastaFormattedAlignmentReader implements FormattedAlignmentReader {
 			
 		} catch (IOException e) {
 			
-			return this.getResultForUnmetRule(new ExceptionWhileReadingRule(e.getMessage()),lineCounter,"");
+			return this.getResultForFault(new ExceptionWhileReadingFault(e.getMessage()),lineCounter,"");
 			
 		}
 		
@@ -187,13 +187,15 @@ public class FastaFormattedAlignmentReader implements FormattedAlignmentReader {
 
 	/////////////////////////////////////
 	// Protected and private Methods
-	private AlignmentReadingResult getResultForUnmetRule(AlignmentRule unmetRule, int lineNumber, String lineContent) {
+	private AlignmentReadingResult getResultForFault(AlignmentReadingFault fault, int lineNumber, String lineContent) {
 		
-		unmetRule.setWrongLineNumber(lineNumber);
+		fault.setWrongLineNumber(lineNumber);
 		
-		unmetRule.setWrongLineContent(lineContent);
+		fault.setWrongLineContent(lineContent);
+		
+		fault.setFaultProducerReader(this);
 
-		this.getResult().setUnmetRule(unmetRule);
+		this.getResult().setFault(fault);
 		
 		return this.getResult();
 	}
