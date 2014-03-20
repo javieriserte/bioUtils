@@ -134,7 +134,7 @@ public class ProfileWriter {
 		
 			/////////////////////////////////////
 			// Export Image
-			profileImage = chart.createBufferedImage( data.length, 300);
+			profileImage = chart.createBufferedImage( Math.max(data.length, 300) , 300);
 		
 		} else {
 
