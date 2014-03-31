@@ -1,31 +1,25 @@
 package utils.ConservationImage;
 
 import utils.ConservationImage.color.BlackColoringStrategy;
+import utils.ConservationImage.color.ColoringStrategy;
 import utils.ConservationImage.color.LightRedBlueColoringStrategy;
 import utils.ConservationImage.color.RedBlueColoringStrategy;
+import cmdGA2.returnvalues.ReturnValueParser;
 
-import cmdGA.parameterType.ParameterType;
-
-public class ColorStrategyParameter extends ParameterType {
+public class ColorStrategyValue extends ReturnValueParser<ColoringStrategy> {
+	
+	///////////////////////////////////////////
+	// Class Constants
 	public final String LIGHTREDBLUE = "LIGHTREDBLUE";
 	public final String REDBLUE = "REDBLUE";
 	public final String BLACK = "BLACK";
+	///////////////////////////////////////////
 	
-	protected static ParameterType singleton = new ColorStrategyParameter();
-	/**
-	 * No instance variables are used, so there is no need of more than one instance.
-	 * A 'singleton' pattern is implemented. 
-
-	 * @return the only one instance InFileParameter
-	 */	
-	public static ColorStrategyParameter getParameter() {
-		return (ColorStrategyParameter) singleton;
-	}
-
+	///////////////////////////////////////////
+	// Public Interface
 	@Override
-	protected Object parse(String parameter) {
-
-		String st = parameter.trim();
+	public ColoringStrategy parse(String token) {
+	String st = token.trim();
 		
 		st = st.replaceAll("\"", "");
 		st = st.replaceAll("\'", "");
@@ -51,7 +45,8 @@ public class ColorStrategyParameter extends ParameterType {
 			return null;
 			
 		}
-		
 	}
+	// End of Public Interface
+	///////////////////////////////////////
 
 }

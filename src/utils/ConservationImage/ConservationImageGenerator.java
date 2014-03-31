@@ -23,18 +23,15 @@ import utils.ConservationImage.managers.GapManager;
 import utils.ConservationImage.managers.MoleculeManager;
 import utils.ConservationImage.managers.NoCountGap;
 import utils.ConservationImage.managers.ProteinManager;
-import utils.ConservationImage.renderer.DrawingLayout;
 import utils.ConservationImage.renderer.Renderer;
 import utils.ConservationImage.renderer.XYPlotRenderer;
-
-import cmdGA.NoOption;
-import cmdGA.Parser;
-import cmdGA.SingleOption;
-import cmdGA.exceptions.IncorrectParameterTypeException;
-import cmdGA.parameterType.InputStreamParameter;
-import cmdGA.parameterType.IntegerParameter;
-import cmdGA.parameterType.OutFileParameter;
-import cmdGA.parameterType.PrintStreamParameter;
+import cmdGA2.CommandLine;
+import cmdGA2.NoArgumentOption;
+import cmdGA2.OptionsFactory;
+import cmdGA2.SingleArgumentOption;
+import cmdGA2.returnvalues.IntegerValue;
+import cmdGA2.returnvalues.OutfileValue;
+import cmdGA2.returnvalues.PrintStreamValue;
 
 public class ConservationImageGenerator {
 
@@ -113,108 +110,83 @@ public class ConservationImageGenerator {
 		commandlineMain(args);
 
 	}
-	
-	public static void commandlineMain(String[] args) {
+
+	////////////////////////////////
+	// Private methods
+	private static void commandlineMain(String[] args) {
 		
 		if (args.length==0) {
 			System.err.println("No option was found.\nProgram Terminated.");
 			System.exit(1);
 		}
 		
-		// STEP ONE:
-		// Create a Parser.
-		Parser parser = new Parser();
+		////////////////////////////////////
+		// Create Command Line.
+		CommandLine cmd = new CommandLine();
 		
-		// STEP TWO:
-		// DEFINE THE POSSIBLE OPTIONS ACCEPTED IN THE COMMAND LINE. (TAKE CARE OF AVOID AMBIGUITY) 
-		SingleOption in  = new SingleOption(parser, System.in, "-infile", InputStreamParameter.getParameter());
-		SingleOption outfile = new SingleOption(parser, null, "-outfile", OutFileParameter.getParameter());
+		/////////////////////////////////////
+		// Add Command line options
+		SingleArgumentOption<InputStream> inOpt = OptionsFactory.createBasicInputStreamArgument(cmd);
+		SingleArgumentOption<File> outOpt = new SingleArgumentOption<File>(cmd, "--outfile", new OutfileValue(), null);
 		
-		SingleOption windowSize = new SingleOption(parser, 11, "-window", IntegerParameter.getParameter());
-		NoOption isProtein = new NoOption(parser, "-protein");
-		NoOption isInformationContent = new NoOption(parser, "-ic");
-		SingleOption renderOpt = new SingleOption(parser, new XYPlotRenderer(),"-renderer",RendererParameter.getParameter());
-		SingleOption layoutOpt = new SingleOption(parser, null, "-layout", LayoutParameter.getParameter());
-		NoOption countGapOpt =  new NoOption(parser, "-countgap");
-		NoOption noDrawOpt = new NoOption(parser, "-noDraw");
-		SingleOption exportValuesOpt = new SingleOption(parser, System.out, "-export", PrintStreamParameter.getParameter());
-		SingleOption colorOpt = new SingleOption(parser, new RedBlueColoringStrategy() , "-color", ColorStrategyParameter.getParameter());
+		SingleArgumentOption<Integer> windowSizeOpt = new SingleArgumentOption<Integer>(cmd, "--window", new IntegerValue(), 11);
+		NoArgumentOption isProteinOpt = new NoArgumentOption(cmd, "--protein");
+		NoArgumentOption isInfContOpt = new NoArgumentOption(cmd, "--ic");
 		
+		Renderer defaultRenderer = new XYPlotRenderer();
+		defaultRenderer.setLayout(defaultRenderer.getDefaultLayout());
+		SingleArgumentOption<Renderer> layoutOpt = new SingleArgumentOption<Renderer>(cmd, "--layout", new RendererValue(), defaultRenderer);
 		
-		// STEP THREE
+		NoArgumentOption countGapOpt = new NoArgumentOption(cmd,"--countgap");
+		NoArgumentOption noDrawOpt = new NoArgumentOption(cmd, "--nodraw");
+		
+		NoArgumentOption exportValuesOpt = new NoArgumentOption(cmd, "--export");
+		SingleArgumentOption<PrintStream> exportPathOpt = new SingleArgumentOption<PrintStream>(cmd, "--path", new PrintStreamValue(), System.out);
+		
+		SingleArgumentOption<ColoringStrategy> colorOpt = new SingleArgumentOption<ColoringStrategy>(cmd, "--color", new ColorStrategyValue(), new RedBlueColoringStrategy());
+	
+		
+		//////////////////////////////////////
 		// PARSE THE COMMAND LINE
-		try {
-			parser.parseEx(args);
-		} catch ( IncorrectParameterTypeException e )  {
-			System.err.println( "The was an error:"       );
-			System.err.println(  e.getMessage()        );
-			System.err.println( "Program Terminated." );
-			System.exit(1);
-		}
+		cmd.readAndExitOnError(args);		
+		///////////////////////////////////////
 		
-			
-		if (outfile.getValue() == null && !noDrawOpt.isPresent()) {
+		///////////////////////////////////////
+		// Get values from command line options
+		// and validates them.
+		if (outOpt.getValue() == null && !noDrawOpt.isPresent()) {
 			System.err.println("No outfile was given.\n.");
 			System.exit(1);
 		}
-		
-		// Program 
-		ConservationImageGenerator cig = new ConservationImageGenerator();
-		InputStream invalue = (InputStream) in.getValue();
+		InputStream invalue     = inOpt.getValue();
+		Profiler profiler       = ConservationImageGenerator.getProfiler(isInfContOpt);
+		MoleculeManager manager = ConservationImageGenerator.getManager(isProteinOpt);
+		GapManager gap          = ConservationImageGenerator.getGapCounting(countGapOpt);
+		ColoringStrategy color  = colorOpt.getValue();
+		// End of get values from command line
+		/////////////////////////////////////////
 
-		Profiler profiler;
-		MoleculeManager manager;
-		GapManager gap;
+		/////////////////////////////////////////
+		// Calculate profile Data
+		double[] plotdata       = profiler.getdata(invalue, manager, gap);		
+		/////////////////////////////////////////
 		
-		if (isInformationContent.isPresent()) {
-			profiler = new InformationProfiler();
-			
-		} else {
-			profiler = new ClustalProfiler();
-		}
-		
-		if (isProtein.isPresent()) {
-			manager = new ProteinManager();
-		} else {
-			manager = new DNAManager();
-		}
-		
-		if (countGapOpt.isPresent()) {
-			gap = new CountGap();
-		} else {
-			gap = new NoCountGap();
-		}
-		
-		double[] plotdata = profiler.getdata(invalue, manager, gap);
-		
-		if (exportValuesOpt.isPresent()) {
-			
-			PrintStream out = (PrintStream) exportValuesOpt.getValue();
-			
-			for (double d : plotdata) {
-				
-				out.println(d);
-				
-			}
-			
-		}
-		
-		ColoringStrategy color = (ColoringStrategy) colorOpt.getValue();
+		/////////////////////////////////////////
+		// Export data
+		exportDataIfRequired(exportValuesOpt, exportPathOpt,plotdata);
+		/////////////////////////////////////////
+
+		ConservationImageGenerator cig = new ConservationImageGenerator();
 		
 		if (!noDrawOpt.isPresent()) {
 		
 			cig.setData(plotdata);
 			
-			try {   
-				Renderer renderer = (Renderer) renderOpt.getValue();
+			try {
+			
+				Renderer renderer = layoutOpt.getValue();
 				
-				DrawingLayout layout = (DrawingLayout) layoutOpt.getValue();
-				
-				if (layout ==null) { layout = renderer.getDefaultLayout() ; }
-				
-				renderer.setLayout(layout);
-				
-				cig.printImage((File)outfile.getValue(), color,(Integer) windowSize.getValue(),renderer );   
+				cig.printImage(outOpt.getValue(), color,(Integer) windowSizeOpt.getValue(),renderer );   
 				
 				} catch (IIOException e) {
 					
@@ -230,4 +202,38 @@ public class ConservationImageGenerator {
 	
 	}
 
+	private static void exportDataIfRequired( NoArgumentOption exportValuesOpt, SingleArgumentOption<PrintStream> exportPathOpt, double[] plotdata) {
+		
+		if (exportValuesOpt.isPresent() || exportPathOpt.isPresent()) {
+			
+			PrintStream out = exportPathOpt.getValue();
+			
+			for (double d : plotdata) {
+				
+				out.println(d);
+				
+			}
+			
+		}
+	}
+
+	private static GapManager getGapCounting(NoArgumentOption countGapOpt) {
+		
+		return (countGapOpt.isPresent())?new CountGap():new NoCountGap();
+		
+	}
+
+	private static MoleculeManager getManager(NoArgumentOption isProteinOpt) {
+
+		return (isProteinOpt.isPresent())? new ProteinManager(): new DNAManager();
+
+	}
+
+	private static Profiler getProfiler(NoArgumentOption isInfContOpt) {
+
+		return  (isInfContOpt.isPresent())?new InformationProfiler(): new ClustalProfiler();
+
+	}
+	// End of private methods
+	////////////////////////////////////////////
 }

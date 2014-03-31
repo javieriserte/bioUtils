@@ -1,0 +1,47 @@
+Conservation Image Generator.
+  Creates conservation plots from multiple sequence alignments.
+  Input alignment must be in Fasta format.
+  
+  Two methods for conservation calculus are available:
+     1. Informative content (Max. Shannon entropy - column Shannon entropy).
+     2. Clustal conservation symbols ('*' = 1, ':' = 0.5, '.' = 0.25, ' ' = 0.0).
+  
+  There are two of kind of graphics available:
+     1. Standard (x,y) plot.
+     2. Vertical bars with differential coloring. 
+
+  Usage: 
+    java -jar ConservationImage.jar <Options>
+
+  Example:
+    java -jar ConservationImage.jar --infile myAlignment.fas --outfile plot.jpg --window 15 --layout LINES --color LIGHTREDBLUE
+
+  Options:
+    --infile <path>         Input multiple sequence alignment.
+    --outfile <path>        Output 'jpg' file.
+    --window <number>       Smoothing window width. Window is equal to 11 by default.
+    --protein               Indicate that the alignment contain protein sequences.
+                            DNA sequences are assumed by default.
+    --ic                    Calculate informative content.
+                            Clustal conservation method is default.
+    --layout <string>       Indicate the graphics style of the output image.
+                            String can contain a path to a file containing the
+                            layout parameters or:
+                             1. 'XY'     for standard (x,y) plot.
+                             2. 'LINES'  for colored vertical bars.
+                            By default (x,y) plot is used.
+    --countgap              Count gaps '-' as another symbol for frequencies
+                            calculation. By default gaps are ignored.
+	--nodraw                Do not generates output image. Useful for only export
+	                        profile values.
+	--export                Indicates than data must be exported.
+	--path                  Sets the out file export data. Standard output is used
+	                        by default.
+	--color                 Coloring method used. Three different kind of 
+	                        coloring methods are supported:
+	                         1. 'LIGHTREDBLUE'  for light red to blue gradient.   
+	                         2. 'REDBLUE'       for red to blue gradient.
+	                         3. 'BLACK'         for uniform black (Use it only 
+	                                            with (x,y) plots).
+	                        By default red to blue gradient is used.
+	--help                  Shows this help.
