@@ -45,12 +45,6 @@ public class MIMatrixViewer extends JFrame{
 				inst.setOptionPane(new OptionsPane(inst));
 				inst.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 				
-//				File infile = new File("/home/javier/Dropbox/Posdoc/HIV.Segundo.Analisis/mi_mf_cl/mi_cl_lc_data");
-//				MI_Matrix matrix = MI_Matrix.loadFromFile(infile);
-
-//				File infile = new File("b:\\javier\\Dropbox\\Posdoc\\HIV.Segundo.Analisis\\mi_mf_cl\\mi_cl_lc_data");
-//				int[] protLengths = new int[]{578, 211, 106, 334, 67, 55, 103, 38, 68};
-				
 				MIMatrixPane matrixPane = new MIMatrixPane(inst);
 				
 				inst.setZoomPanel(new ZoomPanel(inst));
