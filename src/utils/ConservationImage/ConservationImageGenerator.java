@@ -14,6 +14,8 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.stream.ImageOutputStream;
+import javax.swing.SwingUtilities;
+import javax.swing.WindowConstants;
 
 import utils.ConservationImage.color.ColoringStrategy;
 import utils.ConservationImage.color.RedBlueColoringStrategy;
@@ -25,6 +27,7 @@ import utils.ConservationImage.managers.NoCountGap;
 import utils.ConservationImage.managers.ProteinManager;
 import utils.ConservationImage.renderer.Renderer;
 import utils.ConservationImage.renderer.XYPlotRenderer;
+
 import cmdGA2.CommandLine;
 import cmdGA2.NoArgumentOption;
 import cmdGA2.OptionsFactory;
@@ -107,12 +110,40 @@ public class ConservationImageGenerator {
 	// Executable Main
 	public static void 			main								(String[] args) {
 
-		commandlineMain(args);
+		if (args.length == 0) {
+		
+			guiMain();
+			
+		} else {
+			
+			commandlineMain(args);
+		
+		}
 
 	}
-
+	
 	////////////////////////////////
 	// Private methods
+	
+	private static void guiMain() {
+		
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				ConservationImageGui inst = new ConservationImageGui();
+					// creates the main instance
+				
+				inst.setLocationRelativeTo(null);
+				inst.setVisible(true);
+				inst.setTitle("Conservation Image");
+				inst.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+				
+				inst.pack();
+				
+			}
+		});
+		
+	}
+	
 	private static void commandlineMain(String[] args) {
 		
 		if (args.length==0) {
