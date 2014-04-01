@@ -234,6 +234,11 @@ public class ColoredLinesRenderer implements Renderer {
 		
 	}
 
+	public String toString() {
+		
+		return "Colored Lines";
+				
+	}
 
 
 	

@@ -1,19 +1,30 @@
 package utils.ConservationImage;
 
+import java.awt.Color;
 import java.awt.FileDialog;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
+import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.border.BevelBorder;
 
+import utils.ConservationImage.color.BlackColoringStrategy;
 import utils.ConservationImage.color.ColoringStrategy;
+import utils.ConservationImage.color.LightRedBlueColoringStrategy;
+import utils.ConservationImage.color.RedBlueColoringStrategy;
+import utils.ConservationImage.renderer.ColoredLinesRenderer;
 import utils.ConservationImage.renderer.Renderer;
+import utils.ConservationImage.renderer.XYPlotRenderer;
 
 public class OptionsPane extends JPanel {
 	
@@ -65,6 +76,10 @@ public class OptionsPane extends JPanel {
 	// Constructor
 	private void createGUI() {
 		
+		this.setOpaque(true);
+		
+		this.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED, Color.lightGray, Color.gray));
+		
 		GridBagLayout layout = new GridBagLayout();
 		GridBagConstraints constraints = new GridBagConstraints();
 		
@@ -80,6 +95,7 @@ public class OptionsPane extends JPanel {
 		
 		constraints.gridy=0;
 		this.openMSAButton = new JButton("Open MSA");
+		this.openMSAButton.addActionListener(new openMSAActionListener());
 		this.add(this.openMSAButton,constraints);
 		
 		constraints.gridy=1;
@@ -87,6 +103,9 @@ public class OptionsPane extends JPanel {
 
 		constraints.gridy=2;
 		this.cbProfiler = new JComboBox<Profiler>();
+		this.cbProfiler.setRenderer(new CustomRenderer());
+		DefaultComboBoxModel<Profiler> profilerModel = new DefaultComboBoxModel<Profiler>(new Profiler[]{new ClustalProfiler(), new InformationProfiler()}); 
+		this.cbProfiler.setModel(profilerModel);
 		this.add(this.cbProfiler,constraints);
 		
 		constraints.gridy=3;
@@ -94,6 +113,9 @@ public class OptionsPane extends JPanel {
 
 		constraints.gridy=4;
 		this.cbRenderers = new JComboBox<Renderer>();
+		this.cbRenderers.setRenderer(new CustomRenderer());
+		DefaultComboBoxModel<Renderer> renderersModel = new DefaultComboBoxModel<Renderer>(new Renderer[]{new XYPlotRenderer(), new ColoredLinesRenderer()}); 
+		this.cbRenderers.setModel(renderersModel);		
 		this.add(this.cbRenderers,constraints);
 		
 		constraints.gridy=5;
@@ -101,6 +123,9 @@ public class OptionsPane extends JPanel {
 
 		constraints.gridy=6;
 		this.cbColoring = new JComboBox<ColoringStrategy>();
+		this.cbColoring.setRenderer(new CustomRenderer());
+		DefaultComboBoxModel<ColoringStrategy> coloringModel = new DefaultComboBoxModel<ColoringStrategy>(new ColoringStrategy[]{new RedBlueColoringStrategy(), new LightRedBlueColoringStrategy(), new BlackColoringStrategy()}); 
+		this.cbColoring.setModel(coloringModel);		
 		this.add(this.cbColoring,constraints);
 		
 		constraints.gridy=7;
@@ -115,6 +140,7 @@ public class OptionsPane extends JPanel {
 		
 		this.moleculeType.add(this.moleculeDNA);
 		this.moleculeType.add(this.moleculeProtein);
+		this.moleculeDNA.setSelected(true);
 		
 		constraints.gridy=9;
 		this.loadLayoutButton = new JButton("Load Layout");
@@ -127,9 +153,6 @@ public class OptionsPane extends JPanel {
 		constraints.gridy=11;
 		this.saveImageButton= new JButton("Save Image");
 		this.add(this.saveImageButton,constraints);
-
-		
-		
 		
 	}
 	///////////////////////////////////
@@ -154,6 +177,47 @@ public class OptionsPane extends JPanel {
 		this.fileDialog = fileDialog;
 	}	///////////////////////////////////
 
+	///////////////////////////////////////////////////////////////////
+	//Auxiliary classes
+	class openMSAActionListener implements ActionListener {
+		
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			OptionsPane.this.getFileDialog().setModal(true);
+			OptionsPane.this.getFileDialog().setMode(FileDialog.LOAD);
+			OptionsPane.this.getFileDialog().setVisible(true);
+		
+		}
+		
+	}
+	
+	class loadLayoutActionListener implements ActionListener {
+	
+		@Override
+		public void actionPerformed(ActionEvent e) {
+		
+		}
+	
+	}
+	
+	class drawImageActionListener implements ActionListener {
+	
+		@Override
+		public void actionPerformed(ActionEvent e) {
+		
+		}
+		
+	}
+	
+	class saveImageActionListener implements ActionListener {
+	
+		@Override
+		public void actionPerformed(ActionEvent e) {
+		
+		}
+		
+		}
+	}
+	
 
 
-}

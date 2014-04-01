@@ -14,5 +14,11 @@ public class RedBlueColoringStrategy extends ColoringStrategy{
 		return newColor;
 
 	}
+	
+	public String toString() {
+		
+		return "Red to blue Gradient";
+		
+	}
 
 }

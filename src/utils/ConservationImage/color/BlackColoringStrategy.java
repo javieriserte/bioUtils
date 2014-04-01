@@ -14,5 +14,11 @@ public class BlackColoringStrategy extends ColoringStrategy {
 	public Color getColor(double value) {
 		return Color.black;
 	}
+	
+	public String toString() {
+		
+		return "Solid Black";
+		
+	}
 
 }

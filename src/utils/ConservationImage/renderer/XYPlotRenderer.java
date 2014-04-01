@@ -268,6 +268,12 @@ public class XYPlotRenderer implements Renderer {
 		
 		
 	}
+	
+	public String toString() {
+		
+		return "(x,y) plot";
+				
+	}
 
 
 

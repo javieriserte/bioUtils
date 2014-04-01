@@ -17,5 +17,11 @@ public class LightRedBlueColoringStrategy extends ColoringStrategy {
 		return new Color(r,g,b);
 		
 	}
+	
+	public String toString() {
+		
+		return "Light red to blue Gradient";
+		
+	}
 
 }

@@ -136,7 +136,6 @@ public class ConservationImageGenerator {
 				inst.setVisible(true);
 				inst.setTitle("Conservation Image");
 				inst.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-				
 				inst.pack();
 				
 			}
