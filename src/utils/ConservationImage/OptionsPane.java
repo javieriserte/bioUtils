@@ -12,6 +12,7 @@ import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -45,6 +46,7 @@ public class OptionsPane extends JPanel {
 	private JRadioButton moleculeDNA;
 	private JRadioButton moleculeProtein;
 	private ButtonGroup moleculeType;
+	private JCheckBox   countGaps;
 	
 	private FileDialog fileDialog;
 	
@@ -85,8 +87,8 @@ public class OptionsPane extends JPanel {
 		
 		layout.columnWeights = new double[]{1};
 		layout.columnWidths = new int[]{100};
-		layout.rowWeights = new double[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1};
-		layout.rowHeights = new int[]    {25,25,25,25,25,25,25,25,25,25,25,25,25};
+		layout.rowWeights = new double[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1};
+		layout.rowHeights = new int[]    {25,25,25,25,25,25,25,25,25,25,25,25,25,25};
 		
 		this.setLayout(layout);
 		
@@ -143,14 +145,19 @@ public class OptionsPane extends JPanel {
 		this.moleculeDNA.setSelected(true);
 		
 		constraints.gridy=9;
+		this.countGaps = new JCheckBox("Count Gaps");
+		this.countGaps.setSelected(false);
+		this.add(this.countGaps,constraints);
+		
+		constraints.gridy=10;
 		this.loadLayoutButton = new JButton("Load Layout");
 		this.add(this.loadLayoutButton,constraints);
 		
-		constraints.gridy=10;
+		constraints.gridy=11;
 		this.drawImageButton = new JButton("Draw Image");
 		this.add(this.drawImageButton,constraints);
 		
-		constraints.gridy=11;
+		constraints.gridy=12;
 		this.saveImageButton= new JButton("Save Image");
 		this.add(this.saveImageButton,constraints);
 		

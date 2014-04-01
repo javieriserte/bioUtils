@@ -2,6 +2,8 @@ package utils.ConservationImage;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.io.File;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
@@ -12,30 +14,47 @@ import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.plaf.basic.BasicSplitPaneDivider;
 import javax.swing.plaf.basic.BasicSplitPaneUI;
 
+import pair.Pair;
+import utils.ConservationImage.color.ColoringStrategy;
+import utils.ConservationImage.renderer.DrawingLayout;
+import utils.ConservationImage.renderer.Renderer;
+import fileformats.readers.AlignmentReadingResult;
+import fileformats.readers.GenericAlignmentReader;
+
 public class ConservationImageGui extends JFrame {
 
+	//////////////////////////////////////////////
+	// Class Constants
 	private static final long serialVersionUID = -2915260884274179118L;
+	//////////////////////////////////////////////
 	
-	/////////////////////////////////////////
+	//////////////////////////////////////////////
+	// Instance Variables
+	private List<Pair<String,String>> alignment;
+	private DrawingLayout layout;
+	private boolean countGaps;
+	private boolean isProtein;
+	private Renderer renderer;
+	private ColoringStrategy coloring; 
+	//////////////////////////////////////////////
+	
+	//////////////////////////////////////////////
 	// Components
 	private JPanel imagePane;
 	private OptionsPane optionPane;
 	// End of Components
-	/////////////////////////////////////////
-	
-	
+	///////////////////////////////////////////////
 
-
-	///////////////////////
+	///////////////////////////////////////////////
 	// Constructor
 	public ConservationImageGui() {
 		super();
 		this.createGUI();
 	}
-
-
 	////////////////////////////////////////////////
-	// Private Methods
+	
+	////////////////////////////////////////////////
+	// Private and protected Methods
 	private void createGUI() {
 		
 		try {
@@ -88,6 +107,28 @@ public class ConservationImageGui extends JFrame {
 		
 	}
 	
+	protected void loadAlignment(File file) {
+		
+		GenericAlignmentReader reader = new GenericAlignmentReader();
+		
+		List<AlignmentReadingResult> readingResult = reader.read(file);
+		
+		for (AlignmentReadingResult alignmentReadingResult : readingResult) {
+			
+			if (alignmentReadingResult.successfulRead()) {
+				
+				this.setAlignment(alignmentReadingResult.getAlignment());
+				
+				return;
+				
+			}
+			
+		}
+		
+	}
+	// End of Private and Protected Methods
+	////////////////////////////////////////////////
+	
 	////////////////////////////////////////////////
 	// Getters And Setters
 	
@@ -108,6 +149,54 @@ public class ConservationImageGui extends JFrame {
 
 	protected void setOptionPane(OptionsPane optionPane) {
 		this.optionPane = optionPane;
+	}
+
+	protected List<Pair<String, String>> getAlignment() {
+		return alignment;
+	}
+
+	protected void setAlignment(List<Pair<String, String>> list) {
+		this.alignment = list;
+	}
+
+	protected DrawingLayout getDrawingLayout() {
+		return layout;
+	}
+
+	protected void setLayout(DrawingLayout layout) {
+		this.layout = layout;
+	}
+
+	protected boolean isCountGaps() {
+		return countGaps;
+	}
+
+	protected void setCountGaps(boolean countGaps) {
+		this.countGaps = countGaps;
+	}
+
+	protected boolean isProtein() {
+		return isProtein;
+	}
+
+	protected void setProtein(boolean isProtein) {
+		this.isProtein = isProtein;
+	}
+
+	protected Renderer getRenderer() {
+		return renderer;
+	}
+
+	protected void setRenderer(Renderer renderer) {
+		this.renderer = renderer;
+	}
+
+	protected ColoringStrategy getColoring() {
+		return coloring;
+	}
+
+	protected void setColoring(ColoringStrategy coloring) {
+		this.coloring = coloring;
 	}
 
 }
