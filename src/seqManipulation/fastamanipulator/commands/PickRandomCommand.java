@@ -8,7 +8,7 @@ import java.util.List;
 import math.random.FischerYatesShuffle;
 
 import cmdGA.SingleOption;
-import fileformats.fastaIO.Pair;
+import pair.Pair;
 
 /**
  * Select n sequences selected randomly from an MSA

@@ -37,6 +37,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.List;
 import java.util.Vector;
+import pair.Pair;
 /**
  * This class is used to read a Fasta file containing multiple sequences.
  * 

@@ -18,7 +18,7 @@ public class XYPlotRenderer implements Renderer {
 
 	////////////////////////
 	// Instance variables
-	
+	private boolean isDefault = true;
 	private DrawingLayoutXYPlot layout;
 	
 	///////////////////////
@@ -271,8 +271,30 @@ public class XYPlotRenderer implements Renderer {
 	
 	public String toString() {
 		
-		return "(x,y) plot";
+		if (this.isDefault()) {
+		
+			return "Default (x,y) plot";
+			
+		} else {
+			
+			return "Custom (x,y) plot";
+			
+		}
 				
+	}
+
+	@Override
+	public boolean isDefault() {
+		return this.isDefault;
+	}
+
+
+
+	@Override
+	public void setDefault(boolean isDefault) {
+		
+		this.isDefault = isDefault;
+		
 	}
 
 

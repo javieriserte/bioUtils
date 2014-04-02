@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cmdGA.NoOption;
-import fileformats.fastaIO.Pair;
+import pair.Pair;
 
 /**
  * Command to get the descriptions of a fasta file with its row number.

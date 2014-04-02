@@ -2,12 +2,20 @@ package utils.ConservationImage;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.List;
 
+import javax.imageio.IIOImage;
+import javax.imageio.ImageIO;
+import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageWriter;
+import javax.imageio.stream.ImageOutputStream;
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
-import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -16,6 +24,12 @@ import javax.swing.plaf.basic.BasicSplitPaneUI;
 
 import pair.Pair;
 import utils.ConservationImage.color.ColoringStrategy;
+import utils.ConservationImage.managers.CountGap;
+import utils.ConservationImage.managers.DNAManager;
+import utils.ConservationImage.managers.GapManager;
+import utils.ConservationImage.managers.MoleculeManager;
+import utils.ConservationImage.managers.NoCountGap;
+import utils.ConservationImage.managers.ProteinManager;
 import utils.ConservationImage.renderer.DrawingLayout;
 import utils.ConservationImage.renderer.Renderer;
 import fileformats.readers.AlignmentReadingResult;
@@ -36,14 +50,19 @@ public class ConservationImageGui extends JFrame {
 	private boolean isProtein;
 	private Renderer renderer;
 	private ColoringStrategy coloring; 
+	private Profiler profiler;
+	private BufferedImage image;
+	private int windowSize;
 	//////////////////////////////////////////////
 	
 	//////////////////////////////////////////////
 	// Components
-	private JPanel imagePane;
+	private ImagePanel imagePane;
 	private OptionsPane optionPane;
 	// End of Components
 	///////////////////////////////////////////////
+
+	
 
 	///////////////////////////////////////////////
 	// Constructor
@@ -52,6 +71,7 @@ public class ConservationImageGui extends JFrame {
 		this.createGUI();
 	}
 	////////////////////////////////////////////////
+	
 	
 	////////////////////////////////////////////////
 	// Private and protected Methods
@@ -69,7 +89,14 @@ public class ConservationImageGui extends JFrame {
 			e.printStackTrace();
 		}
 		
-		this.setImagePane(new JPanel());
+		
+		this.setImagePane(new ImagePanel());
+		
+		JScrollPane scrollPane = new JScrollPane();
+		
+		scrollPane.setViewportView(this.getImagePane());
+		
+		this.getImagePane().setOpaque(true);
 		
 		this.setOptionPane(new OptionsPane(this));
 		
@@ -79,7 +106,7 @@ public class ConservationImageGui extends JFrame {
 		
 		jsp1.add(this.getOptionPane());
 
-		jsp1.add(this.getImagePane());
+		jsp1.add(scrollPane);
 		
 		this.getImagePane().setOpaque(true);
 		
@@ -91,15 +118,13 @@ public class ConservationImageGui extends JFrame {
 		
 		jsp1.setDividerLocation(200);
 		
-		this.setMinimumSize(new Dimension(600,400));
+		this.setMinimumSize(new Dimension(800,600));
 		
-		this.setPreferredSize(new Dimension(600,400));
+		this.setPreferredSize(new Dimension(800,600));
 		
 		BasicSplitPaneUI ui = (BasicSplitPaneUI) jsp1.getUI();
 		
         BasicSplitPaneDivider divider = ui.getDivider();
-        
-		divider.setBackground(Color.green);
 		
 		divider.setBorder(BorderFactory.createLineBorder(Color.gray, 2));
 		
@@ -107,7 +132,7 @@ public class ConservationImageGui extends JFrame {
 		
 	}
 	
-	protected void loadAlignment(File file) {
+	protected boolean loadAlignment(File file) {
 		
 		GenericAlignmentReader reader = new GenericAlignmentReader();
 		
@@ -119,25 +144,79 @@ public class ConservationImageGui extends JFrame {
 				
 				this.setAlignment(alignmentReadingResult.getAlignment());
 				
-				return;
+				return true;
 				
 			}
 			
 		}
 		
+		return false;
+		
 	}
+	
+	public void drawImage() {
+		
+		MoleculeManager molManager = (this.isProtein)?new ProteinManager(): new DNAManager();
+		
+		GapManager gapManager = (this.countGaps)?new CountGap():new NoCountGap();
+		
+		this.setAlignment(this.getProfiler().replaceUnexpectedCharstoGaps(this.getAlignment(), molManager));
+		
+		double[] data = this.getProfiler().getdata(this.getAlignment(), molManager, gapManager);
+		
+		BufferedImage bi = renderer.render(this.getColoring(),data , this.getWindowSize());
+		
+		this.setImage(bi);
+		
+		this.getImagePane().setBi(bi);
+		
+	}
+	
+
+	public void exportImage(File imageFile) {
+	
+		try {
+
+			FileOutputStream out = new FileOutputStream(imageFile);
+		
+			ImageWriter imagewriter = ImageIO.getImageWritersByFormatName("jpg").next();
+		
+			ImageWriteParam writerparam = imagewriter.getDefaultWriteParam();
+		
+			writerparam.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+		
+			writerparam.setCompressionQuality(1.0f);
+		
+			ImageOutputStream ios = ImageIO.createImageOutputStream(out);
+		
+			imagewriter.setOutput(ios);
+		
+			imagewriter.write(null, new IIOImage(this.getImage(), null, null), writerparam);
+			
+			imagewriter.dispose();
+
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		
+		
+	}
+
+
 	// End of Private and Protected Methods
 	////////////////////////////////////////////////
 	
 	////////////////////////////////////////////////
 	// Getters And Setters
 	
-	protected JPanel getImagePane() {
+	protected ImagePanel getImagePane() {
 		return imagePane;
 	}
 
 
-	protected void setImagePane(JPanel imagePane) {
+	protected void setImagePane(ImagePanel imagePane) {
 		this.imagePane = imagePane;
 	}
 
@@ -198,5 +277,35 @@ public class ConservationImageGui extends JFrame {
 	protected void setColoring(ColoringStrategy coloring) {
 		this.coloring = coloring;
 	}
+
+	public Profiler getProfiler() {
+		return profiler;
+	}
+
+	public void setProfiler(Profiler profiler) {
+		this.profiler = profiler;
+	}
+
+
+	protected BufferedImage getImage() {
+		return image;
+	}
+
+
+	protected void setImage(BufferedImage image) {
+		this.image = image;
+	}
+
+	public int getWindowSize() {
+		return windowSize;
+	}
+
+
+	public void setWindowSize(int windowSize) {
+		this.windowSize = windowSize;
+	}
+
+
+
 
 }

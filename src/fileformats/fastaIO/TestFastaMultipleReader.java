@@ -1,4 +1,5 @@
 package fileformats.fastaIO;
+import pair.Pair;
 
 /**
  * Example of use of Pair class, and FastaReader.

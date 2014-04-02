@@ -7,7 +7,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import cmdGA.MultipleOption;
-import fileformats.fastaIO.Pair;
+import pair.Pair;
 
 /**
  * Remove one or many rows from an alignment.

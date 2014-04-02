@@ -16,7 +16,7 @@ import cmdGA2.OptionsFactory;
 import cmdGA2.SingleArgumentOption;
 import cmdGA2.returnvalues.InfileValue;
 import fileformats.fastaIO.FastaMultipleReader;
-import fileformats.fastaIO.Pair;
+import pair.Pair;
 /**
  * Given a MSA of protein sequences and a set of nucleic acids sequences that
  * correspond to the untranslated sequences of the proteins in the MSA, a new alignment

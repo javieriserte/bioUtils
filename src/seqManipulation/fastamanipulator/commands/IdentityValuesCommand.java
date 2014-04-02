@@ -8,7 +8,7 @@ import java.util.List;
 import seqManipulation.identity.IndentityMatrixCalculator;
 
 import cmdGA.NoOption;
-import fileformats.fastaIO.Pair;
+import pair.Pair;
 
 /**
  * Retrieves a list of indentity values for a given alignment.

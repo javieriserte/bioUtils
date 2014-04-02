@@ -7,7 +7,7 @@ import java.util.Set;
 
 import seqManipulation.AlignmentSequenceEditor;
 
-import fileformats.fastaIO.Pair;
+import pair.Pair;
 
 public class RemoveColumns {
 

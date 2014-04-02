@@ -28,7 +28,7 @@ import cmdGA.exceptions.IncorrectParameterTypeException;
 import cmdGA.parameterType.InputStreamParameter;
 import cmdGA.parameterType.OutFileParameter;
 import fileformats.fastaIO.FastaMultipleReader;
-import fileformats.fastaIO.Pair;
+import pair.Pair;
 
 /**
  * Draws an one-pixel representation of a Multiple

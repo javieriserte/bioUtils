@@ -1,6 +1,6 @@
 package seqManipulation.filtersequences;
 
-import fileformats.fastaIO.Pair;
+import pair.Pair;
 
 public class FilterSequenceSmallerThan extends FilterSequence {
 	int maxSize;

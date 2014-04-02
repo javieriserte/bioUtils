@@ -8,8 +8,12 @@ public interface Renderer {
 
 	public BufferedImage 		render								(ColoringStrategy color, double[] data, int windowLen);
 
-	abstract public DrawingLayout      getDefaultLayout                    ();
+	public DrawingLayout      getDefaultLayout                    ();
 
-	public abstract void setLayout(DrawingLayout layout);
+	public void setLayout(DrawingLayout layout);
+	
+	public boolean isDefault();
+	
+	public void setDefault(boolean isDefault);
 	
 }

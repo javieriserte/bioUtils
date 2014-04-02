@@ -15,7 +15,7 @@ import cmdGA.exceptions.IncorrectParameterTypeException;
 import cmdGA.parameterType.InputStreamParameter;
 import cmdGA.parameterType.PrintStreamParameter;
 import fileformats.fastaIO.FastaMultipleReader;
-import fileformats.fastaIO.Pair;
+import pair.Pair;
 
 public class MapToUngapped {
 

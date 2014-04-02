@@ -8,7 +8,7 @@ import java.util.List;
 import seqManipulation.orf.Translate;
 
 import cmdGA.NoOption;
-import fileformats.fastaIO.Pair;
+import pair.Pair;
 
 /**
  * Translate each sequence of an alignment into an amino acid sequence

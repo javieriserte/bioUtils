@@ -8,7 +8,7 @@ import java.util.List;
 import seqManipulation.GapToolbox;
 
 import cmdGA.SingleOption;
-import fileformats.fastaIO.Pair;
+import pair.Pair;
 
 /***
  * Count the number of gaps in a given row of a sequence alignment

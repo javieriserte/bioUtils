@@ -4,7 +4,7 @@ import java.io.InputStream;
 import java.io.PrintStream;
 
 import cmdGA.SingleOption;
-import fileformats.fastaIO.Pair;
+import pair.Pair;
 
 /**
  * Removes a set of columns from a MSA and keeps the rest.

@@ -13,7 +13,7 @@ import cmdGA2.NoArgumentOption;
 import cmdGA2.OptionsFactory;
 import cmdGA2.SingleArgumentOption;
 import fileformats.fastaIO.FastaMultipleReader;
-import fileformats.fastaIO.Pair;
+import pair.Pair;
 
 public class MapToPDB {
 

@@ -8,7 +8,7 @@ import java.util.Set;
 
 import org.junit.Test;
 
-import fileformats.fastaIO.Pair;
+import pair.Pair;
 
 public class HobohmClusteringM1Test extends HobohmClusteringM1 {
 

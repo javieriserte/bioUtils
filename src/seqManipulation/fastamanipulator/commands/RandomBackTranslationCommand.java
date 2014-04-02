@@ -10,7 +10,7 @@ import java.util.Map;
 import seqManipulation.orf.Translate;
 
 import cmdGA.NoOption;
-import fileformats.fastaIO.Pair;
+import pair.Pair;
 
 /**
  * Perform a back-translation of a protein sequence into a nucleotide sequence.

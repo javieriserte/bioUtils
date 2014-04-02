@@ -20,7 +20,7 @@ import cmdGA.parameterType.InputStreamParameter;
 
 import cmdGA.parameterType.PrintStreamParameter;
 
-import fileformats.fastaIO.Pair;
+import pair.Pair;
 
 public class ClustalReader {
 

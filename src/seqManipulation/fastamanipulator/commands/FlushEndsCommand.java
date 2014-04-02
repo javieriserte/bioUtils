@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cmdGA.NoOption;
-import fileformats.fastaIO.Pair;
+import pair.Pair;
 
 /***
  * Removes columns from the beginning and the end of an alignment while at least one of them doesn't started with the sequence (i.e. contain gaps).

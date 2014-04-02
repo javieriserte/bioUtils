@@ -8,7 +8,7 @@ import seqManipulation.orf.OrfFinder;
 import seqManipulation.orf.datastructures.OrfComposer;
 import seqManipulation.orf.replication.Replicate;
 
-import fileformats.fastaIO.Pair;
+import pair.Pair;
 
 public class ShowMarks extends OrfAnalysis {
 

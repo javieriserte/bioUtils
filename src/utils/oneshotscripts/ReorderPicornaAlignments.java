@@ -12,7 +12,7 @@ import java.util.Map;
 
 import fileformats.fastaIO.FastaMultipleReader;
 import fileformats.fastaIO.FastaWriter;
-import fileformats.fastaIO.Pair;
+import pair.Pair;
 
 
 public class ReorderPicornaAlignments {

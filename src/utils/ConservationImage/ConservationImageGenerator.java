@@ -68,11 +68,7 @@ public class ConservationImageGenerator {
 		this.exportJPG(outfile, bi);
 	}
 	
-	
-	//////////////////
-	// Private Methods
-
-	private void 				exportJPG							(File outfile, BufferedImage bi) throws FileNotFoundException, IOException {
+	public void 				exportJPG							(File outfile, BufferedImage bi) throws FileNotFoundException, IOException {
 		
 		FileOutputStream out = new FileOutputStream(outfile);
 		

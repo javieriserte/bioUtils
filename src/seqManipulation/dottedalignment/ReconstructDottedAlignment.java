@@ -3,7 +3,7 @@ package seqManipulation.dottedalignment;
 import java.util.ArrayList;
 import java.util.List;
 
-import fileformats.fastaIO.Pair;
+import pair.Pair;
 
 /**
  * Reconstruct a normal MSA from a dotted alignment

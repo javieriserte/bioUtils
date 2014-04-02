@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import fileformats.fastaIO.FastaMultipleReader;
-import fileformats.fastaIO.Pair;
+import pair.Pair;
 
 import seqManipulation.fastamanipulator.server.FastaManipulatorProtocol.FastaManipulatorProtocolResponse;
 

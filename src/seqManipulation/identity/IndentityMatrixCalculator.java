@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import fileformats.fastaIO.Pair;
+import pair.Pair;
 /**
  * Calculates a Identity Matrix from a sequence alignment.
  * The matrix returned is implemented as a map from pair(a,b) to double precision numbers.

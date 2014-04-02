@@ -5,7 +5,7 @@ import java.util.List;
 
 import seqManipulation.orf.replication.Replicate;
 
-import fileformats.fastaIO.Pair;
+import pair.Pair;
 
 public class ShowPositions extends OrfAnalysis{
 

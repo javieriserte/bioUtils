@@ -9,7 +9,7 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-import fileformats.fastaIO.Pair;
+import pair.Pair;
 
 public class FastaManipulatorServer {
 

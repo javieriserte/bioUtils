@@ -7,7 +7,7 @@ import java.util.List;
 import seqManipulation.complementary.Complementary;
 import seqManipulation.orf.replication.Replicate;
 
-import fileformats.fastaIO.Pair;
+import pair.Pair;
 
 public abstract class OrfAnalysis {
 	

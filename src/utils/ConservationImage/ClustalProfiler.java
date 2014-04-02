@@ -7,7 +7,7 @@ import java.util.Vector;
 
 import utils.ConservationImage.managers.GapManager;
 import utils.ConservationImage.managers.MoleculeManager;
-import fileformats.fastaIO.Pair;
+import pair.Pair;
 
 public class ClustalProfiler extends Profiler {
 	

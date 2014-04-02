@@ -5,7 +5,7 @@ import java.util.List;
 import utils.ConservationImage.managers.GapManager;
 import utils.ConservationImage.managers.MoleculeManager;
 
-import fileformats.fastaIO.Pair;
+import pair.Pair;
 
 public class InformationProfiler extends Profiler {
 

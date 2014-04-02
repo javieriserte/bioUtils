@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import fileformats.fastaIO.Pair;
+import pair.Pair;
 
 /**
  * Remove sequences that olny contains gaps from an alignment

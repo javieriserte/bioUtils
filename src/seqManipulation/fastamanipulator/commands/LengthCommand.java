@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cmdGA.NoOption;
-import fileformats.fastaIO.Pair;
+import pair.Pair;
 
 /**
  * Verifies if all sequences in the alignment has the same length and returns it.

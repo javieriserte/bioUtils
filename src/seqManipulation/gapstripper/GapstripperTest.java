@@ -7,7 +7,7 @@ import java.util.List;
 
 import org.junit.Test;
 
-import fileformats.fastaIO.Pair;
+import pair.Pair;
 
 public class GapstripperTest extends Gapstripper {
 

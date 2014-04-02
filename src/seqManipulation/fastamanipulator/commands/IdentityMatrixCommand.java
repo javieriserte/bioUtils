@@ -9,7 +9,7 @@ import java.util.Map;
 import seqManipulation.identity.IndentityMatrixCalculator;
 
 import cmdGA.NoOption;
-import fileformats.fastaIO.Pair;
+import pair.Pair;
 
 /**
  * Retrieves an squeare matrix with identity values for each pair of sequences in a MSA.

@@ -9,7 +9,7 @@ import java.util.List;
 
 import cmdGA.SingleOption;
 import fileformats.fastaIO.FastaMultipleReader;
-import fileformats.fastaIO.Pair;
+import pair.Pair;
 
 /**
  * Get two alignments of the same numbers of sequences and combines them into another one.

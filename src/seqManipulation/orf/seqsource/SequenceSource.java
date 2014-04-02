@@ -3,7 +3,7 @@ package seqManipulation.orf.seqsource;
 import java.io.BufferedReader;
 import java.util.List;
 
-import fileformats.fastaIO.Pair;
+import pair.Pair;
 
 public abstract class SequenceSource {
 

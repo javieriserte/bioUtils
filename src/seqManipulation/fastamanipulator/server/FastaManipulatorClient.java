@@ -15,7 +15,7 @@ import cmdGA.exceptions.IncorrectParameterTypeException;
 import cmdGA.parameterType.InFileParameter;
 import cmdGA.parameterType.StringParameter;
 import fileformats.fastaIO.FastaMultipleReader;
-import fileformats.fastaIO.Pair;
+import pair.Pair;
 
 public class FastaManipulatorClient {
 	

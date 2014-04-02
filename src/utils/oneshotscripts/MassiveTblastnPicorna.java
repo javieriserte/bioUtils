@@ -15,7 +15,7 @@ import java.util.Map;
 import seqManipulation.complementary.Complementary;
 
 import fileformats.fastaIO.FastaMultipleReader;
-import fileformats.fastaIO.Pair;
+import pair.Pair;
 
 import blastSearch.BlastResult;
 

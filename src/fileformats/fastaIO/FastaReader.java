@@ -35,6 +35,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import pair.Pair;
 /**
  * This class is used to read sequences files with just one sequence.
  * By the moment, this class can not handle sequences with more than one line.  

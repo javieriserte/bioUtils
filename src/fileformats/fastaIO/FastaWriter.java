@@ -8,6 +8,7 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.List;
 import java.util.Vector;
+import pair.Pair;
 
 
 public class FastaWriter {

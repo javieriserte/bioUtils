@@ -8,7 +8,7 @@ import java.util.List;
 
 import cmdGA.Option;
 import fileformats.fastaIO.FastaMultipleReader;
-import fileformats.fastaIO.Pair;
+import pair.Pair;
 
 public abstract class FastaCommand <Op extends Option> {
 

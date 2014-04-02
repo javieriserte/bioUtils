@@ -20,7 +20,7 @@ import cmdGA2.SingleArgumentOption;
 import cmdGA2.returnvalues.OutfileValue;
 import fileformats.fastaIO.FastaMultipleReader;
 import fileformats.fastaIO.FastaWriter;
-import fileformats.fastaIO.Pair;
+import pair.Pair;
 
 
 /**

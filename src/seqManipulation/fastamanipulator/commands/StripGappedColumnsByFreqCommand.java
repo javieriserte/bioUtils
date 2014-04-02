@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cmdGA.SingleOption;
-import fileformats.fastaIO.Pair;
+import pair.Pair;
 
 /**
  * Eliminates columns of a multiple sequence alignment that contains more than a threshold fraction of gaps.

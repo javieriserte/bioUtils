@@ -3,7 +3,7 @@ package seqManipulation;
 import java.util.ArrayList;
 import java.util.List;
 
-import fileformats.fastaIO.Pair;
+import pair.Pair;
 
 public class GapToolbox {
 

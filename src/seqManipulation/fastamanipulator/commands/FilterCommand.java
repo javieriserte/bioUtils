@@ -10,7 +10,7 @@ import seqManipulation.filtersequences.FilterSequenceBooleanNOT;
 
 import cmdGA.NoOption;
 import cmdGA.Option;
-import fileformats.fastaIO.Pair;
+import pair.Pair;
 
 public abstract class FilterCommand<Op extends Option> extends FastaCommand<Op> {
 

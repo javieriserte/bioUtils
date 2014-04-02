@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cmdGA.SingleOption;
-import fileformats.fastaIO.Pair;
+import pair.Pair;
 
 /**
  * Keeps a set of columns from a MSA and removes the rest.

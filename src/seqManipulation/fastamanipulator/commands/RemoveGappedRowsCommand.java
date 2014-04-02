@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cmdGA.NoOption;
-import fileformats.fastaIO.Pair;
+import pair.Pair;
 
 public class RemoveGappedRowsCommand extends FastaCommand<NoOption> {
 

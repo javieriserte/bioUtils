@@ -9,7 +9,7 @@ import java.util.Set;
 
 import seqManipulation.identity.IndentityMatrixCalculator;
 
-import fileformats.fastaIO.Pair;
+import pair.Pair;
 
 /**
  * Clustering Algorithm from the paper:

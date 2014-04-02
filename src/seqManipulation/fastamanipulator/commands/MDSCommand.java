@@ -10,7 +10,7 @@ import mdsj.ClassicalScaling;
 import seqManipulation.identity.IndentityMatrixCalculator;
 
 import cmdGA.SingleOption;
-import fileformats.fastaIO.Pair;
+import pair.Pair;
 
 /**
  * Performs and Multidimensional Scaling (MDS) for the identities values from a MSA.

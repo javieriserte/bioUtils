@@ -6,7 +6,7 @@ import java.util.Map;
 
 import seqManipulation.AlignmentSequenceEditor;
 import seqManipulation.GapToolbox;
-import fileformats.fastaIO.Pair;
+import pair.Pair;
 import utils.mutualinformation.MICorrections;
 
 public class MICalculator {

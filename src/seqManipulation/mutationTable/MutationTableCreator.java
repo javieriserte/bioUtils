@@ -14,6 +14,7 @@ import cmdGA.parameterType.InputStreamParameter;
 import cmdGA.parameterType.PrintStreamParameter;
 
 import fileformats.fastaIO.*;
+import pair.Pair;
 
 public class MutationTableCreator {
 

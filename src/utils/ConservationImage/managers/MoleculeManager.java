@@ -4,7 +4,7 @@ import java.util.List;
 
 import utils.ConservationImage.ClustalProfiler;
 
-import fileformats.fastaIO.Pair;
+import pair.Pair;
 
 public abstract class MoleculeManager {
 

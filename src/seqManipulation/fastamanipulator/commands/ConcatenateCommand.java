@@ -9,7 +9,7 @@ import java.util.List;
 
 import cmdGA.MultipleOption;
 import fileformats.fastaIO.FastaMultipleReader;
-import fileformats.fastaIO.Pair;
+import pair.Pair;
 
 /**
  * Joins two or more alignments into another. 

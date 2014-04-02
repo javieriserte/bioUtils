@@ -11,7 +11,7 @@ import seqManipulation.AlignmentSequenceEditor;
 import utils.mutualinformation.MICalculator;
 
 import cmdGA.NoOption;
-import fileformats.fastaIO.Pair;
+import pair.Pair;
 
 /**
  * Calculates Mutual Information data for each pair of columns in a multiple sequence alignment.

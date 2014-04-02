@@ -8,7 +8,7 @@ import java.util.List;
 import seqManipulation.complementary.Complementary;
 
 import cmdGA.NoOption;
-import fileformats.fastaIO.Pair;
+import pair.Pair;
 
 /**
  * Retrieves the reverse-complementary sequence of a given DNA sequence

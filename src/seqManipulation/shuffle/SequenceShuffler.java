@@ -14,7 +14,7 @@ import cmdGA2.OptionsFactory;
 import cmdGA2.SingleArgumentOption;
 import fileformats.fastaIO.FastaMultipleReader;
 import fileformats.fastaIO.FastaWriter;
-import fileformats.fastaIO.Pair;
+import pair.Pair;
 import math.random.FischerYatesShuffle;
 
 /**

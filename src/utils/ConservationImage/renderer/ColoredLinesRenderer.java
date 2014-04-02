@@ -12,6 +12,7 @@ public class ColoredLinesRenderer implements Renderer {
 	
 	//////////////////////
 	// Instance variables
+	private boolean isDefault = true;
 	private DrawingLayoutLines layout;
 	
 	
@@ -236,8 +237,33 @@ public class ColoredLinesRenderer implements Renderer {
 
 	public String toString() {
 		
-		return "Colored Lines";
+		
+		if (this.isDefault()) {
+			
+			return "Default Colored Lines";
+			
+		} else {
+			
+			return "Custom Colored Lines";
+			
+		}
 				
+	}
+
+
+
+	@Override
+	public boolean isDefault() {
+		return this.isDefault;
+	}
+
+
+
+	@Override
+	public void setDefault(boolean isDefault) {
+		
+		this.isDefault = isDefault;
+		
 	}
 
 

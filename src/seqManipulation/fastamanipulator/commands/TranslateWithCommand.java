@@ -11,7 +11,7 @@ import java.util.Map;
 import seqManipulation.orf.Translate;
 
 import cmdGA.SingleOption;
-import fileformats.fastaIO.Pair;
+import pair.Pair;
 
 /**
  * Translate each sequence into amino acid positions assuming a given genetic code. 

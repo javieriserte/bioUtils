@@ -7,7 +7,7 @@ import java.util.List;
 
 import cmdGA.MultipleOption;
 
-import fileformats.fastaIO.Pair;
+import pair.Pair;
 
 /**
  * Gets a subsection of an alignment given the first and last column to be retrieved.

@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.Set;
 
 import clustering.HobohmClusteringM1;
-import fileformats.fastaIO.Pair;
+import pair.Pair;
 
 /**
  * Creates a profile with the maximum frequency for each 

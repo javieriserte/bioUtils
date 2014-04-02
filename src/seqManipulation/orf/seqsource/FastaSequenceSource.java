@@ -4,7 +4,7 @@ import java.io.BufferedReader;
 import java.util.List;
 
 import fileformats.fastaIO.FastaMultipleReader;
-import fileformats.fastaIO.Pair;
+import pair.Pair;
 
 public class FastaSequenceSource extends SequenceSource {
 

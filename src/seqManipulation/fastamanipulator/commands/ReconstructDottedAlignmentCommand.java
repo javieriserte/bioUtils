@@ -8,7 +8,7 @@ import java.util.List;
 import seqManipulation.dottedalignment.ReconstructDottedAlignment;
 
 import cmdGA.SingleOption;
-import fileformats.fastaIO.Pair;
+import pair.Pair;
 
 /**
  * Reconstruct a full alignment from a dotted alignment.

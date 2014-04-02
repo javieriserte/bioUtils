@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import fileformats.fastaIO.FastaMultipleReader;
-import fileformats.fastaIO.Pair;
+import pair.Pair;
 
 import utils.ConservationImage.managers.GapManager;
 import utils.ConservationImage.managers.MoleculeManager;
@@ -42,9 +42,6 @@ public abstract class Profiler {
 	
 	public abstract double[] getdata(List<Pair<String, String>> alin, MoleculeManager manager, GapManager gap);
 	
-	/////////////////////////
-	// Private methods
-	
 	/**
 	 * Replace chars in a sequence of DNA or Protein that are not non-degenerated bases or amino acids into gaps 
 	 * 
@@ -52,7 +49,7 @@ public abstract class Profiler {
 	 * @param manager
 	 * @return
 	 */
-	private List<Pair<String,String>> replaceUnexpectedCharstoGaps(List<Pair<String,String>> alin, MoleculeManager manager) {
+	public List<Pair<String,String>> replaceUnexpectedCharstoGaps(List<Pair<String,String>> alin, MoleculeManager manager) {
 		
 		List<Pair<String,String>> newAlin = new ArrayList<Pair<String,String>>();
 		
@@ -67,4 +64,9 @@ public abstract class Profiler {
 		return newAlin;
 		
 	}
+	
+	/////////////////////////
+	// Private methods
+	
+
 }
