@@ -325,31 +325,42 @@ public class OptionsPane extends JPanel {
 			
 			File alnFile = null;
 			
-			OptionsPane.this.getFileDialog().setTitle("Select an alignment");
-			OptionsPane.this.getFileDialog().setModal(true);
-			OptionsPane.this.getFileDialog().setMultipleMode(false);
-			OptionsPane.this.getFileDialog().setMode(FileDialog.LOAD);
-			OptionsPane.this.getFileDialog().setVisible(true);
+			try {
 			
-			if (OptionsPane.this.getFileDialog().getFiles().length>0) {
-			
-				alnFile = OptionsPane.this.getFileDialog().getFiles()[0];
+				OptionsPane.this.getFileDialog().setTitle("Select an alignment");
+				OptionsPane.this.getFileDialog().setModal(true);
+				OptionsPane.this.getFileDialog().setMultipleMode(false);
+				OptionsPane.this.getFileDialog().setMode(FileDialog.LOAD);
+				OptionsPane.this.getFileDialog().setVisible(true);
 				
-				boolean successfulRead = OptionsPane.this.getMainFrame().loadAlignment(alnFile);
+				if (OptionsPane.this.getFileDialog().getFiles().length>0) {
 				
-				if (successfulRead) {
+					alnFile = OptionsPane.this.getFileDialog().getFiles()[0];
 					
-					OptionsPane.this.setGuiStage(2);
+					boolean successfulRead = OptionsPane.this.getMainFrame().loadAlignment(alnFile);
 					
-				} else {
-					
-					OptionsPane.this.setGuiStage(1);
+					if (successfulRead) {
+						
+						OptionsPane.this.setGuiStage(2);
+						
+					} else {
+						
+						OptionsPane.this.setGuiStage(1);
+						
+					}
+	
 					
 				}
-
+			
+			} catch (Exception e1) {
+				
+				System.err.println(e1.getMessage());
+				
+				System.err.println(OptionsPane.this.getFileDialog().getFiles().length);
+				
 				
 			}
-		
+			
 		}
 		
 	}
