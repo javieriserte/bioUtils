@@ -27,7 +27,6 @@ import utils.ConservationImage.managers.NoCountGap;
 import utils.ConservationImage.managers.ProteinManager;
 import utils.ConservationImage.renderer.Renderer;
 import utils.ConservationImage.renderer.XYPlotRenderer;
-
 import cmdGA2.CommandLine;
 import cmdGA2.NoArgumentOption;
 import cmdGA2.OptionsFactory;
@@ -164,17 +163,28 @@ public class ConservationImageGenerator {
 		SingleArgumentOption<Renderer> layoutOpt = new SingleArgumentOption<Renderer>(cmd, "--layout", new RendererValue(), defaultRenderer);
 		
 		NoArgumentOption countGapOpt = new NoArgumentOption(cmd,"--countgap");
+
 		NoArgumentOption noDrawOpt = new NoArgumentOption(cmd, "--nodraw");
 		
 		NoArgumentOption exportValuesOpt = new NoArgumentOption(cmd, "--export");
 		SingleArgumentOption<PrintStream> exportPathOpt = new SingleArgumentOption<PrintStream>(cmd, "--path", new PrintStreamValue(), System.out);
 		
 		SingleArgumentOption<ColoringStrategy> colorOpt = new SingleArgumentOption<ColoringStrategy>(cmd, "--color", new ColorStrategyValue(), new RedBlueColoringStrategy());
+		
+		NoArgumentOption helpOpt = new NoArgumentOption(cmd, "--help");
 	
 		
 		//////////////////////////////////////
 		// PARSE THE COMMAND LINE
 		cmd.readAndExitOnError(args);		
+		///////////////////////////////////////
+		
+		///////////////////////////////////////
+		// Check for help flag
+		if (helpOpt.isPresent()) {
+			System.err.println(ConservationImageGenerator.getHelp());
+			System.exit(0);
+		}
 		///////////////////////////////////////
 		
 		///////////////////////////////////////
@@ -226,6 +236,19 @@ public class ConservationImageGenerator {
 			
 		}
 	
+	}
+
+	private static String getHelp() {
+		InputStream is = ConservationImageGenerator.class.getResourceAsStream("help");
+		int c = -1;
+		StringBuilder sb = new StringBuilder();
+		try {
+			while ((c=is.read())!=-1) {
+				sb.append((char)c);
+			}
+		} catch (IOException e) {
+		}
+		return sb.toString();
 	}
 
 	private static void exportDataIfRequired( NoArgumentOption exportValuesOpt, SingleArgumentOption<PrintStream> exportPathOpt, double[] plotdata) {

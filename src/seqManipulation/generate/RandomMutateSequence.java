@@ -1,6 +1,6 @@
 package seqManipulation.generate;
 
-public class RandomMutateSequece implements Segment {
+public class RandomMutateSequence implements Segment {
 
 	@Override
 	public String generate() {

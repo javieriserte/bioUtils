@@ -32,16 +32,16 @@ Conservation Image Generator.
                             By default (x,y) plot is used.
     --countgap              Count gaps '-' as another symbol for frequencies
                             calculation. By default gaps are ignored.
-	--nodraw                Do not generates output image. Useful for only export
-	                        profile values.
-	--export                Indicates than data must be exported.
-	--path                  Sets the out file export data. Standard output is used
-	                        by default.
-	--color                 Coloring method used. Three different kind of 
-	                        coloring methods are supported:
-	                         1. 'LIGHTREDBLUE'  for light red to blue gradient.   
-	                         2. 'REDBLUE'       for red to blue gradient.
-	                         3. 'BLACK'         for uniform black (Use it only 
-	                                            with (x,y) plots).
-	                        By default red to blue gradient is used.
-	--help                  Shows this help.
+    --nodraw                Do not generates output image. Useful for only export
+                            profile values.
+    --export                Indicates than data must be exported.
+    --path                  Sets the out file export data. Standard output is used
+                            by default.
+    --color                 Coloring method used. Three different kind of 
+                            coloring methods are supported:
+                             1. 'LIGHTREDBLUE'  for light red to blue gradient.   
+                             2. 'REDBLUE'       for red to blue gradient.
+                             3. 'BLACK'         for uniform black (Use it only 
+                                                with (x,y) plots).
+                            By default red to blue gradient is used.
+    --help                  Shows this help.
