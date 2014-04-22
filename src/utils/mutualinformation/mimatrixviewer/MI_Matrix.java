@@ -20,7 +20,22 @@ import utils.mutualinformation.misticmod.MI_PositionLineParser;
  *
  */
 public class MI_Matrix {
-	private MI_Position[] miValues;
+	
+	private double     [] mi;
+	private double     [] apc;
+	private double     [] zscore;
+	
+	private double        minMi;
+	private double        minApc;
+	private double        minZscore;
+
+	private double        maxMi;
+	private double        maxApc;
+	private double        maxZscore;
+	
+	private char[]        refSequence;
+	
+	private MI_Position[] miValues; // From old representation 
 	private int size;
 	
 	/////////////////////////////////
@@ -29,6 +44,14 @@ public class MI_Matrix {
 		this.setSize(size);
 		MI_Position[] values = new MI_Position[sum(size-1)];
 		this.setMIValues(values);
+	}
+	
+	public MI_Matrix(int size, boolean useMI, boolean useAPC, boolean useZscore) {
+		
+		int totalPositions = this.sum (size -1);
+		
+		
+		
 	}
 	
 	/////////////////////////////////
@@ -65,6 +88,94 @@ public class MI_Matrix {
 		this.size = size;
 	}
 	
+	protected double[] getMi() {
+		return mi;
+	}
+
+	protected void setMi(double[] mi) {
+		this.mi = mi;
+	}
+
+	protected double[] getApc() {
+		return apc;
+	}
+
+	protected void setApc(double[] apc) {
+		this.apc = apc;
+	}
+
+	protected double[] getZscore() {
+		return zscore;
+	}
+
+	protected void setZscore(double[] zscore) {
+		this.zscore = zscore;
+	}
+
+	protected double getMinMi() {
+		return minMi;
+	}
+
+	protected void setMinMi(double minMi) {
+		this.minMi = minMi;
+	}
+
+	protected double getMinApc() {
+		return minApc;
+	}
+
+	protected void setMinApc(double minApc) {
+		this.minApc = minApc;
+	}
+
+	protected double getMinZscore() {
+		return minZscore;
+	}
+
+	protected void setMinZscore(double minZscore) {
+		this.minZscore = minZscore;
+	}
+
+	protected double getMaxMi() {
+		return maxMi;
+	}
+
+	protected void setMaxMi(double maxMi) {
+		this.maxMi = maxMi;
+	}
+
+	protected double getMaxApc() {
+		return maxApc;
+	}
+
+	protected void setMaxApc(double maxApc) {
+		this.maxApc = maxApc;
+	}
+
+	protected double getMaxZscore() {
+		return maxZscore;
+	}
+
+	protected void setMaxZscore(double maxZscore) {
+		this.maxZscore = maxZscore;
+	}
+
+	protected char[] getRefSequence() {
+		return refSequence;
+	}
+
+	protected void setRefSequence(char[] refSequence) {
+		this.refSequence = refSequence;
+	}
+
+	protected MI_Position[] getMiValues() {
+		return miValues;
+	}
+
+	protected void setMiValues(MI_Position[] miValues) {
+		this.miValues = miValues;
+	}
+
 	////////////////////////////////
 	// Private Methods
 	private int sum(int i) {
