@@ -20,6 +20,7 @@ import utils.mutualinformation.misticmod.MI_PositionLineParser;
  *
  */
 public class MI_Matrix {
+	public static double UNDEFINED = Double.NEGATIVE_INFINITY; 
 	
 	private double     [] mi;
 	private double     [] apc;
@@ -39,7 +40,7 @@ public class MI_Matrix {
 	private int size;
 	
 	/////////////////////////////////
-	// Constructor
+	// Constructors
 	public MI_Matrix(int size) {
 		this.setSize(size);
 		MI_Position[] values = new MI_Position[sum(size-1)];
@@ -48,14 +49,27 @@ public class MI_Matrix {
 	
 	public MI_Matrix(int size, boolean useMI, boolean useAPC, boolean useZscore) {
 		
-		int totalPositions = this.sum (size -1);
+		this.setSize(size);
 		
+		int totalPositions = this.sum (this.getSize() -1);
 		
+		this.setMi( useMI?new double[totalPositions]:null);
+		this.setApc( useAPC?new double[totalPositions]:null);
+		this.setZscore( useZscore?new double[totalPositions]:null);
 		
 	}
 	
 	/////////////////////////////////
 	// Public Interface
+	
+	public double getMIValue(int position1, int position2) {
+		
+		return this.getGenericValue(position1, position2, this.getMi());
+	}
+	
+	
+
+
 	public MI_Position getValue(int p1, int p2) {
 		int pos = translateCoordinates(p1,p2);
 		if (pos<0) {
@@ -69,6 +83,10 @@ public class MI_Matrix {
 		if (pos>=0) {
 			this.getMIValues()[pos] = mi_Position;
 		}
+	}
+	
+	public int count() {
+		return this.sum(this.getSize());
 	}
 	
 	/////////////////////////////////
@@ -192,6 +210,23 @@ public class MI_Matrix {
 			return sum(p1-2)+p2-1;
 		}
 	}
+	
+	private double getGenericValue(int position1, int position2, double[] dataMatrix) {
+		
+		int transformedPosition = this.translateCoordinates(position1,position2);
+		
+		if (transformedPosition<0 || transformedPosition>this.count()) {
+			
+			return MI_Matrix.UNDEFINED;
+			
+		} else {
+			
+			return dataMatrix[transformedPosition];
+			
+		}
+
+	}
+
 	
 	///////////////////////////////////
 	// Class Methods
