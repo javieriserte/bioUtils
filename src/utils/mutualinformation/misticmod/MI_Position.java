@@ -118,10 +118,10 @@ public class MI_Position {
 		this.aa2 = aa2;
 	}
 
-	protected void setMi(Double mi) {
+	public void setMi(Double mi) {
 		this.mi = mi;
 	}
-	protected void setRaw_mi(Double raw_mi) {
+	public void setRaw_mi(Double raw_mi) {
 		this.raw_mi = raw_mi;
 	}
 
@@ -150,13 +150,13 @@ public class MI_Position {
 	public double getMean_mi() {
 		return mean_mi;
 	}
-	protected void setMean_mi(double mean_mi) {
+	public void setMean_mi(double mean_mi) {
 		this.mean_mi = mean_mi;
 	}
 	public double getSd_mi() {
 		return sd_mi;
 	}
-	protected void setSd_mi(double sd_mi) {
+	public void setSd_mi(double sd_mi) {
 		this.sd_mi = sd_mi;
 	}
 	///////////////////////////////
