@@ -1,0 +1,38 @@
+TopMiFilter.
+  Keep top values from a MI Data. 
+  Values that are not in the top are removed or set to -999.
+ 
+Usage:
+  topMiData.jar <Options>  
+ 
+Options:
+  --infile          Path file to input alignment. If omitted standard input is used.
+  
+  --prefix          Prefix name of output file generated. Output file are created 
+                    by concatenation of prefix, filter tag name, and suffix. Default
+                    value is 'filtered'.
+
+  --suffix          Suffix name of output file generated. Output file are created 
+                    by concatenation of prefix, filter tag name, and suffix. Default
+                    value is '-data'.
+                
+  --outfolder       String. Sets the parent folder for output files. By default current
+                    working folder is used.
+  
+  --filters         Set of filters to be applied. Multiple filters can be used. Each
+                    one is separated by a ','. Three kind of filters are accepted:
+                     1  - Top nn values. Sort all MI values, keep the highest nn values.
+                           nn must be an integer number. Must end with 'v' char.
+                           Example: --filters 100v, 50v, 5v 
+                     2  - Top nn percent. Sort all MI values, keep the highest nn percent
+                           of all values. nn must be an real number. Must end with 'p' char.
+                           Example: --filters 0.1p, 1p, 0.01p 
+                     3  - Values above nn. Keep values that are above nn.
+                           nn must be an real nummber. Must end with 'c' char.
+                           Example: --filters 1.0c, 2c, 6.5c
+   
+  --removeUnwanted  Remove values that do not pass the filter. By default, values 
+                    are set to -999.
+
+  --help            Shows this help.               
+
