@@ -1,0 +1,18 @@
+AlnClusWeight.
+
+  This program calculates a weight for each sequence in a MSA according to the
+  size of the sequence cluster it belong. The weight is calculated as 1 / size
+  of cluster. Clustering is performed with Hobohm-1 method. 
+  
+Usage:
+  alnclusweight.jar <Options>  
+ 
+Options:
+  --infile      Path file to input alignment. If omitted standard input is used.
+  
+  --outfile     Path file to output file. If omitted standard output is used.
+                
+  --clusterId   Real Number. Identity fraction threshold for sequence clustering. 
+                By default 0.62 is used.
+
+  --help        Shows this help and exits.
