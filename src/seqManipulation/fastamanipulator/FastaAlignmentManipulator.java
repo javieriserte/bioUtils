@@ -8,6 +8,7 @@ import java.util.List;
 import seqManipulation.fastamanipulator.commands.AppendCommand;
 import seqManipulation.fastamanipulator.commands.AppendManyCommand;
 import seqManipulation.fastamanipulator.commands.CalculateMICommand;
+import seqManipulation.fastamanipulator.commands.ChangeDescriptionsCommand;
 import seqManipulation.fastamanipulator.commands.ComplementaryCommand;
 import seqManipulation.fastamanipulator.commands.ConcatenateCommand;
 import seqManipulation.fastamanipulator.commands.CountCommand;
@@ -182,6 +183,8 @@ public class FastaAlignmentManipulator {
 		uniqueCommands.add(new ReplaceUncommonChars(null, null, new MultipleOption(parser, null, "-repUncommon", ',', StringParameter.getParameter())));
 		
 		uniqueCommands.add(new RemoveCommand(null,null,new MultipleOption(parser,null, "-remove", ',',IntegerParameter.getParameter())));
+		
+		uniqueCommands.add(new ChangeDescriptionsCommand(null, null, new SingleOption(parser,1, "-changeDesc", InFileParameter.getParameter())));
 
 		// Step Three : Try to parse the command line
 		
