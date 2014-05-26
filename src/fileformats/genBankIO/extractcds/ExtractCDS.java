@@ -1,101 +1,129 @@
 package fileformats.genBankIO.extractcds;
 
+import io.onelinelister.OneLineListReader;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.io.InputStream;
 
-import cmdGA.Parser;
-import cmdGA.SingleOption;
-import cmdGA.exceptions.IncorrectParameterTypeException;
-import cmdGA.parameterType.InFileParameter;
-
+import cmdGA2.CommandLine;
+import cmdGA2.OptionsFactory;
+import cmdGA2.SingleArgumentOption;
+import cmdGA2.returnvalues.InfileValue;
 import fileformats.genBankIO.GenBankReaderAsync;
 import fileformats.genBankIO.GenBankRecord;
 import fileformats.genBankIO.elements.Feature;
 
+/**
+ * Extract all translation sequences in CDS Features of a GenBank file.
+ * 
+ * @author Javier Iserte
+ *
+ */
 public class ExtractCDS {
 	
 	public static void main(String[] args) {
 		
-		Parser parser =  new Parser();
+		//////////////////////////////////////
+		// Create the command line 
+		CommandLine cmd = new CommandLine();
+		// Add options to the command line
+		SingleArgumentOption<File> listOpt = new SingleArgumentOption<File>(cmd, "--list", new InfileValue(),null);
+		SingleArgumentOption<InputStream> inOpt = OptionsFactory.createBasicInputStreamArgument(cmd);
+		SingleArgumentOption<PrintStream> outOpt = OptionsFactory.createBasicPrintStreamArgument(cmd);
+		// Parse Command Line Options
+		cmd.readAndExitOnError(args);
+		//////////////////////////////////////
 		
-		SingleOption listOpt = new SingleOption(parser, null, "-list", InFileParameter.getParameter());
+		//////////////////////////////////////
+		// Get Values from command line arguments
+		// Get output print stream
+		PrintStream output = outOpt.getValue();
+		// Get input Files
+		List<BufferedReader> inputs = new ArrayList<>();
+		inputs.addAll(getInputFileList(listOpt));
+		// Get source input stream
+		inputs.addAll(getGenBankInputStream(inOpt));
+		////////////////////////////////////////////////
 		
-		try {
-			
-			parser.parseEx(args);
-			
-		} catch (IncorrectParameterTypeException e) {
-			
-			System.err.println("There was an error parsing "+ args);
-			
-			System.err.println(e.getMessage());
-			
-		}
+		////////////////////////////////////////////////
+		// Extract CDS features
+		ExtractCDS extractor = new ExtractCDS();
+		//
+		for (BufferedReader bufferedReader : inputs) {
 		
-		if (listOpt.isPresent()) {
-			
-			ExtractCDS ex = new ExtractCDS();
-			
-			File in = (File) listOpt.getValue();
-			
-			BufferedReader bf;
-			
 			try {
-				bf = new BufferedReader(new FileReader(in));
-				
-				String line = null;
-				
-				while ((line=bf.readLine())!=null) {
-					
-					String[] fields = line.split("\t");
-					
-					File file = new File(fields[0]);
-					
-					if (file.exists()) {
+
+				GenBankReaderAsync gbreader = new GenBankReaderAsync(bufferedReader);
 						
-						BufferedReader bff = new BufferedReader(new FileReader(file));
-					
-						GenBankReaderAsync gbreader = new GenBankReaderAsync(bff);
+				GenBankRecord currentRecord = null;
 						
-						GenBankRecord r = null;
+				while ((currentRecord=gbreader.readGenBankRecord())!=null) {
+							
+					List<String> aas = extractor.getCDS(currentRecord);
+
+					String gi = currentRecord.getHeader().getGi();
+							
+					for (String string : aas) {
 						
-						while ((r=gbreader.readGenBankRecord())!=null) {
-							
-							List<String> aas = ex.getCDS(r);
-							
-							int counter=0;
-							
-							for (String string : aas) {
-								
-								counter++;
-								
-								ex.printOut(string, System.out, new String[]{fields[1],fields[2],String.valueOf(counter)});
-								
-							}
-							
-						}
-					
+						extractor.printOut(string, output, new String[]{gi});
+						
 					}
 					
 				}
-				
-			} catch (FileNotFoundException e1) {
-				e1.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
+		
 			} catch (Exception e) {
 				e.printStackTrace();
+		    }
+		
+		}
+	
+	}
+
+
+	private static List<BufferedReader> getGenBankInputStream( SingleArgumentOption<InputStream> inOpt) {
+		
+		List<BufferedReader> inputs = new ArrayList<BufferedReader>();
+		
+		if (inOpt.isPresent()) {
+			inputs.add(new BufferedReader(new InputStreamReader(inOpt.getValue())));
+		}
+		return inputs;
+	}
+
+
+	private static List<BufferedReader> getInputFileList(
+			SingleArgumentOption<File> listOpt) {
+		List<BufferedReader> inputs = new ArrayList<>();
+		
+		if (listOpt.isPresent() ) {
+		
+			File listFile = listOpt.getValue();
+			
+			List<String> listOfFiles = OneLineListReader.createOneLineListReaderForString().read(listFile); 
+			
+			for (String file : listOfFiles) {
+			
+				try {
+					
+					inputs.add(new BufferedReader(new FileReader(new File(file))));
+					
+				} catch (FileNotFoundException e) {
+					
+					e.printStackTrace();
+					
+				}
+				
 			}
 			
-			
 		}
-		
+		return inputs;
 	}
 	
 
