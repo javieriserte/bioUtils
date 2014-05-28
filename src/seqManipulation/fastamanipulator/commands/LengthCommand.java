@@ -52,7 +52,7 @@ public class LengthCommand extends FastaCommand<NoOption> {
 
 		}
 		
-		if (allEqual) {
+		if (allEqual && lens.length>0) {
 			
 			results.add(String.valueOf(lens[0]));
 			
@@ -63,7 +63,6 @@ public class LengthCommand extends FastaCommand<NoOption> {
 		}
 		
 		return results;
-		
 	
 	}
 
