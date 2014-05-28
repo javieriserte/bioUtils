@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -128,7 +129,14 @@ public class Gapstripper {
 		//////////////////////////////
 		// Load Fasta File
 		LinkedHashMap<String, String> sequences = stripper.loadFasta(in);
-
+		
+		/////////////////////////////
+		// Check that all sequences in the alignment has the same length
+		if(!stripper.checkAlignmentSizeEquality(sequences)) {
+			System.err.println("Sequences in the alignment hasn't the same length. Please review the alignment.");
+			System.exit(0);
+		}
+		
 		//////////////////////////////
 		// Get Maximum Frequencies Mask
 		boolean[] mask = stripper.getMaxFreqMask(sequences, maxfreq, clusterOpt.isPresent(), clusterIdOpt.getValue());
@@ -221,6 +229,31 @@ public class Gapstripper {
 		}
 		
 	}
+	
+	/**
+	 * Checks that all sequences in an alignment has the same length
+	 * @param sequences
+	 * @return
+	 */
+	private boolean checkAlignmentSizeEquality(LinkedHashMap<String, String> sequences) {
+		
+		Collection<String> seqs = sequences.values();
+		boolean first = true;
+		int lastSize = 0;
+		for (String string : seqs) {
+			
+			int currentSize = string.length();
+			if (! (lastSize == currentSize) || first) {
+				return false;
+			}
+			lastSize = currentSize;
+			first = false;
+			
+		}
+		
+		return true;
+	}
+
 
 	
 	/**
