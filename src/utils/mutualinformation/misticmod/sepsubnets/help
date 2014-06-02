@@ -1,0 +1,28 @@
+SeparateMiSubnets.
+  Keep top values from a MI Data. 
+  Values that are not in the top are removed or set to -999.
+ 
+Usage:
+  subnetsMI.jar <Options>  
+ 
+Options:
+  --infile          String. Path file to input MI Data. If omitted standard 
+                    input is used.
+  
+  --prefix          String. Prefix name of output file generated. Output file 
+                    are created by concatenation of prefix, a serial number, and
+                    suffix. Default value is 'mi_data_'.
+
+  --suffix          String. Suffix name of output file generated. Output file 
+                    are created by concatenation of prefix, filter tag name, and
+                    suffix. Default value is '_subnet'.
+                
+  --outfolder       String. Sets the parent folder for output files. By default 
+                    current working folder is used.
+  
+  --remove          Integer. Filter subnets by the its size. Subnets with more 
+                    than the given cut off value are kept. 
+                    Default Value is '0' (no filtering).
+
+  --help            Shows this help.               
+
