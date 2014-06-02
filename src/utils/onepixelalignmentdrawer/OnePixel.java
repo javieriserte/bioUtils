@@ -284,6 +284,10 @@ public class OnePixel {
 					BufferedImage.TYPE_INT_RGB);
 			
 			Graphics2D graphics = (Graphics2D) newImage.getGraphics();
+
+			graphics.setColor(Color.white);
+			
+			graphics.fillRect(0, 0, newImage.getWidth(),newImage.getHeight());
 			
 			graphics.drawImage(currentPanel, leftSpacer, topSpacer, currentPanel.getWidth(), currentPanel.getHeight(), null);
 			
@@ -329,7 +333,7 @@ public class OnePixel {
 			// Draw Text Labels
 			
 			graphics.setColor(Color.black);
-			graphics.setFont(new Font("Arial",0,10));
+			graphics.setFont(new Font("Arial",1,20));
 			for (Integer tick: ticks) {
 			
 				String label = String.valueOf(tick);
