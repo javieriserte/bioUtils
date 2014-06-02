@@ -68,7 +68,7 @@ public class SeparateMISubnets {
 		// Print Help
 		if (helpOpt.isPresent()) {
 			
-			System.err.println(new ResourceContentAsString().readContents("help"));
+			System.err.println(new ResourceContentAsString().readContents("help",SeparateMISubnets.class));
 			
 			System.exit(0);
 			
