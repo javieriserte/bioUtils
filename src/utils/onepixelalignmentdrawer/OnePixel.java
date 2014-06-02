@@ -30,6 +30,8 @@ import cmdGA.exceptions.IncorrectParameterTypeException;
 import cmdGA.parameterType.InputStreamParameter;
 import cmdGA.parameterType.OutFileParameter;
 import fileformats.fastaIO.FastaMultipleReader;
+import functionalcollections.BinaryFunction;
+import functionalcollections.FoldCollection;
 import pair.Pair;
 
 /**
@@ -198,17 +200,15 @@ public class OnePixel {
 
 	private static BufferedImage appendPanels(List<BufferedImage> panels) {
 		
-		int totalWidth = 0;
+		int totalWidth = new FoldCollection<BufferedImage,Integer>().fold(
+				0, 
+				new BinaryFunction<Integer, BufferedImage>() { @Override public Integer f(Integer arg0, BufferedImage arg1) { 	return arg0 + arg1.getWidth(); } }, 
+				panels);
 		
-		int height = 0;
-		
-		for (BufferedImage panel :panels) {
-			
-			totalWidth += panel.getWidth();
-			
-			height = Math.max(panel.getHeight() , height);
-			
-		}
+		int height = new FoldCollection<BufferedImage, Integer>().fold(
+				0, 
+				new BinaryFunction<Integer, BufferedImage>() { @Override public Integer f(Integer arg0, BufferedImage arg1) { return Math.max(arg0,arg1.getHeight()); } }, 
+				panels);
 		
 		BufferedImage result = new BufferedImage(totalWidth, height, BufferedImage.TYPE_INT_RGB);
 
