@@ -149,7 +149,7 @@ public class MIDataToCytoscapeConverter {
 	private static Node createRootElement(Document doc) {
 		
 		Element rootElement = doc.createElement("graph");
-		rootElement.setAttribute("label", "network_Top500");
+		rootElement.setAttribute("label", "Default NetWork (" + (Math.random() * 1000 + 1) +")");
 		rootElement.setAttribute("xmlns:dc","http://purl.org/dc/elements/1.1/");
         rootElement.setAttribute("xmlns:xlink","http://www.w3.org/1999/xlink" );
         rootElement.setAttribute("xmlns:rdf","http://www.w3.org/1999/02/22-rdf-syntax-ns#" );
