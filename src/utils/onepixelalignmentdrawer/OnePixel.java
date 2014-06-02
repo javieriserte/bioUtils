@@ -1,6 +1,8 @@
 package utils.onepixelalignmentdrawer;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
@@ -9,6 +11,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.imageio.IIOImage;
@@ -20,7 +23,6 @@ import javax.imageio.stream.ImageOutputStream;
 import utils.color.ColorStrategy;
 import utils.color.DnaColorStrategy;
 import utils.color.ProteinColorStrategy;
-
 import cmdGA.NoOption;
 import cmdGA.Parser;
 import cmdGA.SingleOption;
@@ -153,7 +155,23 @@ public class OnePixel {
 		
 		//////////////////////////////
 		// Make the image Squared
-		onePixelAlignmentImage = getSquaredImage(squareOpt, onePixelAlignmentImage);
+		List<BufferedImage> panels= getSquaredImages(squareOpt, onePixelAlignmentImage);
+		
+		//////////////////////////////
+		// Add Ticks
+		panels = addTicksToPanels(panels,100,10);
+		
+		//////////////////////////////
+		// Append all panels
+		
+		if (squareOpt.isPresent()) {
+			
+			panels = addSpacerToPanels (panels);
+			
+		}
+		
+		onePixelAlignmentImage = appendPanels(panels);
+		
 		
 		//////////////////////////////
 		// Export Image
@@ -175,7 +193,204 @@ public class OnePixel {
 		
 	}
 
+	
 
+
+	private static BufferedImage appendPanels(List<BufferedImage> panels) {
+		
+		int totalWidth = 0;
+		
+		int height = 0;
+		
+		for (BufferedImage panel :panels) {
+			
+			totalWidth += panel.getWidth();
+			
+			height = Math.max(panel.getHeight() , height);
+			
+		}
+		
+		BufferedImage result = new BufferedImage(totalWidth, height, BufferedImage.TYPE_INT_RGB);
+
+		Graphics2D graphics = (Graphics2D) result.getGraphics();  
+		
+		graphics.setColor(Color.black);
+		
+		graphics.fillRect(0, 0, totalWidth, height);
+		
+		int x = 0;
+		
+		int y = 0;
+		
+		for (BufferedImage panel :panels) {
+			
+			int currentWidth = panel.getWidth();
+			
+			int currentHeight = panel.getHeight();
+			
+			graphics.drawImage(panel, x, y, currentWidth, currentHeight, null);
+			
+		}
+		
+		return result;
+		
+	}
+
+
+	private static List<BufferedImage> addSpacerToPanels (List<BufferedImage> panels) {
+		
+		int alignmentSpacer = 30;
+		
+		List<BufferedImage> result = new ArrayList<>();
+		
+		BufferedImage spacerImage = new BufferedImage(alignmentSpacer, panels.get(0).getHeight(), BufferedImage.TYPE_INT_RGB);
+		
+		Graphics2D graphics = (Graphics2D) spacerImage.getGraphics();
+		graphics.setColor(Color.white);
+		graphics.fillRect(0, 0, spacerImage.getWidth(), spacerImage.getHeight());
+		
+		boolean first = true;
+		
+		for (BufferedImage currentPanel : panels) {
+			
+			if (!first) {
+				
+				result.add(spacerImage);
+				
+			}
+			
+			result.add(currentPanel);
+			
+		}
+		
+		return result;
+	}
+
+
+	private static List<BufferedImage> addTicksToPanels( List<BufferedImage> panels, int majorTickSpacer,int minorTickSpacer) {
+		
+		int topSpacer = 30;
+		int leftSpacer = 50;
+		int rightSpacer = 50;
+		int bottomSpacers = 10;
+
+		List<BufferedImage> result = new ArrayList<>();
+		
+		for (BufferedImage currentPanel : panels) {
+			
+			BufferedImage newImage = new BufferedImage(
+					leftSpacer+rightSpacer+currentPanel.getWidth(), // Width 
+					topSpacer+bottomSpacers+currentPanel.getHeight(), // Height 
+					BufferedImage.TYPE_INT_RGB);
+			
+			Graphics2D graphics = (Graphics2D) newImage.getGraphics();
+			
+			graphics.drawImage(currentPanel, leftSpacer, topSpacer, currentPanel.getWidth(), currentPanel.getHeight(), null);
+			
+			////////////////////////////
+			// Draw Minor Ticks
+			int minorTickLength = 5;
+			graphics.setStroke(new BasicStroke(1));
+			graphics.setColor(Color.black);
+			List<Integer> ticks = new ArrayList<>();
+			ticks.add(1);
+			for (int x=minorTickSpacer-1;x<currentPanel.getWidth();x=x+minorTickSpacer) {
+
+				ticks.add(x+1);
+				
+			}
+			
+			for (Integer integer : ticks) {
+			
+				graphics.drawLine(leftSpacer + integer-1, topSpacer, leftSpacer + integer-1, topSpacer-minorTickLength);
+				
+			}
+			
+			////////////////////////////
+			// Draw Large Ticks
+			int majorTickLength = 10;
+			graphics.setStroke(new BasicStroke(2));
+			graphics.setColor(Color.black);
+			ticks = new ArrayList<>();
+			ticks.add(1);
+			for (int x=majorTickSpacer-1;x<currentPanel.getWidth();x=x+majorTickSpacer) {
+
+				ticks.add(x+1);
+				
+			}
+			
+			for (Integer integer : ticks) {
+			
+				graphics.drawLine(leftSpacer + integer, topSpacer, leftSpacer+integer, topSpacer-majorTickLength);
+				
+			}
+			
+			////////////////////////////
+			// Draw Text Labels
+			
+			graphics.setColor(Color.black);
+			graphics.setFont(new Font("Arial",0,10));
+			for (Integer tick: ticks) {
+			
+				String label = String.valueOf(tick);
+				
+				int textAdvance = graphics.getFontMetrics().stringWidth(label);
+				
+				graphics.drawString(label, leftSpacer + tick -1 - textAdvance/2, 17);
+				
+			}
+			
+			result.add(newImage);
+			
+		} 
+		
+		return result;
+	}
+
+
+	private static List<BufferedImage> getSquaredImages(NoOption squareOpt, BufferedImage onePixelAlignmentImage) {
+		
+		List<BufferedImage> result = new ArrayList<>();
+		
+		if (squareOpt.isPresent()) {
+			int length = onePixelAlignmentImage.getHeight();
+			int width =  onePixelAlignmentImage.getWidth();
+			int numberOfRegions = (int) Math.round(Math.sqrt(length/width));
+			
+			if (numberOfRegions>1) {
+				
+				int height  =  ((int) length /numberOfRegions) -1;
+				
+				for (int i = 0; i<numberOfRegions; i++) {
+					
+					BufferedImage temp = new BufferedImage(width, Math.min(height, length - i*height),  BufferedImage.TYPE_INT_RGB);
+		
+					((Graphics2D) temp.getGraphics()).drawImage(onePixelAlignmentImage, 0, -i*height, null);
+					
+					result.add(temp);
+					
+					((Graphics2D) temp.getGraphics()).dispose();
+					
+				}
+				
+			} else {
+				
+				result.add(onePixelAlignmentImage);
+			
+			}
+			
+		} else {
+			
+			result.add(onePixelAlignmentImage);
+			
+		}
+		
+		return result;
+		
+	}
+
+	@Deprecated
+	@SuppressWarnings("unused")
 	private static BufferedImage getSquaredImage(NoOption squareOpt,
 			BufferedImage onePixelAlignmentImage) {
 		if (squareOpt.isPresent()) {
