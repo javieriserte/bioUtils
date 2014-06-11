@@ -7,9 +7,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeSet;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -22,7 +25,9 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import mdsj.ClassicalScaling;
+//import mdsj.ClassicalScaling;
+
+
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -30,6 +35,13 @@ import org.w3c.dom.Node;
 
 import utils.mutualinformation.misticmod.MI_Position;
 import utils.mutualinformation.misticmod.MI_PositionLineParser;
+import utils.mutualinformation.misticmod.tocytoscape.layouts.Edge;
+import utils.mutualinformation.misticmod.tocytoscape.layouts.Force;
+import utils.mutualinformation.misticmod.tocytoscape.layouts.GraphLayout;
+import utils.mutualinformation.misticmod.tocytoscape.layouts.HyperbolicRepulsiveForce;
+//import utils.mutualinformation.misticmod.tocytoscape.layouts.HyperbolicWithRandomRepulsiveForce;
+import utils.mutualinformation.misticmod.tocytoscape.layouts.LogAtractiveForce;
+import utils.mutualinformation.misticmod.tocytoscape.layouts.Vertex;
 import cmdGA2.CommandLine;
 import cmdGA2.OptionsFactory;
 import cmdGA2.SingleArgumentOption;
@@ -87,23 +99,45 @@ public class MIDataToCytoscapeConverter {
 			////////////////////////////////////////////
 			// Calculate Distances for every MI Pair
 			// Distance is calculated as if MI was a force
-			// and MI column were two ojects of the same mass.
+			// and MI column were two objects of the same mass.
 			// F = m1 * m2 / ( d ^ 2) => 
 			// d = sqrt ( m1 * m2 / F)
-			Map<Integer, Integer> positionByIndex = getPositionByIndexMap(positions);
-			double[][] distances = calculateDistances(positions, positionByIndex);
+			//Map<Integer, Integer> positionByIndex = getPositionByIndexMap(positions);
+			//double[][] distances = calculateDistances(positions, positionByIndex);
 			////////////////////////////////////////////
 			
 			////////////////////////////////////////////
 			// Calculate x and y positioning
 			// for MI pairs using Multidimensional Scaling
-			double[][] evecs = new double[2][positionByIndex.size()];  
+			//double[][] evecs = new double[2][positionByIndex.size()];  
 			// Array to store eigenvectors
-			double[] evals = new double[2];                            
+			//double[] evals = new double[2];                            
 			// Array to store eigenvalues
-			ClassicalScaling.eigen(distances, evecs, evals);  
+			//ClassicalScaling.eigen(distances, evecs, evals);  
 			// Perform MDS
 			////////////////////////////////////////////
+			
+			double minMIValue = getMinMiValue(positions);
+			
+			double meanMIValue = getMeanMiValue(positions);
+			
+			MiToDistanceTransformation transform = new BoundedHyperbolicTransformation(1, 1, meanMIValue, minMIValue);
+	
+			Map<Integer,Vertex<Integer>> vertexMap = new HashMap<Integer, Vertex<Integer>>();
+
+			vertexMap = createVertexMap(positions);
+			
+			List<Edge<Integer>> edgeList = createEdgeList(positions, vertexMap,transform);
+		
+			Force atractive = new LogAtractiveForce(2);
+			
+			Force repulsive = new HyperbolicRepulsiveForce(1);
+			
+//			Force repulsive = new HyperbolicWithRandomRepulsiveForce(1,0.5);
+			
+			GraphLayout<Integer> layout = new GraphLayout<Integer>(atractive, repulsive, 0.2);
+			
+			layout.applyLayout(edgeList, 200);
 			
 			////////////////////////////////////////////
 			// Append All Nodes
@@ -116,7 +150,7 @@ public class MIDataToCytoscapeConverter {
 			
 			for (Integer columnNumber : allColumns) {
 				
-				rootGraph.appendChild(createNewNode(doc, columnNumber, evecs,positionByIndex));	
+				rootGraph.appendChild(createNewNode(doc, columnNumber, vertexMap));	
 				
 			}
 			////////////////////////////////////////////
@@ -153,26 +187,63 @@ public class MIDataToCytoscapeConverter {
 		
 	}
 
-	private static double[][] calculateDistances(List<MI_Position> positions,
-			Map<Integer, Integer> positionByIndex) {
-		double[][] distances = new double[positionByIndex.size()][positionByIndex.size()];
-		for (int i = 0; i < distances.length; i++) {
-			for (int j = 0; j < distances.length; j++) {
-				distances[i][j] = 0;
-			}
-		}
-		for (MI_Position mi_Position : positions) {
-			int firstCordinate = positionByIndex.get(mi_Position.getPos1());
-			int secondCordinate = positionByIndex.get(mi_Position.getPos2());
+	private static double getMeanMiValue(List<MI_Position> positions) {
+		double totalMI = 0;
+		for (MI_Position position : positions) {
 			
-			double currentDistance = (mi_Position.getMi()>0)?1d / mi_Position.getMi():0;
+			totalMI += position.getMi();
 			
-			distances[firstCordinate][secondCordinate] = Math.sqrt( currentDistance );
-			distances[secondCordinate][firstCordinate] = Math.sqrt( currentDistance );
-		}
-		return distances;
+		}		
+		
+		return totalMI / (double) positions.size();
 	}
 
+	private static double getMinMiValue(List<MI_Position> positions) {
+		double minimum = Double.POSITIVE_INFINITY;
+		
+		for (MI_Position mi_Position : positions) {
+			minimum = Math.min(minimum, mi_Position.getMi());
+		}
+		
+		return minimum;
+	}
+
+	private static List<Edge<Integer>> createEdgeList( List<MI_Position> positions, Map<Integer, Vertex<Integer>> vertexMap, MiToDistanceTransformation transform) {
+		
+		List<Edge<Integer>> result = new ArrayList<Edge<Integer>>();
+		
+		for (MI_Position mi_Position : positions) {
+			
+			result.add(new Edge<Integer>(vertexMap.get(mi_Position.getPos1()), vertexMap.get(mi_Position.getPos2()), transform.distance(mi_Position.getMi())));
+			
+		}
+		
+		return result;
+		
+	}
+
+	private static Map<Integer, Vertex<Integer>> createVertexMap(List<MI_Position> positions) {
+		
+		Map<Integer, Vertex<Integer>> result = new HashMap<Integer, Vertex<Integer>>();
+		
+		Set<Integer> vertexIndexes = new HashSet<Integer>();
+		
+		for (MI_Position position : positions) {
+			vertexIndexes.add(position.getPos1());
+			vertexIndexes.add(position.getPos2());
+		}
+		
+		for (Integer index : vertexIndexes) {
+			
+			result.put(index, new Vertex<Integer>(0, 0, index));
+			
+		}
+		
+		return result;
+		
+	}
+
+	@SuppressWarnings("unused")
 	private static Map<Integer, Integer> getPositionByIndexMap(
 			List<MI_Position> positions) {
 		Map<Integer,Integer> positionByIndex = new HashMap<Integer, Integer>();
@@ -210,10 +281,10 @@ public class MIDataToCytoscapeConverter {
 		return newNode;
 	}
 
-	private static Node createNewNode(Document doc, Integer columnNumber, double[][] xyCoordinates, Map<Integer, Integer> positionByIndex) {
+	private static Node createNewNode(Document doc, Integer columnNumber, Map<Integer, Vertex<Integer>> vertexMap ) {
 		Node newNode = createElementWithAttributes(doc, "node", "label",String.valueOf(columnNumber),"id","-" + String.valueOf(columnNumber)); 
 		newNode.appendChild(createElementWithAttributes(doc, "att", "type","string","name","canonicalName","value",String.valueOf(columnNumber)));
-		newNode.appendChild(createElementWithAttributes(doc, "graphics", "type","ELLIPSE","h","35.0", "w","35.0", "x", String.valueOf(1000*xyCoordinates[0][positionByIndex.get(columnNumber)]), "y", String.valueOf(1000*xyCoordinates[1][positionByIndex.get(columnNumber)]), "fill","#62c8e0", "width","1", "outline","#000000","cy:nodeTransparency","0.72", "cy:nodeLabelFont","Default-0-12","cy:nodeLabel",String.valueOf(columnNumber), "cy:borderLineType","solid"));
+		newNode.appendChild(createElementWithAttributes(doc, "graphics", "type","ELLIPSE","h","35.0", "w","35.0", "x", String.valueOf(50*vertexMap.get(columnNumber).getX()), "y", String.valueOf(50*vertexMap.get(columnNumber).getY()), "fill","#62c8e0", "width","1", "outline","#000000","cy:nodeTransparency","0.72", "cy:nodeLabelFont","Default-0-12","cy:nodeLabel",String.valueOf(columnNumber), "cy:borderLineType","solid"));
 		return newNode;
 	}
 
