@@ -135,9 +135,9 @@ public class MIDataToCytoscapeConverter {
 			
 //			Force repulsive = new HyperbolicWithRandomRepulsiveForce(1,0.5);
 			
-			GraphLayout<Integer> layout = new GraphLayout<Integer>(atractive, repulsive, 0.2);
+			GraphLayout<Integer> layout = new GraphLayout<Integer>(atractive, repulsive, 0.1);
 			
-			layout.applyLayout(edgeList, 200);
+			layout.applyLayout(edgeList, 1000);
 			
 			////////////////////////////////////////////
 			// Append All Nodes
