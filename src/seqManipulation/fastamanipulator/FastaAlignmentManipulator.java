@@ -25,6 +25,7 @@ import seqManipulation.fastamanipulator.commands.FilterSizeSmEqThanCommand;
 import seqManipulation.fastamanipulator.commands.FilterTitleContainingCommand;
 import seqManipulation.fastamanipulator.commands.FilterTitlesContainingCommand;
 import seqManipulation.fastamanipulator.commands.FlushEndsCommand;
+import seqManipulation.fastamanipulator.commands.GapFrequencyInColumnsCommand;
 import seqManipulation.fastamanipulator.commands.GeneticCodeHelpCommand;
 import seqManipulation.fastamanipulator.commands.HelpCommand;
 import seqManipulation.fastamanipulator.commands.IdentityMatrixCommand;
@@ -185,6 +186,8 @@ public class FastaAlignmentManipulator {
 		uniqueCommands.add(new RemoveCommand(null,null,new MultipleOption(parser,null, "-remove", ',',IntegerParameter.getParameter())));
 		
 		uniqueCommands.add(new ChangeDescriptionsCommand(null, null, new SingleOption(parser,1, "-changeDesc", InFileParameter.getParameter())));
+		
+		uniqueCommands.add(new GapFrequencyInColumnsCommand(null,null,new NoOption(parser, "-gapfreq")));
 
 		// Step Three : Try to parse the command line
 		
