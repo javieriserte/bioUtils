@@ -29,12 +29,22 @@ import javax.xml.transform.stream.StreamResult;
 
 
 
+
+
+
+
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import utils.mutualinformation.misticmod.MI_Position;
 import utils.mutualinformation.misticmod.MI_PositionLineParser;
+import utils.mutualinformation.misticmod.tocytoscape.labelers.EdgeLabeler;
+import utils.mutualinformation.misticmod.tocytoscape.labelers.MiEdgeLabeler;
+import utils.mutualinformation.misticmod.tocytoscape.labelers.NodeLabeler;
+import utils.mutualinformation.misticmod.tocytoscape.labelers.NodeLabelerValue;
+import utils.mutualinformation.misticmod.tocytoscape.labelers.NumericNodeLabeler;
 import utils.mutualinformation.misticmod.tocytoscape.layouts.Edge;
 import utils.mutualinformation.misticmod.tocytoscape.layouts.Force;
 import utils.mutualinformation.misticmod.tocytoscape.layouts.GraphLayout;
@@ -67,6 +77,7 @@ public class MIDataToCytoscapeConverter {
 		// Add commmand line options
 		SingleArgumentOption<InputStream> inOpt = OptionsFactory.createBasicInputStreamArgument(cmd);
 		SingleArgumentOption<PrintStream> outOpt = OptionsFactory.createBasicPrintStreamArgument(cmd);
+		SingleArgumentOption<NodeLabeler> nodlblOpt = new SingleArgumentOption<NodeLabeler>(cmd, "--labels", new NodeLabelerValue(), new NumericNodeLabeler());
 		/////////////////////////////////////////////
 		
 		/////////////////////////////////////////////
@@ -78,7 +89,10 @@ public class MIDataToCytoscapeConverter {
 		// Get Command line arguments
 		BufferedReader in = new BufferedReader(new InputStreamReader(inOpt.getValue()));
 		PrintStream out = outOpt.getValue();
+		NodeLabeler nodeLabeler = nodlblOpt.getValue();
 		/////////////////////////////////////////////
+
+		EdgeLabeler edgeLabeler = new MiEdgeLabeler(nodeLabeler);
 		
 		OneLineListReader<MI_Position> reader = new OneLineListReader<MI_Position>(new MI_PositionLineParser());
 		
@@ -150,7 +164,7 @@ public class MIDataToCytoscapeConverter {
 			
 			for (Integer columnNumber : allColumns) {
 				
-				rootGraph.appendChild(createNewNode(doc, columnNumber, vertexMap));	
+				rootGraph.appendChild(createNewNode(doc, columnNumber, vertexMap, nodeLabeler));	
 				
 			}
 			////////////////////////////////////////////
@@ -159,8 +173,7 @@ public class MIDataToCytoscapeConverter {
 			// Append All Edges
 			for (MI_Position mi_Position : positions) {
 				
-				rootGraph.appendChild(createNewEdge(doc, mi_Position));
-				
+				rootGraph.appendChild(createNewEdge(doc, mi_Position, edgeLabeler,nodeLabeler));
 				
 			}
 			////////////////////////////////////////////
@@ -270,8 +283,8 @@ public class MIDataToCytoscapeConverter {
 		return positionByIndex;
 	}
 
-	private static Node createNewEdge(Document doc, MI_Position mi_Position) {
-		String edgeLabel = mi_Position.getPos1() + " (MI) " +  mi_Position.getPos2();
+	private static Node createNewEdge(Document doc, MI_Position mi_Position, EdgeLabeler edgeLabeler, NodeLabeler nodeLabeler) {
+		String edgeLabel =edgeLabeler.label(mi_Position.getPos1(), mi_Position.getPos2());
 		Node newNode = createElementWithAttributes(doc, "edge", "label",edgeLabel, "source","-" + String.valueOf(mi_Position.getPos1()), "target","-" + String.valueOf(mi_Position.getPos2()));
 		
 		newNode.appendChild(createElementWithAttributes(doc, "att", "type","real","name","MutualInfo","value",String.valueOf(mi_Position.getMi())));
@@ -281,9 +294,9 @@ public class MIDataToCytoscapeConverter {
 		return newNode;
 	}
 
-	private static Node createNewNode(Document doc, Integer columnNumber, Map<Integer, Vertex<Integer>> vertexMap ) {
-		Node newNode = createElementWithAttributes(doc, "node", "label",String.valueOf(columnNumber),"id","-" + String.valueOf(columnNumber)); 
-		newNode.appendChild(createElementWithAttributes(doc, "att", "type","string","name","canonicalName","value",String.valueOf(columnNumber)));
+	private static Node createNewNode(Document doc, Integer columnNumber, Map<Integer, Vertex<Integer>> vertexMap, NodeLabeler nodeLabeler ) {
+		Node newNode = createElementWithAttributes(doc, "node", "label", nodeLabeler.label(columnNumber),"id","-" + columnNumber); 
+		newNode.appendChild(createElementWithAttributes(doc, "att", "type","string","name","canonicalName","value",nodeLabeler.label(columnNumber)));
 		newNode.appendChild(createElementWithAttributes(doc, "graphics", "type","ELLIPSE","h","35.0", "w","35.0", "x", String.valueOf(50*vertexMap.get(columnNumber).getX()), "y", String.valueOf(50*vertexMap.get(columnNumber).getY()), "fill","#62c8e0", "width","1", "outline","#000000","cy:nodeTransparency","0.72", "cy:nodeLabelFont","Default-0-12","cy:nodeLabel",String.valueOf(columnNumber), "cy:borderLineType","solid"));
 		return newNode;
 	}
@@ -321,7 +334,7 @@ public class MIDataToCytoscapeConverter {
 		
 		for (int i = 0; i < Math.ceil(attr.length / 2d)*2; i=i+2) {
 			
-				elem.setAttribute(attr[i], attr[i+1]);
+			elem.setAttribute(attr[i], attr[i+1]);
 			
 		}
 		
