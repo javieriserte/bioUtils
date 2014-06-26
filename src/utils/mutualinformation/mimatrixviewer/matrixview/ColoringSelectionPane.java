@@ -1,4 +1,4 @@
-package utils.mutualinformation.mimatrixviewer;
+package utils.mutualinformation.mimatrixviewer.matrixview;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -9,6 +9,8 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+
+import utils.mutualinformation.mimatrixviewer.MIMatrixViewer;
 
 public class ColoringSelectionPane extends JPanel {
 	

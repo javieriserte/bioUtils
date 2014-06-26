@@ -1,4 +1,4 @@
-package utils.mutualinformation.mimatrixviewer;
+package utils.mutualinformation.mimatrixviewer.matrixview;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -10,6 +10,8 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+
+import utils.mutualinformation.mimatrixviewer.MIMatrixViewer;
 
 /**
  * Component that shows a zoom-in portion of a MI matrix.

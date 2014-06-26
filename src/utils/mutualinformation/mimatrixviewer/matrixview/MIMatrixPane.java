@@ -1,4 +1,4 @@
-package utils.mutualinformation.mimatrixviewer;
+package utils.mutualinformation.mimatrixviewer.matrixview;
 
 import java.awt.Color;
 import java.awt.Cursor;
@@ -23,6 +23,8 @@ import java.util.Arrays;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+import utils.mutualinformation.mimatrixviewer.MIMatrixViewer;
+import utils.mutualinformation.mimatrixviewer.MI_Matrix;
 import utils.mutualinformation.misticmod.MI_Position;
 
 public class MIMatrixPane extends JScrollPane {

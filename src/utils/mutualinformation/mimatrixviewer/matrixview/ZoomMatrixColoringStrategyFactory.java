@@ -1,4 +1,4 @@
-package utils.mutualinformation.mimatrixviewer;
+package utils.mutualinformation.mimatrixviewer.matrixview;
 
 public class ZoomMatrixColoringStrategyFactory {
 	

@@ -17,6 +17,13 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.WindowConstants;
 
+import utils.mutualinformation.mimatrixviewer.matrixview.BlackAndWhiteZoomMatrixColoringStrategy;
+import utils.mutualinformation.mimatrixviewer.matrixview.ColoringSelectionPane;
+import utils.mutualinformation.mimatrixviewer.matrixview.MIMatrixPane;
+import utils.mutualinformation.mimatrixviewer.matrixview.MatrixColoringStrategyFactory;
+import utils.mutualinformation.mimatrixviewer.matrixview.ZoomMatrixColoringStrategyFactory;
+import utils.mutualinformation.mimatrixviewer.matrixview.ZoomPanel;
+
 
 public class MIMatrixViewer extends JFrame{
 
@@ -50,13 +57,6 @@ public class MIMatrixViewer extends JFrame{
 				inst.setZoomPanel(new ZoomPanel(inst));
 				
 				inst.setMatrixPane(matrixPane);
-//				inst.getMatrixPane().setProteinLengths(protLengths);
-//				MatrixColoringStrategy color = new RedBlueGradientMatrixColoringStrategy(-10,50,6.5);
-				
-//				inst.getMatrixPane().setColor(color);
-				
-//				inst.getMatrixPane().setMatrix(matrix);
-//				inst.getMatrixPane().setPreferredSize(inst.getMatrixPane().getMinimumSize());
 				
 				inst.setLayout(new BorderLayout());
 				
@@ -171,7 +171,7 @@ public class MIMatrixViewer extends JFrame{
 		this.zoomPanel = zoomPanel;
 	}
 
-	protected ColoringSelectionPane getColoringPane() {
+	public ColoringSelectionPane getColoringPane() {
 		return coloringPane;
 	}
 

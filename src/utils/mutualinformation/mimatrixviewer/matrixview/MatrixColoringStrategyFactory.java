@@ -1,8 +1,9 @@
-package utils.mutualinformation.mimatrixviewer;
+package utils.mutualinformation.mimatrixviewer.matrixview;
 
 import java.awt.Color;
 
 import pair.Pair;
+import utils.mutualinformation.mimatrixviewer.MI_Matrix;
 
 /**
  * Creates Ready to use MatrixColoringStrategy objects.
