@@ -167,7 +167,7 @@ public class OptionsPane extends JPanel {
 							
 						}
 						
-						int matrixSize = OptionsPane.this.getMatrixViewer().getMatrixPane().getMatrix().getSize();
+						int matrixSize = OptionsPane.this.getMatrixViewer().getMatrixPane().getMatrixPane().getMatrix().getSize();
 						
 						int sumOfLengths = 0;
 						for (Integer length : lengths) {
@@ -188,16 +188,16 @@ public class OptionsPane extends JPanel {
 							}
 							
 							if (!emptyNames) {
-								OptionsPane.this.getMatrixViewer().getMatrixPane().setNames(namesFields);
+								OptionsPane.this.getMatrixViewer().getMatrixPane().getMatrixPane().setNames(namesFields);
 							} else {
-								OptionsPane.this.getMatrixViewer().getMatrixPane().setNames(null);
+								OptionsPane.this.getMatrixViewer().getMatrixPane().getMatrixPane().setNames(null);
 							}
 							
 							OptionsPane.this.getMatrixViewer().getMatrixPane().setProteinLengths(lengthsArray);
 							
-							OptionsPane.this.getMatrixViewer().getMatrixPane().accomodateSize();
+							OptionsPane.this.getMatrixViewer().getMatrixPane().getMatrixPane().accomodateSize();
 							
-							OptionsPane.this.getMatrixViewer().getMatrixPane().resetImage();
+							OptionsPane.this.getMatrixViewer().getMatrixPane().getMatrixPane().resetImage();
 							
 							OptionsPane.this.getMatrixViewer().getMatrixPane().updateUI();
 							

@@ -29,12 +29,12 @@ public class ColoringSelectionPane extends JPanel {
 	// Instance Variables
 	private DefaultComboBoxModel<MatrixColoringStrategy> matrixColoringModel;
 	private DefaultComboBoxModel<ZoomMatrixColoringStrategy> zoomMatrixColoringModel;
-	private MIMatrixViewer viewer;
+	private MatrixViewMainPane viewer;
 	///////////////////////////////
 	
 	///////////////////////////////
 	// Constructor
-	public ColoringSelectionPane(MIMatrixViewer viewer) {
+	public ColoringSelectionPane(MatrixViewMainPane viewer) {
 		super();
 		this.setViewer(viewer);
 		this.createGUI();
@@ -95,12 +95,12 @@ public class ColoringSelectionPane extends JPanel {
 	///////////////////////////////
 	
 
-	public MIMatrixViewer getViewer() {
+	public MatrixViewMainPane getViewer() {
 		return viewer;
 	}
 
-	public void setViewer(MIMatrixViewer viewer) {
-		this.viewer = viewer;
+	public void setViewer(MatrixViewMainPane viewer2) {
+		this.viewer = viewer2;
 	}
 
 	///////////////////////////////
@@ -158,7 +158,7 @@ public class ColoringSelectionPane extends JPanel {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			
-			ColoringSelectionPane.this.getViewer().ColorSelected();
+			//ColoringSelectionPane.this.getViewer().ColorSelected();
 			
 		}
 		

@@ -44,14 +44,14 @@ public class ZoomPanel extends JScrollPane {
 	private double[][] subMatrix;
 	private char[] aaSeqHor;
 	private char[] aaSeqVer;
-	private MIMatrixViewer viewer;
+	private MatrixViewMainPane viewer;
 	////////////////////////////////
 	
 	////////////////////////////////
 	// Constructor
-	public ZoomPanel(MIMatrixViewer viewer) {
+	public ZoomPanel(MatrixViewMainPane matrixViewMainPane) {
 		super();
-		this.setViewer(viewer);
+		this.setViewer(matrixViewMainPane);
 		this.setImagePanel(new ZoomImagePanel());
 		this.getImagePanel().setOpaque(true);
 		this.setViewportView(this.getImagePanel());
@@ -144,12 +144,12 @@ public class ZoomPanel extends JScrollPane {
 	}
 	///////////////////////////////
 
-	protected MIMatrixViewer getViewer() {
+	protected MatrixViewMainPane getViewer() {
 		return viewer;
 	}
 
-	protected void setViewer(MIMatrixViewer viewer) {
-		this.viewer = viewer;
+	protected void setViewer(MatrixViewMainPane matrixViewMainPane) {
+		this.viewer = matrixViewMainPane;
 	}
 
 	///////////////////////////////

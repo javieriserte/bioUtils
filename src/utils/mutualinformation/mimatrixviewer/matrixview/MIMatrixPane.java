@@ -52,7 +52,7 @@ public class MIMatrixPane extends JScrollPane {
 	// The generated map image
 	private ImagePanel imagePane = null;
 	// Component to store the image
-	private MIMatrixViewer viewer;
+	private MatrixViewMainPane viewer;
 	// Parent MI Matrix Viewer
 	private char[] aminoAcids;
 	// Amino acid from whole MI Data
@@ -61,7 +61,7 @@ public class MIMatrixPane extends JScrollPane {
 	
 	///////////////////////////////
 	// Constructor
-	public MIMatrixPane(MIMatrixViewer viewer) {
+	public MIMatrixPane(MatrixViewMainPane viewer) {
 		super();
 		ImagePanel imagePanel = new ImagePanel();
 		GetValuesFromPointMouseListener l = new GetValuesFromPointMouseListener();
@@ -321,12 +321,13 @@ public class MIMatrixPane extends JScrollPane {
 		this.names = names;
 	}
 	
-	public MIMatrixViewer getViewer() {
-		return viewer;
+	public MatrixViewMainPane getViewer() {
+		return viewer; 
+		
 	}
 
-	public void setViewer(MIMatrixViewer viewer) {
-		this.viewer = viewer;
+	public void setViewer(MatrixViewMainPane viewer2) {
+		this.viewer = viewer2;
 	}
 	public char[] getAminoAcids() {
 		return aminoAcids;

@@ -21,6 +21,7 @@ import utils.mutualinformation.mimatrixviewer.matrixview.BlackAndWhiteZoomMatrix
 import utils.mutualinformation.mimatrixviewer.matrixview.ColoringSelectionPane;
 import utils.mutualinformation.mimatrixviewer.matrixview.MIMatrixPane;
 import utils.mutualinformation.mimatrixviewer.matrixview.MatrixColoringStrategyFactory;
+import utils.mutualinformation.mimatrixviewer.matrixview.MatrixViewMainPane;
 import utils.mutualinformation.mimatrixviewer.matrixview.ZoomMatrixColoringStrategyFactory;
 import utils.mutualinformation.mimatrixviewer.matrixview.ZoomPanel;
 
@@ -34,9 +35,9 @@ public class MIMatrixViewer extends JFrame{
 	
 	////////////////////////////////
 	// Components
-	private OptionsPane optionPane;
-	private MIMatrixPane matrixPane;
-	private ZoomPanel zoomPanel;
+	private OptionsPane             optionPane;
+	private MatrixViewMainPane      matrixPane;
+	private ZoomPanel                zoomPanel;
 	private ColoringSelectionPane coloringPane;
 	////////////////////////////////
 
@@ -52,24 +53,16 @@ public class MIMatrixViewer extends JFrame{
 				inst.setOptionPane(new OptionsPane(inst));
 				inst.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 				
-				MIMatrixPane matrixPane = new MIMatrixPane(inst);
-				
-				inst.setZoomPanel(new ZoomPanel(inst));
-				
-				inst.setMatrixPane(matrixPane);
+				MatrixViewMainPane matrixPane = new MatrixViewMainPane();
 				
 				inst.setLayout(new BorderLayout());
 				
-				JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
-				splitPane.add(inst.getZoomPanel());
-				splitPane.add(inst.getMatrixPane());
-				inst.getZoomPanel().setColoringStrategy(new BlackAndWhiteZoomMatrixColoringStrategy(10));
-				inst.getContentPane().add(splitPane, BorderLayout.CENTER);
 				inst.getContentPane().add(inst.getOptionPane(), BorderLayout.NORTH);
-				splitPane.setDividerLocation(200);
+
+				inst.setMatrixView(matrixPane);
 				
-				inst.setColoringPane(new ColoringSelectionPane(inst));
-				inst.getContentPane().add(inst.getColoringPane(),BorderLayout.SOUTH);
+				inst.getContentPane().add(inst.getMatrixPane(),BorderLayout.CENTER);
+
 				inst.pack();
 				inst.getGlassPane();
 				
@@ -128,20 +121,13 @@ public class MIMatrixViewer extends JFrame{
 			matrix = MI_Matrix.loadFromFile(file);
 		}
 		
-		this.getColoringPane().getMatrixColoringModel().removeAllElements();
-		this.getColoringPane().addMatrixColoringStrategy(MatrixColoringStrategyFactory.createRedBlueGradient(matrix));
-		this.getColoringPane().addMatrixColoringStrategy(MatrixColoringStrategyFactory.createRedBlueGradientGt10(matrix));
-		this.getColoringPane().addMatrixColoringStrategy(MatrixColoringStrategyFactory.createRedBlueGradientNoCutOff(matrix));
-		
-		this.getColoringPane().getZoomMatrixColoringModel().removeAllElements();
-		this.getColoringPane().addZoomMatrixColoringStrategy(ZoomMatrixColoringStrategyFactory.BlackAndWhiteWithStdCutoff());
-		this.getColoringPane().addZoomMatrixColoringStrategy(ZoomMatrixColoringStrategyFactory.BlackAndWhiteWithCutoff10());
+
 		
 		int[] protLengths = new int[]{matrix.getSize()};
 		this.getMatrixPane().setMatrix(matrix);
 		this.getMatrixPane().setProteinLengths(protLengths);
-		this.getMatrixPane().accomodateSize();
-		this.getMatrixPane().resetImage();
+		this.getMatrixPane().getMatrixPane().accomodateSize();
+		this.getMatrixPane().getMatrixPane().resetImage();
 		this.getMatrixPane().updateUI();
 	}
 	
@@ -154,11 +140,11 @@ public class MIMatrixViewer extends JFrame{
 	public void setOptionPane(OptionsPane optionPane) {
 		this.optionPane = optionPane;
 	}
-	public MIMatrixPane getMatrixPane() {
-		return matrixPane;
+	public MatrixViewMainPane getMatrixPane() {
+		return this.matrixPane;
 	}
 
-	public void setMatrixPane(MIMatrixPane matrixPane) {
+	public void setMatrixView(MatrixViewMainPane matrixPane) {
 		this.matrixPane = matrixPane;
 	}
 
@@ -194,14 +180,10 @@ public class MIMatrixViewer extends JFrame{
 		
 	}
 
-	public void zoomArea(Rectangle rect, double[][] values, char[] hChars, char[] vChars) {
-		this.getZoomPanel().renderImage(values, hChars, vChars);
-		
-	}
 
 	public void ColorSelected() {
-		this.getMatrixPane().resetImage();
-		this.getMatrixPane().updateUI();
+//		this.getMatrixPane().resetImage();
+//		this.getMatrixPane().updateUI();
 		
 	}
 }
