@@ -2,7 +2,7 @@ package utils.mutualinformation.mimatrixviewer.matrixview;
 
 import java.awt.Color;
 
-import utils.mutualinformation.misticmod.MI_Position;
+import utils.mutualinformation.misticmod.datastructures.MI_Position;
 
 public interface MatrixColoringStrategy {
 

@@ -25,7 +25,7 @@ import javax.swing.JScrollPane;
 
 import utils.mutualinformation.mimatrixviewer.MIMatrixViewer;
 import utils.mutualinformation.mimatrixviewer.MI_Matrix;
-import utils.mutualinformation.misticmod.MI_Position;
+import utils.mutualinformation.misticmod.datastructures.MI_Position;
 
 public class MIMatrixPane extends JScrollPane {
 	

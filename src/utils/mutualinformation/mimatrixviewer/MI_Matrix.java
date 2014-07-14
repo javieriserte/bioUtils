@@ -10,8 +10,8 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import utils.mutualinformation.misticmod.MI_Position;
-import utils.mutualinformation.misticmod.MI_PositionLineParser;
+import utils.mutualinformation.misticmod.datastructures.MI_Position;
+import utils.mutualinformation.misticmod.datastructures.MI_PositionLineParser;
 
 /**
  * Class to represent a square MI matrix.
