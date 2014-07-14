@@ -1,7 +1,6 @@
 package utils.ProfilePlotter;
 
 import graphics.profile.PngWriter;
-
 import io.onelinelister.OneLineListReader;
 
 import java.awt.Color;
@@ -28,6 +27,7 @@ import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.ui.Layer;
 import org.jfree.ui.RectangleAnchor;
+import org.jfree.ui.RectangleInsets;
 import org.jfree.ui.TextAnchor;
 
 import cmdGA.NoOption;
@@ -134,7 +134,11 @@ public class ProfileWriter {
 		
 			/////////////////////////////////////
 			// Export Image
-			profileImage = chart.createBufferedImage( Math.max(data.length, 300) , 300);
+			chart.setPadding(new RectangleInsets(0,0,0,0));
+			chart.getPlot().setInsets(new RectangleInsets(1,1,1,1));
+			chart.getXYPlot().setAxisOffset(new RectangleInsets(0,4,0,0));
+			chart.getXYPlot().getRangeAxis().setFixedDimension(95);
+			profileImage = chart.createBufferedImage( Math.max(data.length+100+1, 300) , 300);
 		
 		} else {
 
