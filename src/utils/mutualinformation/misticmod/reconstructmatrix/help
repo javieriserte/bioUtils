@@ -1,0 +1,29 @@
+ ReconstructMI - Creates a MI data file from several files.
+ 
+ Reads several MI_Data files and creates one that contains all the data.  Given 
+ a data set of N proteins (each protein is Pi, with 0 < i <= N), the program 
+ reads (N*(N+1)) files of MI data between all proteins, including every protein 
+ with itself (each MI data file corresponds to MI(P_i,P_j), with j >= i). Files 
+ must given in the right order, for data files for MI(P_i,P_j):
+   1. index j >= index i.
+   2. first, order by i index.
+   3. then, order data sets with the same index i, with the index j.
+    
+ Residue enumeration for both proteins in every data file must start with 1.
+ The first residue of every MI pair must correspond to P_i, and the second to 
+ P_j, for a data file of MI(P_i,P_j).
+ 
+ Usage: 
+   reconstructmi.jar <Option>
+  
+ Options:
+   --files    List of Strings. Paths to all MI data files, separated by comma.
+              The files must be given in the right order.
+                
+   --outfile  String. Path to the resulting mi data file.
+
+   --lengths  List of Integer. A list with the length of every protein. The 
+              values must be given in order, corresponding to the order in 
+              --files option.  
+    
+   --help    Shows this help and exit.
