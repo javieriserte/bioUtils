@@ -34,12 +34,13 @@ import javax.xml.transform.stream.StreamResult;
 
 
 
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-import utils.mutualinformation.misticmod.MI_Position;
-import utils.mutualinformation.misticmod.MI_PositionLineParser;
+import utils.mutualinformation.misticmod.datastructures.MI_Position;
+import utils.mutualinformation.misticmod.datastructures.MI_PositionLineParser;
 import utils.mutualinformation.misticmod.tocytoscape.labelers.EdgeLabeler;
 import utils.mutualinformation.misticmod.tocytoscape.labelers.MiEdgeLabeler;
 import utils.mutualinformation.misticmod.tocytoscape.labelers.NodeLabeler;

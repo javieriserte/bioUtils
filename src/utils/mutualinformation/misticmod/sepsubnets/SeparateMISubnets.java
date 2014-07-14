@@ -13,8 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import utils.mutualinformation.misticmod.MI_Position;
-import utils.mutualinformation.misticmod.MI_PositionLineParser;
+import utils.mutualinformation.misticmod.datastructures.MI_Position;
+import utils.mutualinformation.misticmod.datastructures.MI_PositionLineParser;
 import cmdGA2.CommandLine;
 import cmdGA2.NoArgumentOption;
 import cmdGA2.OptionsFactory;
