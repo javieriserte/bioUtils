@@ -18,6 +18,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
+import utils.mutualinformation.misticmod.datastructures.MI_PositionWithProtein;
 import cmdGA2.CommandLine;
 import cmdGA2.MultipleArgumentOption;
 import cmdGA2.OptionsFactory;

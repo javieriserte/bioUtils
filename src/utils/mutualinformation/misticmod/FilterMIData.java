@@ -8,6 +8,7 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import utils.mutualinformation.misticmod.datastructures.MI_Position;
 import cmdGA.SingleOption;
 
 public abstract class FilterMIData {

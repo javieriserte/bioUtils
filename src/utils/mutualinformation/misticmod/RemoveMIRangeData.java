@@ -11,6 +11,8 @@ import java.io.PrintStream;
 import java.util.List;
 
 import pair.Pair;
+import utils.mutualinformation.misticmod.datastructures.MI_Position;
+import utils.mutualinformation.misticmod.datastructures.MI_PositionLineParser;
 import cmdGA2.CommandLine;
 import cmdGA2.NoArgumentOption;
 import cmdGA2.OptionsFactory;

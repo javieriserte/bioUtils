@@ -10,6 +10,7 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import utils.mutualinformation.misticmod.datastructures.MI_PositionWithProtein;
 import cmdGA.MultipleOption;
 import cmdGA.NoOption;
 import cmdGA.Parser;

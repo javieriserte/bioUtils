@@ -14,6 +14,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
+import utils.mutualinformation.misticmod.datastructures.MI_PositionWithProtein;
 import cmdGA.NoOption;
 import cmdGA.Parser;
 import cmdGA.SingleOption;

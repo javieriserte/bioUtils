@@ -15,8 +15,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import utils.mutualinformation.misticmod.datastructures.MI_Position;
+import utils.mutualinformation.misticmod.datastructures.MI_PositionLineParser;
 import math.ranks.SpearmanCorrelation;
-
 import cmdGA2.CommandLine;
 import cmdGA2.OptionsFactory;
 import cmdGA2.SingleArgumentOption;

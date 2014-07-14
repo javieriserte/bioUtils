@@ -14,6 +14,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import utils.mutualinformation.misticmod.datastructures.MI_Position;
+import utils.mutualinformation.misticmod.datastructures.MI_PositionLineParser;
 import cmdGA2.CommandLine;
 import cmdGA2.NoArgumentOption;
 import cmdGA2.OptionsFactory;
