@@ -1,6 +1,6 @@
 package utils.mutualinformation.misticmod.top;
 
-import utils.mutualinformation.misticmod.MI_Position;
+import utils.mutualinformation.misticmod.datastructures.MI_Position;
 
 public abstract class UnwantedManager {
 

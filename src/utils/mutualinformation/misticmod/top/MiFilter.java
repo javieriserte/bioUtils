@@ -2,7 +2,7 @@ package utils.mutualinformation.misticmod.top;
 
 import java.util.List;
 
-import utils.mutualinformation.misticmod.MI_Position;
+import utils.mutualinformation.misticmod.datastructures.MI_Position;
 
 /**
  * Abstract class to represent MI Data filters.

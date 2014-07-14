@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import utils.mutualinformation.misticmod.MI_Position;
+import utils.mutualinformation.misticmod.datastructures.MI_Position;
 
 /**
  * Abstract class for filters for MI Data that require sorting the values.
@@ -45,6 +45,10 @@ public abstract class SortedMiFilter extends MiFilter {
 			public int compare(MI_Position o1, MI_Position o2) {
 				if (o1.getMi()<o2.getMi()) return 1;
 				if (o1.getMi()>o2.getMi()) return -1;
+				if (o1.getPos1()>o2.getPos1()) return 1; 
+				if (o1.getPos1()<o2.getPos1()) return -1;
+				if (o1.getPos2()>o2.getPos2()) return 1;
+				if (o1.getPos2()<o2.getPos2()) return -1;
 				return 0;
 			}
 		};

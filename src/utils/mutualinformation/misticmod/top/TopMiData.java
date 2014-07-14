@@ -11,9 +11,9 @@ import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.util.List;
 
-import utils.mutualinformation.misticmod.MI_Position;
-import utils.mutualinformation.misticmod.MI_PositionLineParser;
-import utils.mutualinformation.misticmod.MI_Position_MortemPrinter;
+import utils.mutualinformation.misticmod.datastructures.MI_Position;
+import utils.mutualinformation.misticmod.datastructures.MI_PositionLineParser;
+import utils.mutualinformation.misticmod.datastructures.MI_Position_MortemPrinter;
 import cmdGA2.CommandLine;
 import cmdGA2.MultipleArgumentOption;
 import cmdGA2.NoArgumentOption;
