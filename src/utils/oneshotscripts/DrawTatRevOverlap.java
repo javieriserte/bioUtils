@@ -12,8 +12,8 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
-import utils.mutualinformation.misticmod.MI_Position;
-import utils.mutualinformation.misticmod.MI_PositionLineParser;
+import utils.mutualinformation.misticmod.datastructures.MI_Position;
+import utils.mutualinformation.misticmod.datastructures.MI_PositionLineParser;
 
 /**
  * This class draws a Mutual Information matrix to
