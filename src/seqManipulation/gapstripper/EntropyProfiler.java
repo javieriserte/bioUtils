@@ -10,13 +10,13 @@ import clustering.HobohmClusteringM1;
 import pair.Pair;
 
 /**
- * Creates a profile with the maximum frequency for each 
+ * Creates a profile with the entropy frequency for each 
  * column of an alignment.
  * 
  * @author Javier Iserte
  *
  */
-public class MaximumFrequencyProfiler extends AbstractProfiler {
+public class EntropyProfiler extends AbstractProfiler {
 	
 	/////////////////////////////////
 	// Class Constants
@@ -61,7 +61,7 @@ public class MaximumFrequencyProfiler extends AbstractProfiler {
 	 *          the alignment. 
 	 */
 	public double[] calculateProfileUsingClustering(Map<String, String> sequences, double thresholdId) {
-
+		
 		Map<String,Double> clusterWeigth = new HashMap<>();
 		
 		HobohmClusteringM1 clusterer = new HobohmClusteringM1();
@@ -117,15 +117,19 @@ public class MaximumFrequencyProfiler extends AbstractProfiler {
 		for (int i = 0; i<AlignmentLength; i++) {
 		// iterates over each column of the alignment
 		
-			getColumnMaxFreq(sequences, descriptions, profile, i, clusterWeigth);
+			getColumnEntropy(sequences, descriptions, profile, i, clusterWeigth);
 			
 		}
 
 		return profile;
 	}
 	
-	private void getColumnMaxFreq(Map<String, String> sequences,
-			Set<String> descriptions, double[] profile, int i, Map<String,Double> clusterWeigth) {
+	private void getColumnEntropy(
+			Map<String, String>  sequences, 
+			Set<String>          descriptions, 
+			double[]             profile, 
+			int                  i, 
+			Map<String,Double>   clusterWeigth) {
 		
 		Map<Character,Double> frequencies = new HashMap<>();
 		// Creates a temporary data structure to accumulate
@@ -141,7 +145,7 @@ public class MaximumFrequencyProfiler extends AbstractProfiler {
 			
 			char currentChar = sequences.get(currentSeq).charAt(i);
 			
-			if (currentChar != MaximumFrequencyProfiler.gap) {
+			if (currentChar != EntropyProfiler.gap) {
 			
 				if (!frequencies.containsKey(currentChar)) {
 					// Initializes the frequencies map
@@ -162,33 +166,21 @@ public class MaximumFrequencyProfiler extends AbstractProfiler {
 			
 		}
 		
-		double maxCount = getMaxCount(frequencies);
-		// Search for the symbol with maximum 
-		// frequency
+		// After Calculating frequencies, calculates entropy		
+		double entropy = 0;
 		
-		profile[i] = maxCount / counter;
-		// Adds the max frequency value to the result array
-	}
-
-	/**
-	 * Search for the alphabet symbol that is most frequent in a column
-	 * of an alignment.
-	 * 
-	 * @param frequencies are the counts calculated for a given column
-	 * @return the number of counts of the most common symbol.
-	 */
-	private double getMaxCount(Map<Character, Double> frequencies) {
+		double correctingConstant = Math.log(20);
 		
-		double maxCount = 0;
-		
-		for (char alphabetSymbol : frequencies.keySet()) {
+		for (char symbol : frequencies.keySet()) {
 			
-			maxCount = Math.max(maxCount, frequencies.get(alphabetSymbol));
+			double frequency = frequencies.get(symbol) / counter;
+			
+			entropy = entropy - Math.log(frequency) * ( frequency / correctingConstant);
 			
 		}
 		
-		return maxCount;
-		
+		profile[i] = entropy;
+		// Adds the max entropy value to the result array
 	}
 	
 }

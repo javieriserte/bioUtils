@@ -65,6 +65,10 @@ public class Gapstripper {
 		SingleArgumentOption<Double> maxfreqOpt = OptionsFactory.createBasicDoubleArgument(cmdline, "--maxfreq", 1d); 
 		// Keeps the columns whose maximum frequency 
 		// is less than or equal to a given value
+
+		SingleArgumentOption<Double> entropyOpt = OptionsFactory.createBasicDoubleArgument(cmdline, "--entropy", 1d); 
+		// Keeps the columns whose entropy 
+		// is greater than or equal to a given value
 		
 		NoArgumentOption clusterOpt = new NoArgumentOption(cmdline, "--cluster");
 		// Perform clustering before maximum frequency filter
@@ -114,11 +118,22 @@ public class Gapstripper {
 			
 		}
 		
+		if (maxfreqOpt.isPresent() && entropyOpt.isPresent()) {
+
+			System.err.println("--maxfreq and --entropy can not be present at the same time.");
+			
+			Gapstripper.printHelp();
+			
+			System.exit(1);
+			
+		}
+		
 		//////////////////////////////
 		// Get Values From Command Line
 		BufferedReader in = new BufferedReader(new InputStreamReader(inOpt.getValue()));
 		PrintStream out = outOpt.getValue();
 		Double maxfreq = maxfreqOpt.getValue();
+		Double entropy = entropyOpt.getValue();
 		Double gapsInRows = gapsInRowsOpt.getValue();
 		File refFile = refFileOpt.getValue();
 		
@@ -137,9 +152,16 @@ public class Gapstripper {
 			System.exit(0);
 		}
 		
-		//////////////////////////////
+		
+		////////////////////////////////////////////////////////////////////////
+		// Get the profiler object
+		AbstractProfiler profiler = entropyOpt.isPresent()?new EntropyProfiler():new  MaximumFrequencyProfiler();
+		CutOffEvaluator evaluator = entropyOpt.isPresent()?new AboveEqualCutOffEvaluator(entropy): new LowerEqualCutOffEvaluator(maxfreq);
+		////////////////////////////////////////////////////////////////////////
+		
+		////////////////////////////////////////////////////////////////////////
 		// Get Maximum Frequencies Mask
-		boolean[] mask = stripper.getMaxFreqMask(sequences, maxfreq, clusterOpt.isPresent(), clusterIdOpt.getValue());
+		boolean[] mask = stripper.getMaxFreqMask(profiler,sequences, evaluator, clusterOpt.isPresent(), clusterIdOpt.getValue());
 		
 		////////////////////////////////
 		// Get Reference Sequence Description
@@ -524,29 +546,29 @@ public class Gapstripper {
 	 * Checks which columns of and alignment has lesser or equal that
 	 * a given value of maximum frequency,  
 	 * @param sequences
-	 * @param maxfreq
+	 * @param cutoff
 	 * @return an array that represents a logical mask of which column passes 
 	 * the maximum frequency filter. 
 	 */
-	public boolean[] getMaxFreqMask(LinkedHashMap<String, String> sequences, double maxfreq, boolean performClustering, double thresholdId) {
+	public boolean[] getMaxFreqMask(AbstractProfiler profiler,LinkedHashMap<String, String> sequences, CutOffEvaluator eval, boolean performClustering, double thresholdId) {
 		
-		MaximumFrequencyProfiler maxFreqProfiler = new  MaximumFrequencyProfiler();
-		// Creates the object tha can calculate the profile
 		
+		////////////////////////////////////////////////////////////////////////
+		// Creates the profile
 		double[] profile = null;
-		
+
 		if (performClustering) {
 			
-			profile = maxFreqProfiler.calculateProfileUsingClustering(sequences,thresholdId);
+			profile = profiler.calculateProfileUsingClustering(sequences,thresholdId);
 			
 		} else {
 			
-			profile = maxFreqProfiler.calculateProfileWithoutClustering(sequences);
+			profile = profiler.calculateProfileWithoutClustering(sequences);
 		}
+		////////////////////////////////////////////////////////////////////////
 		
-		 
-		// Creates the profile
-		
+		////////////////////////////////////////////////////////////////////////
+		// Evaluates which positions of the profile pass the filter  
 		boolean[] mask = new boolean[profile.length];
 		// Creates a data structure to store and return  
 		// the result masking data.
@@ -555,13 +577,49 @@ public class Gapstripper {
 		for (int i = 0; i<profile.length; i++) {
 		// Iterates over each position of the profile 
 			
-			mask[i] = profile[i]<=maxfreq;
+			mask[i] = eval.passCutoff(profile[i]);
 			// Checks if the current value of the profile 
-			// passes the maximum frequency filter.
+			// passes the filter.
 			
 		}
+		////////////////////////////////////////////////////////////////////////
 		
 		return mask;
+		
+////////////////////////////////////////////////////////////////////////////////
+// Old implementation
+//		MaximumFrequencyProfiler maxFreqProfiler = new  MaximumFrequencyProfiler();
+//		// Creates the object that can calculate the profile
+//		
+//		double[] profile = null;
+//		
+//		if (performClustering) {
+//			
+//			profile = maxFreqProfiler.calculateProfileUsingClustering(sequences,thresholdId);
+//			
+//		} else {
+//			
+//			profile = maxFreqProfiler.calculateProfileWithoutClustering(sequences);
+//		}
+//		
+//		 
+//		// Creates the profile
+//		
+//		boolean[] mask = new boolean[profile.length];
+//		// Creates a data structure to store and return  
+//		// the result masking data.
+//		// A True value means that this position should be kept.
+//		
+//		for (int i = 0; i<profile.length; i++) {
+//		// Iterates over each position of the profile 
+//			
+//			mask[i] = profile[i]<=cutoff;
+//			// Checks if the current value of the profile 
+//			// passes the maximum frequency filter.
+//			
+//		}
+//		
+//		return mask;
 		
 	}
 	
