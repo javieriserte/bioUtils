@@ -1,4 +1,4 @@
-package seqManipulation.gapstripper;
+package seqManipulation.gapstripper.tests;
 
 import static org.junit.Assert.*;
 
@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.Test;
+
+import seqManipulation.gapstripper.EntropyProfiler;
 
 public class EntropyProfilerTest {
 

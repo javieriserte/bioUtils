@@ -1,4 +1,4 @@
-package seqManipulation.gapstripper;
+package seqManipulation.gapstripper.tests;
 
 import static org.junit.Assert.*;
 
@@ -8,6 +8,9 @@ import java.util.List;
 import org.junit.Test;
 
 import pair.Pair;
+import seqManipulation.gapstripper.Gapstripper;
+import seqManipulation.gapstripper.LowerEqualCutOffEvaluator;
+import seqManipulation.gapstripper.MaximumFrequencyProfiler;
 
 public class GapstripperTest extends Gapstripper {
 

@@ -1,8 +1,11 @@
-package seqManipulation.gapstripper;
+package seqManipulation.gapstripper.tests;
 
 import static org.junit.Assert.*;
 
 import org.junit.Test;
+
+import seqManipulation.gapstripper.AboveEqualCutOffEvaluator;
+import seqManipulation.gapstripper.CutOffEvaluator;
 
 public class AboveEqualCutOffEvaluatorTest {
 
