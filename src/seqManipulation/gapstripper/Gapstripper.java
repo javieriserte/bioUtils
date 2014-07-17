@@ -581,41 +581,6 @@ public class Gapstripper {
 		
 		return mask;
 		
-////////////////////////////////////////////////////////////////////////////////
-// Old implementation
-//		MaximumFrequencyProfiler maxFreqProfiler = new  MaximumFrequencyProfiler();
-//		// Creates the object that can calculate the profile
-//		
-//		double[] profile = null;
-//		
-//		if (performClustering) {
-//			
-//			profile = maxFreqProfiler.calculateProfileUsingClustering(sequences,thresholdId);
-//			
-//		} else {
-//			
-//			profile = maxFreqProfiler.calculateProfileWithoutClustering(sequences);
-//		}
-//		
-//		 
-//		// Creates the profile
-//		
-//		boolean[] mask = new boolean[profile.length];
-//		// Creates a data structure to store and return  
-//		// the result masking data.
-//		// A True value means that this position should be kept.
-//		
-//		for (int i = 0; i<profile.length; i++) {
-//		// Iterates over each position of the profile 
-//			
-//			mask[i] = profile[i]<=cutoff;
-//			// Checks if the current value of the profile 
-//			// passes the maximum frequency filter.
-//			
-//		}
-//		
-//		return mask;
-		
 	}
 	
 	
