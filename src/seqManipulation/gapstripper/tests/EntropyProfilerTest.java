@@ -7,12 +7,14 @@ import java.util.Map;
 
 import org.junit.Test;
 
+import seqManipulation.gapstripper.ClusteringWeighter;
 import seqManipulation.gapstripper.EntropyProfiler;
+import seqManipulation.gapstripper.UniformWeighter;
 
 public class EntropyProfilerTest {
 
 	@Test
-	public void testCalculateProfileWithoutClustering() {
+	public void testCalculateProfile() {
 		EntropyProfiler profiler  = new EntropyProfiler();
 		
 		Map<String,String> sequences = new HashMap<String, String>();
@@ -24,7 +26,7 @@ public class EntropyProfilerTest {
 		sequences.put("s5", "ARGTF");
 		
 		
-		double[] profile = profiler.calculateProfileWithoutClustering(sequences);
+		double[] profile = profiler.calculateProfile(sequences,new UniformWeighter());
 		
 		assertArrayEquals(new double[]{0, 0.167038, 0.224653, 0.444699, 0.537231}, profile, 0.001d);
 
@@ -37,18 +39,11 @@ public class EntropyProfilerTest {
 		sequences.put("s5", "-RGTF");
 		
 		
-		profile = profiler.calculateProfileWithoutClustering(sequences);
+		profile = profiler.calculateProfile(sequences,new UniformWeighter());
 		
 		assertArrayEquals(new double[]{0, 0.1877, 0.231362, 0.462758, 0.462758}, profile, 0.001d);
 
-	}
-
-	@Test
-	public void testCalculateProfileUsingClustering() {
-		EntropyProfiler profiler  = new EntropyProfiler();
-		
-		Map<String,String> sequences = new HashMap<String, String>();
-		
+			
 		//cluster 1 (weight = 1/2)
 		sequences.put("s1", "ACTGAACTGAACTGA");
 		sequences.put("s2", "ACTGAACTGAACTGG");
@@ -59,7 +54,7 @@ public class EntropyProfilerTest {
 		sequences.put("s5", "ACTGACTGAGARGTF");
 		
 		
-		double[] profile = profiler.calculateProfileUsingClustering(sequences, 0.62 );
+		profile = profiler.calculateProfile(sequences, new ClusteringWeighter(sequences, 0.62 ));
 		
 		assertArrayEquals(new double[]{ 0, 0, 0, 0, 0, 
 				0.231362, 0.231362, 0.231362, 0.231362, 0.231362, 
@@ -77,7 +72,7 @@ public class EntropyProfilerTest {
 		sequences.put("s5", "ACTGACTGAGARGTF");
 		
 		
-		profile = profiler.calculateProfileUsingClustering(sequences, 0.666 );
+		profile = profiler.calculateProfile(sequences, new ClusteringWeighter(sequences, 0.666 ));
 		
 		assertArrayEquals(new double[]{ 0, 0, 0, 0, 0, 
 				0.231362, 0.231362, 0.231362, 0.231362, 0.231362, 

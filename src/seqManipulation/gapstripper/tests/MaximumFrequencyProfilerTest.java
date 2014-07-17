@@ -7,7 +7,10 @@ import java.util.Map;
 
 import org.junit.Test;
 
+import seqManipulation.gapstripper.AbstractProfiler;
+import seqManipulation.gapstripper.ClusteringWeighter;
 import seqManipulation.gapstripper.MaximumFrequencyProfiler;
+import seqManipulation.gapstripper.UniformWeighter;
 
 public class MaximumFrequencyProfilerTest {
 
@@ -16,7 +19,7 @@ public class MaximumFrequencyProfilerTest {
 	@Test
 	public void testCalculateProfileWithoutClustering() {
 		
-		MaximumFrequencyProfiler profiler  = new MaximumFrequencyProfiler();
+		AbstractProfiler profiler  = new MaximumFrequencyProfiler();
 		
 		Map<String,String> sequences = new HashMap<String, String>();
 		
@@ -27,7 +30,7 @@ public class MaximumFrequencyProfilerTest {
 		sequences.put("s5", "ARGTF");
 		
 		
-		double[] profile = profiler.calculateProfileWithoutClustering(sequences);
+		double[] profile = profiler.calculateProfile(sequences, new UniformWeighter());
 		
 		assertArrayEquals(new double[]{1.0,0.8,0.6,0.4,0.2}, profile, 0.001d);
 
@@ -40,20 +43,10 @@ public class MaximumFrequencyProfilerTest {
 		sequences.put("s5", "-RGTF");
 		
 		
-		profile = profiler.calculateProfileWithoutClustering(sequences);
+		profile = profiler.calculateProfile(sequences , new UniformWeighter());
 		
 		assertArrayEquals(new double[]{1.0,0.75,0.5,0.25,0.25}, profile, 0.001d);
 
-		
-	}
-
-	@Test
-	public void testCalculateProfileUsingClustering() {
-
-		MaximumFrequencyProfiler profiler  = new MaximumFrequencyProfiler();
-		
-		Map<String,String> sequences = new HashMap<String, String>();
-		
 		//cluster 1 (weight = 1/2)
 		sequences.put("s1", "ACTGAACTGAACTGA");
 		sequences.put("s2", "ACTGAACTGAACTGG");
@@ -64,7 +57,7 @@ public class MaximumFrequencyProfilerTest {
 		sequences.put("s5", "ACTGACTGAGARGTF");
 		
 		
-		double[] profile = profiler.calculateProfileUsingClustering(sequences, 0.666 );
+		profile = profiler.calculateProfile(sequences, new ClusteringWeighter(sequences, .666 ));
 		
 		assertArrayEquals(new double[]{ 1.0,1.0,1.0,1.0,1.0,
 				                         0.5,0.5,0.5,0.5,0.5,
@@ -94,7 +87,7 @@ public class MaximumFrequencyProfilerTest {
 		sequences.put("s5", "ACTGACTGAGARGTF");
 		
 		
-		profile = profiler.calculateProfileUsingClustering(sequences, 0.666 );
+		profile = profiler.calculateProfile(sequences, new ClusteringWeighter(sequences, .666 ));
 		
 		assertArrayEquals(new double[]{ 1.0,1.0,1.0,1.0,1.0,
 				                         0.5,0.5,0.5,0.5,0.5,

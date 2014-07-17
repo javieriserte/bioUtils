@@ -8,9 +8,11 @@ import java.util.List;
 import org.junit.Test;
 
 import pair.Pair;
+import seqManipulation.gapstripper.ClusteringWeighter;
 import seqManipulation.gapstripper.Gapstripper;
 import seqManipulation.gapstripper.LowerEqualCutOffEvaluator;
 import seqManipulation.gapstripper.MaximumFrequencyProfiler;
+import seqManipulation.gapstripper.UniformWeighter;
 
 public class GapstripperTest extends Gapstripper {
 
@@ -259,57 +261,57 @@ public class GapstripperTest extends Gapstripper {
 		sequences.put("s5", s5);
 		sequences.put("s6", s6);
 
+		UniformWeighter uw = new UniformWeighter();
 		
-		
-		boolean[] noCl = stripper.getMaxFreqMask(new MaximumFrequencyProfiler(),sequences, new LowerEqualCutOffEvaluator(.85), false, 0);
+		boolean[] noCl = stripper.getProfileMask(new MaximumFrequencyProfiler(),sequences, new LowerEqualCutOffEvaluator(.85),uw);
 		
 		assertArrayEquals(new Boolean[]{true,true,true,true,true,true,true,true,true,true},
 				          new Boolean[]{noCl[0],noCl[1],noCl[2],noCl[3],noCl[4],noCl[5],noCl[6],noCl[7],noCl[8],noCl[9]});
 		
-		noCl = stripper.getMaxFreqMask(new MaximumFrequencyProfiler(),sequences, new LowerEqualCutOffEvaluator(0.8), false, 0);
+		noCl = stripper.getProfileMask(new MaximumFrequencyProfiler(),sequences, new LowerEqualCutOffEvaluator(0.8),uw);
 		
 		assertArrayEquals(new Boolean[]{true,true,true,true,true,true,true,true,true,false},
 				          new Boolean[]{noCl[0],noCl[1],noCl[2],noCl[3],noCl[4],noCl[5],noCl[6],noCl[7],noCl[8],noCl[9]});
 
-		noCl = stripper.getMaxFreqMask(new MaximumFrequencyProfiler(),sequences, new LowerEqualCutOffEvaluator(0.6), false, 0);
+		noCl = stripper.getProfileMask(new MaximumFrequencyProfiler(),sequences, new LowerEqualCutOffEvaluator(0.6),uw);
 		
 		assertArrayEquals(new Boolean[]{false,false,false,false,false,false,false,true,false,false},
 				          new Boolean[]{noCl[0],noCl[1],noCl[2],noCl[3],noCl[4],noCl[5],noCl[6],noCl[7],noCl[8],noCl[9]});
 
-		noCl = stripper.getMaxFreqMask(new MaximumFrequencyProfiler(),sequences, new LowerEqualCutOffEvaluator(0.45), false, 0);
+		noCl = stripper.getProfileMask(new MaximumFrequencyProfiler(),sequences, new LowerEqualCutOffEvaluator(0.45),uw);
 		
 		assertArrayEquals(new Boolean[]{false,false,false,false,false,false,false,false,false,false},
 				          new Boolean[]{noCl[0],noCl[1],noCl[2],noCl[3],noCl[4],noCl[5],noCl[6],noCl[7],noCl[8],noCl[9]});
 
+		ClusteringWeighter cw = new ClusteringWeighter(sequences, 0.7);
 		
-		
-		boolean[] cl = stripper.getMaxFreqMask(new MaximumFrequencyProfiler(),sequences, new LowerEqualCutOffEvaluator(0.88), true, 0.7);
+		boolean[] cl = stripper.getProfileMask(new MaximumFrequencyProfiler(),sequences, new LowerEqualCutOffEvaluator(0.88), cw);
 		
 		assertArrayEquals(new Boolean[]{true,true,true,true,true,true,true,true,true,true},
 				          new Boolean[]{cl[0],cl[1],cl[2],cl[3],cl[4],cl[5],cl[6],cl[7],cl[8],cl[9]});
 
-		cl = stripper.getMaxFreqMask(new MaximumFrequencyProfiler(),sequences, new LowerEqualCutOffEvaluator(0.85), true, 0.7);
+		cl = stripper.getProfileMask(new MaximumFrequencyProfiler(),sequences, new LowerEqualCutOffEvaluator(0.85), cw);
 		
 		assertArrayEquals(new Boolean[]{true,true,true,true,true,true,true,true,true,false},
 				          new Boolean[]{cl[0],cl[1],cl[2],cl[3],cl[4],cl[5],cl[6],cl[7],cl[8],cl[9]});
 		
 		
-		cl = stripper.getMaxFreqMask(new MaximumFrequencyProfiler(),sequences, new LowerEqualCutOffEvaluator(0.8), true, 0.7);
+		cl = stripper.getProfileMask(new MaximumFrequencyProfiler(),sequences, new LowerEqualCutOffEvaluator(0.8), cw);
 		
 		assertArrayEquals(new Boolean[]{true,true,true,true,true,true,true,true,true,false},
 				          new Boolean[]{cl[0],cl[1],cl[2],cl[3],cl[4],cl[5],cl[6],cl[7],cl[8],cl[9]});
 		
-		cl = stripper.getMaxFreqMask(new MaximumFrequencyProfiler(),sequences, new LowerEqualCutOffEvaluator(0.6), true, 0.7);
+		cl = stripper.getProfileMask(new MaximumFrequencyProfiler(),sequences, new LowerEqualCutOffEvaluator(0.6), cw);
 		
 		assertArrayEquals(new Boolean[]{true,true,true,true,true,true,true,false,false,false},
 				          new Boolean[]{cl[0],cl[1],cl[2],cl[3],cl[4],cl[5],cl[6],cl[7],cl[8],cl[9]});
 		
-		cl = stripper.getMaxFreqMask(new MaximumFrequencyProfiler(),sequences, new LowerEqualCutOffEvaluator(0.5), true, 0.7);
+		cl = stripper.getProfileMask(new MaximumFrequencyProfiler(),sequences, new LowerEqualCutOffEvaluator(0.5), cw);
 		
 		assertArrayEquals(new Boolean[]{true,true,true,true,true,true,true,false,false,false},
 				          new Boolean[]{cl[0],cl[1],cl[2],cl[3],cl[4],cl[5],cl[6],cl[7],cl[8],cl[9]});
 
-		cl = stripper.getMaxFreqMask(new MaximumFrequencyProfiler(),sequences, new LowerEqualCutOffEvaluator(0.49), true, 0.7);
+		cl = stripper.getProfileMask(new MaximumFrequencyProfiler(),sequences, new LowerEqualCutOffEvaluator(0.49), cw);
 		
 		assertArrayEquals(new Boolean[]{false,false,false,false,false,false,false,false,false,false},
 				          new Boolean[]{cl[0],cl[1],cl[2],cl[3],cl[4],cl[5],cl[6],cl[7],cl[8],cl[9]});

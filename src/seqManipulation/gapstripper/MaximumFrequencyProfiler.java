@@ -1,13 +1,6 @@
 package seqManipulation.gapstripper;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
-
-import clustering.HobohmClusteringM1;
-import pair.Pair;
 
 /**
  * Creates a profile with the maximum frequency for each 
@@ -17,156 +10,29 @@ import pair.Pair;
  *
  */
 public class MaximumFrequencyProfiler extends AbstractProfiler {
-	
-	/////////////////////////////////
-	// Class Constants
-	private static final char gap = '-';
-
-	/////////////////////////////////
-	// Public Methods
 	/**
-	 * Calculates the maximum frequency profile
-	 * for a given alignment without perform clustering before.
-	 * 
-	 * @param sequences a map of sequences and descriptions
-	 * @return an array of the length of the alignment. In each position 
-	 *          of the array is the maximum frequency for one column of 
-	 *          the alignment. 
-	 */
-	public double[] calculateProfileWithoutClustering(Map<String, String> sequences) {
-
-		Map<String,Double> clusterWeigth = new HashMap<>();
-		
-		for (String description : sequences.keySet()) {
-			
-			clusterWeigth.put(description, 1d);
-			
-		}
-		
-		return calculateProfile(sequences,clusterWeigth);
-
-	}
-	
-	/**
-	 * Calculates the maximum frequency profile
-	 * for a given alignment performing clustering before.
-	 * Clustering gives a weight to every sequence in the alignment as:
-	 * <pre>
-	 * w = 1 / (number of sequences in the cluster)  
-	 * </pre>
-	 * 
-	 * @param sequences a map of sequences and descriptions
-	 * @return an array of the length of the alignment. In each position 
-	 *          of the array is the maximum frequency for one column of 
-	 *          the alignment. 
-	 */
-	public double[] calculateProfileUsingClustering(Map<String, String> sequences, double thresholdId) {
-
-		Map<String,Double> clusterWeigth = new HashMap<>();
-		
-		HobohmClusteringM1 clusterer = new HobohmClusteringM1();
-		
-		List<Pair<String,String>> sequenceList = new ArrayList<>();
-		
-		for (String  description : sequences.keySet()) {
-			
-			sequenceList.add(new Pair<String, String>(description, sequences.get(description)));
-			
-		}
-		
-		Set<List<Pair<String, String>>> clusters = clusterer.clusterize(sequenceList, thresholdId);
-
-		for (List<Pair<String, String>> list : clusters) {
-			
-			double currentClusterWeight = list.size();
-			
-			for (Pair<String, String> pair : list) {
-				
-				clusterWeigth.put(pair.getFirst(), 1/currentClusterWeight);
-				
-			}
-			
-		}
-		
-		return calculateProfile(sequences,clusterWeigth);
-		
-	}
-
-	/////////////////////////////////
-	// Private Methods
-	
-	/**
-	 * Calculates the maximum frequency profile
-	 * for a given alignment
+	 * Calculates the maximum frequency profile values for a given alignment. 
+	 * Calculates the value for one position in each call.
 	 *  
-	 * @param sequences is a Map representing an alignment.
-	 * @return a double array with the profile values.
+	 * @param profile is the array where the value is stored
+	 * @param i is the current position of the profile being calculated
+	 * @param frequencies is a map whose keys are amino acids and values are 
+	 *        the number of occurrences of this amino acid in the i-th column 
+	 *        of the alignment.
+	 * @param numberOfSequences is the number of non-gap positions in the i-th
+	 *        column of the alignment.
 	 */
-	private double[] calculateProfile(Map<String, String> sequences, Map<String,Double> clusterWeigth) {
-		
-		Set<String> descriptions = sequences.keySet();
-		// Retrieves the description key of sequences
-
-		int AlignmentLength = sequences.get(descriptions.iterator().next()).length();
-		// Retrieves the length of the alignment
-		// Assumes that all sequences has the same length. 
-
-		double[] profile = new double[AlignmentLength];
-		// Creates a data structure to hold and return the profile.
-
-		for (int i = 0; i<AlignmentLength; i++) {
-		// iterates over each column of the alignment
-		
-			getColumnMaxFreq(sequences, descriptions, profile, i, clusterWeigth);
-			
-		}
-
-		return profile;
-	}
-	
-	private void getColumnMaxFreq(Map<String, String> sequences,
-			Set<String> descriptions, double[] profile, int i, Map<String,Double> clusterWeigth) {
-		
-		Map<Character,Double> frequencies = new HashMap<>();
-		// Creates a temporary data structure to accumulate
-		// frequencies of each symbol of the alphabet
-		
-		double counter = 0;
-		// Counter to store the number of non-gap characters
-		// or weights if clustering is used
-		
-		for (String currentSeq : descriptions) {
-		// Iterates over each position
-		// of the current column
-			
-			char currentChar = sequences.get(currentSeq).charAt(i);
-			
-			if (currentChar != MaximumFrequencyProfiler.gap) {
-			
-				if (!frequencies.containsKey(currentChar)) {
-					// Initializes the frequencies map
-					// for a given new char
-					
-					frequencies.put(currentChar, 0d);
-					
-				}
-				
-				frequencies.put(currentChar, frequencies.get(currentChar) + clusterWeigth.get(currentSeq) );
-				// Adds one to the count
-				// of this character
-				
-				counter = counter + clusterWeigth.get(currentSeq);
-				// Also, adds one the the counter of all non-gap chars.
-				
-			}
-			
-		}
-		
+	@Override
+	protected void calculateProfileFromFrequencies(
+			double[] profile, 
+			int i,
+			Map<Character, Double> frequencies, 
+			double numberOfSequences) {
 		double maxCount = getMaxCount(frequencies);
 		// Search for the symbol with maximum 
 		// frequency
 		
-		profile[i] = maxCount / counter;
+		profile[i] = maxCount / numberOfSequences;
 		// Adds the max frequency value to the result array
 	}
 
@@ -190,5 +56,5 @@ public class MaximumFrequencyProfiler extends AbstractProfiler {
 		return maxCount;
 		
 	}
-	
+
 }

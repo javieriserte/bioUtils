@@ -160,8 +160,13 @@ public class Gapstripper {
 		////////////////////////////////////////////////////////////////////////
 		
 		////////////////////////////////////////////////////////////////////////
+		// Get the sequence weighter object
+		SequenceWeighter weighter = clusterOpt.isPresent()?new ClusteringWeighter(sequences, clusterIdOpt.getValue()):new UniformWeighter();
+		////////////////////////////////////////////////////////////////////////
+		
+		////////////////////////////////////////////////////////////////////////
 		// Get Maximum Frequencies Mask
-		boolean[] mask = stripper.getMaxFreqMask(profiler,sequences, evaluator, clusterOpt.isPresent(), clusterIdOpt.getValue());
+		boolean[] mask = stripper.getProfileMask(profiler,sequences, evaluator, weighter);
 		
 		////////////////////////////////
 		// Get Reference Sequence Description
@@ -550,21 +555,11 @@ public class Gapstripper {
 	 * @return an array that represents a logical mask of which column passes 
 	 * the maximum frequency filter. 
 	 */
-	public boolean[] getMaxFreqMask(AbstractProfiler profiler,LinkedHashMap<String, String> sequences, CutOffEvaluator eval, boolean performClustering, double thresholdId) {
-		
+	public boolean[] getProfileMask(AbstractProfiler profiler,LinkedHashMap<String, String> sequences, CutOffEvaluator eval, SequenceWeighter weighter) {
 		
 		////////////////////////////////////////////////////////////////////////
 		// Creates the profile
-		double[] profile = null;
-
-		if (performClustering) {
-			
-			profile = profiler.calculateProfileUsingClustering(sequences,thresholdId);
-			
-		} else {
-			
-			profile = profiler.calculateProfileWithoutClustering(sequences);
-		}
+		double[] profile = profiler.calculateProfile(sequences, weighter);
 		////////////////////////////////////////////////////////////////////////
 		
 		////////////////////////////////////////////////////////////////////////
