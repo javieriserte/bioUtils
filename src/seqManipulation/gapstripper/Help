@@ -3,7 +3,7 @@ Gapstripper.
   This program is intended to perform three common pre-processing
   features in alignments before MI calculation.
  
-   * Maximum frequency filter.
+   * Maximum frequency filter or entropy filter.
    * Strip with a reference sequence.
    * Remove rows (sequences) with more than a given fraction of gaps.
  
@@ -18,7 +18,13 @@ Options:
                 
   --maxfreq     Real number. Keeps the columns whose maximum frequency is less 
                 than or equal to a given value. If omitted all positions are 
-                included.
+                included. Options --maxfreq and --entropy can not be present
+                at the same time.
+                
+  --entropy     Real number. Keeps the columns whose Shannon entropy is greater 
+                than or equal to a given value. If omitted all positions are 
+                included. Options --maxfreq and --entropy can not be present
+                at the same time.             
                 
   --refId       String. Sets reference sequence by its title or description.
   
@@ -35,8 +41,8 @@ Options:
                  
   --ref_file    Path File to out reference map file. If omitted reference is not
                 printed. The first column is the position in the output alignment,
-		        the second column is the corresponding position in the original
-		        alignment.
+                the second column is the corresponding position in the original
+                alignment.
 		        
   --cluster     Perform clustering before maximum frequency filter. By defult, 
                 clustering is not performed.

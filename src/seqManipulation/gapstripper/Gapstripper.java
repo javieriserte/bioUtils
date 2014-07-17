@@ -29,7 +29,7 @@ import pair.Pair;
  * features in alignments before MI calculation.
  * 
  * <ol>
- * <li> Maximum frequency filter</li>
+ * <li> Maximum frequency filter or Entropy filter</li>
  * <li> Strip with a reference sequence</li>
  * <li> Remove rows (sequences) with more than a given fraction of gaps.</li> 
  * </ol>
