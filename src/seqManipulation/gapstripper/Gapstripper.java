@@ -270,7 +270,7 @@ public class Gapstripper {
 		for (String string : seqs) {
 			
 			int currentSize = string.length();
-			if (! (lastSize == currentSize) || first) {
+			if ((lastSize != currentSize) && !first) {
 				return false;
 			}
 			lastSize = currentSize;
