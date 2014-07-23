@@ -1,0 +1,26 @@
+ColPairFreq. 0.2.1
+
+  This program reads an alignment, and a series of position pairs an returns 
+  the amino acid pairs in those positions and the frequency of appearance of 
+  each pair.  
+ 
+Usage:
+  colpairfreq.jar <Options>  
+ 
+Options:
+  --infile      Path file to input alignment. If omitted standard input is used.
+  
+  --outfile     Path file to output text. If omitted standard output is used.
+                
+  --list_file   File. Is the path to a file containing the position pairs to 
+                analyze. Each text line of the file correspond to a single pair. 
+                Numbers in each line should be separated by a space or tab char.
+                Position numbers starts in 1, not 0. 
+                
+  --positions   Integer. A list of comma separated values that correspond to 
+                columns in the alignment (starting in 1, not 0). The list must 
+                have a even number of elements. First and second elements 
+                correspond to the first pair, third and fourth correspond to
+                the second pair, etc.              
+                
+  --help        Flag. Shows this help and exit.
