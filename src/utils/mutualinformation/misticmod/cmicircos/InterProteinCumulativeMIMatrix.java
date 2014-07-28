@@ -169,11 +169,11 @@ public class InterProteinCumulativeMIMatrix {
 
 				if (i==0 && j>0 || i>0 && j==0) {
 					
-					out.print( ((i==0)?"\t":"") + names.get(Math.max(i-i,j-1)));
+					out.print( ((i==0)?"\t":"") + names.get(Math.max(i-1,j-1)));
 					
 				} else if (j>0 && i>0) {
 					
-					String value = (j>i)?String.format(Locale.US,"%4.2f",cmi_inter[i-1][j-1]):"-"; 
+					String value = (j>i)?String.format(Locale.US,"%6.5f",cmi_inter[i-1][j-1]):"-"; 
 					
 					out.print("\t" + value);
 					
