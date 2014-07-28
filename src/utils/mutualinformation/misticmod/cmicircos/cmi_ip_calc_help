@@ -1,0 +1,32 @@
+Interprotein CMI calculator.
+  Calculates an weighted sum of MI between all pairs of residues of protein
+  pairs.
+
+Usage:
+  cmi_ip.jar <Options>
+
+Options:
+  -infile           Path file to input MI data file. If omitted standard input 
+                    is used.
+  
+  -outfile          Output file path. If omitted standard output is used. 
+
+  -countall         Flag. If present, the Cmi between two proteins is normalized
+                    by the product of the lengths of both proteins, regardless
+                    that many positions sum 0 to Cmi.
+                    If absent, the Cmi between two proteins is normalized by the
+                    number of pairs that have a value greater then 0 (usually,
+                    greater than 6.5, but this is not verified).
+                
+  -lengths          List of Integer. The length of each protein, separated by a
+                    comma. Protein lengths must have the same order than the MI
+                    data file. 
+                    
+  -names            List of String. The name of each protein, separated by a 
+                    comma.
+                    
+  -table            Flag. Indicates that the output must be print as a table.
+  
+  -help             Shows this help.               
+
+		

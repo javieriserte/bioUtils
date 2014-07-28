@@ -1,0 +1,56 @@
+package utils.mutualinformation.misticmod.cmicircos;
+
+/**
+ * Normalize the sum of MI values among two proteins with all pairs.
+ * This normalization includes pairs with MI = -999.99.
+ * 
+ * @author javier iserte
+ *
+ */
+public class NormalizeWithAll extends Normalizer {
+	
+	////////////////////////////////////////////////////////////////////////////
+	// Instance variables
+	private Integer[] lengths;
+	////////////////////////////////////////////////////////////////////////////
+	
+	////////////////////////////////////////////////////////////////////////////
+	// Constructor
+	/**+
+	 * Creates a new NormalizerWithAll object.
+	 * @param lengths
+	 */
+	public NormalizeWithAll(Integer[] lengths) {
+		super();
+		this.lengths = lengths;
+	}
+	////////////////////////////////////////////////////////////////////////////
+
+	////////////////////////////////////////////////////////////////////////////
+	// Public interface
+	@Override
+	public double denominator(int row, int column) {
+		
+		return (lengths[row] * lengths[column]);
+		
+	}
+	////////////////////////////////////////////////////////////////////////////
+
+	////////////////////////////////////////////////////////////////////////////
+	// Private methods	
+	/**
+	 * @return the lengths
+	 */
+	protected Integer[] getLengths() {
+		return lengths;
+	}
+
+	/**
+	 * @param lengths the lengths to set
+	 */
+	protected void setLengths(Integer[] lengths) {
+		this.lengths = lengths;
+	}
+	////////////////////////////////////////////////////////////////////////////
+	
+}

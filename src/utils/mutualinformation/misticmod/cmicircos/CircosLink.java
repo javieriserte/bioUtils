@@ -1,4 +1,4 @@
-package utils.mutualinformation.misticmod;
+package utils.mutualinformation.misticmod.cmicircos;
 
 public class CircosLink {
 

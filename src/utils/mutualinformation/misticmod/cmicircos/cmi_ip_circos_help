@@ -1,0 +1,32 @@
+Interprotein CMI Circos generator.
+  Creates the configuration files for Circos representing the MI interprotein
+  data.
+
+Usage:
+  CmiToCircos.jar <Options>
+
+Options:
+  -infile           Path file to input MI data file. If omitted standard input 
+                    is used.
+  
+  -prefix           String. Prefixes in file names generated to be used in 
+                    circos.
+
+  -countall         Flag. If present, the Cmi between two proteins is normalized
+                    by the product of the lengths of both proteins, regardless
+                    that many positions sum 0 to Cmi.
+                    If absent, the Cmi between two proteins is normalized by the
+                    number of pairs that have a value greater then 0 (usually,
+                    greater than 6.5, but this is not verified).
+                
+  -lengths          List of Integer. The length of each protein, separated by a
+                    comma. Protein lengths must have the same order than the MI
+                    data file. 
+                    
+  -names            Path to a file with the names of each region or protein.
+                    
+  -pngdir           Path to the directory where png files should be exported by  circos.
+  
+  -help             Shows this help.               
+
+		
