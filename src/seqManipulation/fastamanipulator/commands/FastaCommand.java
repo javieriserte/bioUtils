@@ -6,11 +6,11 @@ import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.util.List;
 
-import cmdGA.Option;
+import cmdGA2.ArgOption;
 import fileformats.fastaIO.FastaMultipleReader;
 import pair.Pair;
 
-public abstract class FastaCommand <Op extends Option> {
+public abstract class FastaCommand <Op extends ArgOption<?>> {
 
 	////////////////////////////
 	// Instance Variables

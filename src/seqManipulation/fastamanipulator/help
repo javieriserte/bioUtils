@@ -1,0 +1,107 @@
+Fasta Alignment Manipulator
+  Manipulate MSA with the command line.
+
+Usage:
+  java -jar fam.jar <Options>   or
+  fam.jar <Otions>
+  
+Options: -infile            : Is the input fasta file (or stdin if no present).
+         -outfile           : Is the path to the output file (or stdout if no 
+                               present).
+         -revcomp           : Gets the reverse complementary sequence.
+         -extract           : Extracts some of the sequences of the alignment.
+                               A comma separated list of the row number of the 
+                               sequences to be retrieved is required.
+                               The first sequence i s the number 1.
+         -count             : Counts the number of sequences in a fasta file.
+         -length            : Counts the number of columns in the alignment. 
+                               If all of them haven't the same size return 0.
+         -lengths           : Counts the number of columns in each row 
+                               of the alignment.
+         -concatenate       : Joins many alignments into one (adding rows).
+                               the names of files to be concatenated must be 
+                               separated by a comma.
+         -def               : Shows and enumerates the descriptions of each
+                               sequence.
+         -append            : Creates a new alignment from two. Each sequences 
+                               of the new alignment results of the combination 
+                               of the sequences from the input alignments at the
+                               same row. The two input alignment should have the
+                               same number of rows.
+                               Example: 
+                                fam.jar -infile=a.fas -append=b.fas > c.fas
+         -slice             : Cuts a segment of the alignment and keeps it. 
+                               The rest is removed. The starting position and 
+                               the last position must be passed. 
+                               Example:  -slice=1,20   
+                                Keeps the 20 first characters of the alignment.
+         -degap             : Removes "-" symbols from each sequence.
+         -translate         : Translate DNA sequences into amino acid.
+         -translateWith     : Translate DNA sequences into amino acid using a 
+                               given file containing a genetic code.
+                               Example:
+                                -translateWith=myGeneticCode.txt
+         -genCodeHelp       : Shows help about the genetic code format.
+         -randomRT          : Back-translate a protein sequence into a DNA 
+                               sequence, choosing for every amino acid one the 
+                               possible codons randomly. 
+         -recFromCon        : Reconstruct an alignment from a dotted alignment 
+                               using a reference consensus sequence.
+                               Example: -recFromCon=1 
+                                uses the first sequence as reference
+         -fGrTh             : Looks through the alignment and removes all the 
+                               sequences, except the ones that are greater than 
+                               a given size.
+                               Example: -fGrTh=7000
+                                removes sequences with length lower or equal 
+                                to 7000
+         -fSmTh             : Looks through the alignment and removes all the 
+                               sequences, except the ones that are smaller than 
+                               a given size
+                               Example: -fSmTh=7000    
+                                removes sequences with length greater or equal 
+                                to 7000
+         -title             : Filter sequences that contains a given string 
+                               in the description
+                               Example: -title=gi00001
+                                keeps the sequences that contains the 
+                                string gi00001 in the title.
+         -idValues          : Gets a list of identity percent values between 
+                               all the sequences in the alignment.
+         -idMatrix          : Exports an csv file with a symmetric matrix with 
+                               identities values.
+         -mds               : Performs a Multidimensional Scaling analysis 
+                               (using the MDSJ package developed by Christian 
+                               Pich (University of Konstanz)).
+                               Requires a number that indicates the number of 
+                               output dimensions.
+         -stripGappedColFr  : Removes columns of the alignment that contains 
+                               more than a given proportion of gaps.
+         -pick              : Pick a random number set of the sequences.
+                               Example: -pick=5
+                                pick 5 random sequences
+         -keeppos           : Reads a file that contains one number per line and 
+                               keeps the columns of the alignment that 
+                               corresponds to these numbers.
+         -rempos            : Reads a file that contains one number per line and 
+                               removes the columns of the alignment that 
+                               corresponds to these numbers.
+         -remIdPos          : Removes columns of an alignment that contains the  
+                              same char (or a gap) in every row.
+         -pad               : Add gaps to every row until the length of that row
+                               is equal to the length of the largest row. 
+         -repUncommon       : Replace uncommon chars that might be found in some
+                               sequences by a given char two arguments must be 
+                               passed. The first is the type of sequences to 
+                               look for and the second is the replacement char
+                               the values of first argument may be:
+                               b for non degenerated bases
+                               d for degenerated bases
+                               a for amino acids
+                               Example: -repUncommon b,N 
+                                replace all chars, except A,C,T,G,-,a,c,t,g, 
+                                by N.
+         -extract_titles    : Extract selected sequences from an alignment by 
+                               their description (or title).
+         -ver               : Prints the number of the version in stdout.
+         -help              : Shows this help.
