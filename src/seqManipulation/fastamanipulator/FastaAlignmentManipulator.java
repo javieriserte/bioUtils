@@ -16,6 +16,7 @@ import seqManipulation.fastamanipulator.commands.CountGapsInRowCommand;
 import seqManipulation.fastamanipulator.commands.DeInterleaveCommand;
 import seqManipulation.fastamanipulator.commands.DefinitionsCommand;
 import seqManipulation.fastamanipulator.commands.DegapCommand;
+import seqManipulation.fastamanipulator.commands.ExtractByTitleCommand;
 import seqManipulation.fastamanipulator.commands.ExtractCommand;
 import seqManipulation.fastamanipulator.commands.FastaCommand;
 import seqManipulation.fastamanipulator.commands.FilterSequenceContainingCommand;
@@ -169,6 +170,8 @@ public class FastaAlignmentManipulator {
 
 		uniqueCommands.add(new FilterTitlesContainingCommand(null, null, new MultipleOption(parser, 1, "-titles", ',',StringParameter.getParameter()), invertFilterOpt));
 
+		uniqueCommands.add(new ExtractByTitleCommand(null, null, new MultipleOption(parser, 1, "-extract_titles", ',',StringParameter.getParameter())));
+		
 		uniqueCommands.add(new KeepPositionsCommand(null, null, new SingleOption(parser, 1, "-keeppos", InFileParameter.getParameter())));
 
 		uniqueCommands.add(new RemPositionsCommand(null, null, new SingleOption(parser, 1, "-rempos", InFileParameter.getParameter())));

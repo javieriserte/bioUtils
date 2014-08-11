@@ -77,6 +77,7 @@ public class HelpCommand extends FastaCommand<NoOption> {
 		results.add("                               b for non degenerated bases");
 		results.add("                               d for degenerated bases");
 		results.add("                               a for amino acids");
+		results.add("         -extract_titles    : Extract selected sequences from an alignment by their title.");
 		results.add("         -ver               : prints the number of the version in stdout.");
 		results.add("         -help              : shows this help.");
 
