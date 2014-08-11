@@ -39,9 +39,13 @@ public class ExtractByTitleCommand extends FastaCommand<MultipleOption> {
 			
 			String query = (String) queryIndex;
 			
-			results.add(">" + query);
+			if (sequenceMap.containsKey(query)) {
+			
+				results.add(">" + query);
 				
-			results.add(sequenceMap.get(query));
+				results.add(sequenceMap.get(query));
+			
+			}
 			
 		}
 		
