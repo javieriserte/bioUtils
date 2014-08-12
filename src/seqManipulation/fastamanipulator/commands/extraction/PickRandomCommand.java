@@ -24,16 +24,16 @@ public class PickRandomCommand extends FastaCommand<SingleArgumentOption<Integer
 		
 		super(inputstream, output, option);
 		
-		this.numberToPick = (Integer) this.getOption().getValue();
-
 	}
 
 	@Override
 	protected List<String> performAction() {
-		
+
 		List<String> results = new ArrayList<String>();
 		
 		List<Pair<String, String>> seqs = this.getSequences();
+
+		this.numberToPick = Math.min(this.getOption().getValue(),seqs.size());
 		
 		if (seqs.size()>0) {
 				
