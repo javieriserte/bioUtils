@@ -24,12 +24,12 @@ public class CountGapsInRowCommand extends FastaCommand<SingleArgumentOption<Int
 		
 		super(inputstream, output, option);
 		
-		this.rowToCounts = this.getOption().getValue();
-		
 	}
 
 	@Override
 	protected List<String> performAction() {
+		
+		this.rowToCounts = this.getOption().getValue();
 		
 		List<Pair<String, String>> seqs = this.getSequences();
 		

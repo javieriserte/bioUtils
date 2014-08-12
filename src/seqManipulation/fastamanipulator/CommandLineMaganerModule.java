@@ -21,6 +21,7 @@ import seqManipulation.fastamanipulator.commands.filter.FilterSizeSmEqThanComman
 import seqManipulation.fastamanipulator.commands.filter.FilterTitleContainingCommand;
 import seqManipulation.fastamanipulator.commands.filter.FilterTitlesContainingCommand;
 import seqManipulation.fastamanipulator.commands.gaps.CountGapsInRowCommand;
+import seqManipulation.fastamanipulator.commands.gaps.CrushEndsCommand;
 import seqManipulation.fastamanipulator.commands.gaps.DegapCommand;
 import seqManipulation.fastamanipulator.commands.gaps.FlushEndsCommand;
 import seqManipulation.fastamanipulator.commands.gaps.GapFrequencyInColumnsCommand;
@@ -94,6 +95,7 @@ public class CommandLineMaganerModule {
 	private static final String MI = "-MI";
 	private static final String RANDOM_RT = "-randomRT";
 	private static final String FLUSH = "-flush";
+	private static final String CRUSH = "-crush";
 	private static final String STRIP_GAPPED_COL_FR = "-stripGappedColFr";
 	private static final String STRIP_GAPPED_COLUMNS = "-stripGappedColumns";
 	private static final String GEN_CODE_HELP = "-genCodeHelp";
@@ -201,6 +203,7 @@ public class CommandLineMaganerModule {
 		// Gap
 		uniqueCommands.add(new DegapCommand(null, null, new NoArgumentOption(cmd, DEGAP)));
 		uniqueCommands.add(new FlushEndsCommand(null, null, new NoArgumentOption(cmd, FLUSH)));
+		uniqueCommands.add(new CrushEndsCommand(null, null, new NoArgumentOption(cmd, CRUSH)));
 		uniqueCommands.add(new PadWithGapCommand(null, null, new NoArgumentOption(cmd, PAD)));
 		uniqueCommands.add(new GapFrequencyInColumnsCommand(null,null,new NoArgumentOption(cmd, GAPFREQ)));
 		uniqueCommands.add(new RemoveGappedRowsCommand(null, null, new NoArgumentOption(cmd, REM_GAP_ROWS)));
