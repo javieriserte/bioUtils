@@ -208,7 +208,7 @@ public class CommandLineMaganerModule {
 		uniqueCommands.add(new GapFrequencyInColumnsCommand(null,null,new NoArgumentOption(cmd, GAPFREQ)));
 		uniqueCommands.add(new RemoveGappedRowsCommand(null, null, new NoArgumentOption(cmd, REM_GAP_ROWS)));
 		uniqueCommands.add(new StripGappedColumnsCommand(null, null, new NoArgumentOption(cmd, STRIP_GAPPED_COLUMNS)));
-		uniqueCommands.add(new StripGappedColumnsByFreqCommand(null, null, new SingleArgumentOption<Double>(cmd,STRIP_GAPPED_COL_FR, new DoubleValue(),null ), new SingleArgumentOption<File>(cmd,  "-reference", new OutfileValue(),null)));
+		uniqueCommands.add(new StripGappedColumnsByFreqCommand(null, null, new SingleArgumentOption<Double>(cmd,STRIP_GAPPED_COL_FR, new DoubleValue(),1d ), new SingleArgumentOption<File>(cmd,  "-reference", new OutfileValue(),null)));
 		uniqueCommands.add(new CountGapsInRowCommand(null, null, new SingleArgumentOption<Integer>(cmd, COUNT_GAPS_IN,  new IntegerValue(),1)));
 		////////////////////////////////////////////////////////////////////////
 		// Misc
