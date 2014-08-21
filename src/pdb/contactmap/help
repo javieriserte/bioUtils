@@ -1,0 +1,14 @@
+ContactMapper - Creates a list of contacts for a PDB file.
+ 
+Usage: 
+   contactmapper.jar <Option>
+  
+Options:
+   --infile   Strings. Path to the input PDB file.
+                
+   --outfile  String. Path to the resulting file with the contacts.
+   
+   --draw     String. Path to an file where to export an image of the contact 
+               map.
+
+   --help    Shows this help and exit.

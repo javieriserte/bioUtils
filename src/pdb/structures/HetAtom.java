@@ -1,4 +1,4 @@
-package pdb;
+package pdb.structures;
 
 public class HetAtom extends SpacePoint {
 

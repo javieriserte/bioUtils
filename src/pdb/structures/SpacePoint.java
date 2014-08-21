@@ -1,4 +1,4 @@
-package pdb;
+package pdb.structures;
 
 import java.util.ArrayList;
 import java.util.HashMap;

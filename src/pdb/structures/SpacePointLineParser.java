@@ -1,4 +1,4 @@
-package pdb;
+package pdb.structures;
 
 import io.onelinelister.OneLineListReader.LineParser;
 

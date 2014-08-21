@@ -18,6 +18,8 @@ import cmdGA2.OptionsFactory;
 import cmdGA2.SingleArgumentOption;
 import cmdGA2.returnvalues.InfileValue;
 import pair.Pair;
+import pdb.structures.SpacePoint;
+import pdb.structures.SpacePointLineParser;
 
 public class ResidueDistanceCalculator {
 	
