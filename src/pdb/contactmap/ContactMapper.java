@@ -1,12 +1,17 @@
 package pdb.contactmap;
 
+import graphics.profile.PngWriter;
 import io.resources.ResourceContentAsString;
 
+import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -16,6 +21,7 @@ import pdb.contacts.ContactCriteria;
 import pdb.structures.Chain;
 import pdb.structures.SimplePdbReader;
 import pdb.structures.SpacePoint;
+import stringeditor.StringEditor;
 import cmdGA2.CommandLine;
 import cmdGA2.NoArgumentOption;
 import cmdGA2.OptionsFactory;
@@ -82,51 +88,53 @@ public class ContactMapper {
 		// Export contacts
 		for (Pair<SpacePoint, SpacePoint> pair : contacts) {
 			
-			StringBuilder sb = new StringBuilder();
+			List<String> dataToExport = new ArrayList<String>();
 			
-			sb.append(pair.getFirst().getResidueSequenceNumber());
-			sb.append("\t");
-			sb.append(pair.getFirst().getResidueName());
-			sb.append("\t");
-			sb.append(pair.getSecond().getResidueSequenceNumber());
-			sb.append("\t");
-			sb.append(pair.getSecond().getResidueName());
+			dataToExport.add(String.valueOf(pair.getFirst().getResidueSequenceNumber()));
+			dataToExport.add(String.valueOf(pair.getFirst().getResidueName()));
+			dataToExport.add(String.valueOf(pair.getSecond().getResidueSequenceNumber()));
+			dataToExport.add(String.valueOf(pair.getSecond().getResidueName()));
 
 			if (exportAtomsOpt.isPresent()) {
-				sb.append("\t");
-				sb.append(pair.getFirst().getAtomSerialNumber());	
-				sb.append("\t");
-				sb.append(pair.getFirst().getAtomName());
-				sb.append("\t");
-				sb.append(pair.getSecond().getAtomSerialNumber());
-				sb.append("\t");
-				sb.append(pair.getSecond().getAtomName());
+				dataToExport.add(String.valueOf(pair.getFirst().getAtomSerialNumber()));
+				dataToExport.add(String.valueOf(pair.getFirst().getAtomName()));
+				dataToExport.add(String.valueOf(pair.getSecond().getAtomSerialNumber()));
+				dataToExport.add(String.valueOf(pair.getSecond().getAtomName()));
 			}
 			
 			if (exportCoordinates.isPresent()) {
-				sb.append("\t");
-				sb.append(pair.getFirst().getX());
-				sb.append("\t");
-				sb.append(pair.getFirst().getY());
-				sb.append("\t");
-				sb.append(pair.getFirst().getZ());
-				sb.append("\t");
-				sb.append(pair.getSecond().getX());
-				sb.append("\t");
-				sb.append(pair.getSecond().getY());
-				sb.append("\t");
-				sb.append(pair.getSecond().getZ());
+				dataToExport.add(String.valueOf(pair.getFirst().getX()));
+				dataToExport.add(String.valueOf(pair.getFirst().getY()));
+				dataToExport.add(String.valueOf(pair.getFirst().getZ()));
+				dataToExport.add(String.valueOf(pair.getSecond().getX()));
+				dataToExport.add(String.valueOf(pair.getSecond().getY()));
+				dataToExport.add(String.valueOf(pair.getSecond().getZ()));
 			}
-			out.println();
+			
+			out.println(StringEditor.join(dataToExport, "\t"));
 			
 		}
+		out.flush();
+		out.close();
 		////////////////////////////////////////////////////////////////////////
 
 		////////////////////////////////////////////////////////////////////////
 		// Draw Image
 		if (drawOpt.isPresent()) {
 			
+			ContactMapDrawer drawer = new ContactMapDrawer();
 			
+			BufferedImage image = drawer.drawMap(pdb, contacts);
+			
+			PngWriter writer = new PngWriter();
+			
+			try {
+				writer.write(drawOpt.getValue(), image);
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 			
 		}
 		////////////////////////////////////////////////////////////////////////

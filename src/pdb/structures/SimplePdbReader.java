@@ -28,7 +28,7 @@ public class SimplePdbReader {
 				
 				int currentResNumber = spacePoint.getResidueSequenceNumber();
 				
-				String currentResId = spacePoint.getResidueName().toString();
+				String currentResId = String.valueOf(spacePoint.getResidueName());
 				
 				if (!data.containsKey(currentChainIdentifier)) {
 					
@@ -44,7 +44,7 @@ public class SimplePdbReader {
 					
 				}
 				
-				Residue currentResidue = currentChain.getResidues().get(currentResId);
+				Residue currentResidue = currentChain.getResidues().get(currentResNumber);
 				
 				currentResidue.addSpacePoint(spacePoint);
 
