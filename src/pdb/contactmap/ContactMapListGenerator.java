@@ -29,23 +29,24 @@ public class ContactMapListGenerator {
 	public List<Pair<SpacePoint,SpacePoint>> getSpacePointsInContact(Map<Character,Chain> pdb, ContactCriteria criteria) {
 		
 		List<Pair<SpacePoint,SpacePoint>> result = new ArrayList<Pair<SpacePoint,SpacePoint>>();
+
+		List<Residue> residues = new ArrayList<Residue>();
 		
 		for (Chain chain : pdb.values()) {
-			
-			List<Residue> residues = new ArrayList<Residue>();
+
 			residues.addAll(chain.getResiduesCollection());
 			
-			for (int i =0 ; i< residues.size() -1 ; i++) {
-				
-				for (int j =i+1 ;j< residues.size() ; j++) {
+		}
+			
+		for (int i =0 ; i< residues.size() -1 ; i++) {
+			
+			for (int j =i+1 ;j< residues.size() ; j++) {
 
-					Pair<SpacePoint, SpacePoint> pair = criteria.areInContact(residues.get(i), residues.get(j));
+				Pair<SpacePoint, SpacePoint> pair = criteria.areInContact(residues.get(i), residues.get(j));
+				
+				if (pair!=null) {
 					
-					if (pair!=null) {
-						
-						result.add(pair);
-						
-					}
+					result.add(pair);
 					
 				}
 				
