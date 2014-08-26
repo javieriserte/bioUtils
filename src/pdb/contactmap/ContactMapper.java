@@ -43,6 +43,7 @@ public class ContactMapper {
 		SingleArgumentOption<PrintStream> outOpt= OptionsFactory.createBasicPrintStreamArgument(cmd);
 		SingleArgumentOption<File> drawOpt= new SingleArgumentOption<File>(cmd, "--draw", new OutfileValue(), null);
 		SingleArgumentOption<ContactCriteria> critOpt = new SingleArgumentOption<ContactCriteria>(cmd, "--criteria", new ContactCriteriaValue(), new ClosestAtomPairContactCriteria(6));
+		NoArgumentOption exportChainOpt = new NoArgumentOption(cmd, "--withChains");
 		NoArgumentOption exportAtomsOpt = new NoArgumentOption(cmd, "--withAtoms");
 		NoArgumentOption exportCoordinates = new NoArgumentOption(cmd, "--withCoordinates");
 		NoArgumentOption helpOpt= new NoArgumentOption(cmd, "--help");
@@ -94,6 +95,11 @@ public class ContactMapper {
 			dataToExport.add(String.valueOf(pair.getFirst().getResidueName()));
 			dataToExport.add(String.valueOf(pair.getSecond().getResidueSequenceNumber()));
 			dataToExport.add(String.valueOf(pair.getSecond().getResidueName()));
+			
+			if (exportChainOpt.isPresent()) {
+				dataToExport.add(String.valueOf(pair.getFirst().getChainIdentifier()));
+				dataToExport.add(String.valueOf(pair.getSecond().getChainIdentifier()));
+			}
 
 			if (exportAtomsOpt.isPresent()) {
 				dataToExport.add(String.valueOf(pair.getFirst().getAtomSerialNumber()));
