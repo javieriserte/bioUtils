@@ -45,7 +45,8 @@ public class ContactMapper {
 		SingleArgumentOption<ContactCriteria> critOpt = new SingleArgumentOption<ContactCriteria>(cmd, "--criteria", new ContactCriteriaValue(), new ClosestAtomPairContactCriteria(6));
 		NoArgumentOption exportChainOpt = new NoArgumentOption(cmd, "--withChains");
 		NoArgumentOption exportAtomsOpt = new NoArgumentOption(cmd, "--withAtoms");
-		NoArgumentOption exportCoordinates = new NoArgumentOption(cmd, "--withCoordinates");
+		NoArgumentOption exportCoordinatesOpt = new NoArgumentOption(cmd, "--withCoordinates");
+		NoArgumentOption exportDistancesOpt= new NoArgumentOption(cmd, "--withDistances");
 		NoArgumentOption helpOpt= new NoArgumentOption(cmd, "--help");
 		////////////////////////////////////////////////////////////////////////
 		
@@ -108,13 +109,17 @@ public class ContactMapper {
 				dataToExport.add(String.valueOf(pair.getSecond().getAtomName()));
 			}
 			
-			if (exportCoordinates.isPresent()) {
+			if (exportCoordinatesOpt.isPresent()) {
 				dataToExport.add(String.valueOf(pair.getFirst().getX()));
 				dataToExport.add(String.valueOf(pair.getFirst().getY()));
 				dataToExport.add(String.valueOf(pair.getFirst().getZ()));
 				dataToExport.add(String.valueOf(pair.getSecond().getX()));
 				dataToExport.add(String.valueOf(pair.getSecond().getY()));
 				dataToExport.add(String.valueOf(pair.getSecond().getZ()));
+			}
+			
+			if (exportDistancesOpt.isPresent()) {
+				dataToExport.add(String.valueOf(pair.getFirst().distanceTo(pair.getSecond())));
 			}
 			
 			out.println(StringEditor.join(dataToExport, "\t"));
