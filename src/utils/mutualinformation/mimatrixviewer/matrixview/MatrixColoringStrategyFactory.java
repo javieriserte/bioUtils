@@ -61,7 +61,8 @@ public class MatrixColoringStrategyFactory {
 			
 			for (int j=i+1;j<matrix.getSize();j++){
 
-				Double mi = matrix.getValue(i+1,j+1 ).getMi();
+				Double mi = matrix.getZscoreValue(i+1, j+1); 
+				
 				if (mi>-900) {
 					min = Math.min(min, mi);
 					max = Math.max(max, mi);

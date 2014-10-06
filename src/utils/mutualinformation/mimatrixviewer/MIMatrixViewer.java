@@ -25,7 +25,7 @@ import utils.mutualinformation.mimatrixviewer.matrixview.MatrixViewMainPane;
 import utils.mutualinformation.mimatrixviewer.matrixview.ZoomMatrixColoringStrategyFactory;
 import utils.mutualinformation.mimatrixviewer.matrixview.ZoomPanel;
 
-
+@Deprecated
 public class MIMatrixViewer extends JFrame{
 
 	////////////////////////////////
@@ -116,9 +116,9 @@ public class MIMatrixViewer extends JFrame{
 		}
 		MI_Matrix matrix = null;
 		if (isZipFile) {
-			matrix = MI_Matrix.loadFromZippedFile(file);
+			//matrix = MI_Matrix.loadFromZippedFile(file);
 		} else {
-			matrix = MI_Matrix.loadFromFile(file);
+			//matrix = MI_Matrix.loadFromFile(file);
 		}
 		
 

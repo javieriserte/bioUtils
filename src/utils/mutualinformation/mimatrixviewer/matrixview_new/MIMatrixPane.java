@@ -1,4 +1,4 @@
-package utils.mutualinformation.mimatrixviewer.matrixview;
+package utils.mutualinformation.mimatrixviewer.matrixview_new;
 
 import java.awt.Color;
 import java.awt.Cursor;
@@ -23,9 +23,7 @@ import java.util.Arrays;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-import utils.mutualinformation.mimatrixviewer.MIMatrixViewer;
-import utils.mutualinformation.mimatrixviewer.MI_Matrix;
-import utils.mutualinformation.misticmod.datastructures.MI_Position;
+import utils.mutualinformation.mimatrixviewer.DataContainer;
 
 public class MIMatrixPane extends JScrollPane {
 	
@@ -37,10 +35,10 @@ public class MIMatrixPane extends JScrollPane {
 	
 	//////////////////////////////
 	//  Instance Variables
-	private MI_Matrix matrix = null;
+	private DataContainer data = null;
 	// Mi data values
 	@SuppressWarnings("unused")
-	private MatrixColoringStrategy color = null;
+	private ColorMapper color = null;
 	// The way that each pair of residues is colored on map.
 	private int numberOfProteins = 1;
 	// How many proteins correspond to the map
@@ -91,7 +89,7 @@ public class MIMatrixPane extends JScrollPane {
 	public void accomodateSize() {
 		boolean showBands = this.getProteinLengths().length >0;
 		int nprot = this.getProteinLengths().length;
-		int size = this.getMatrix().getSize() + nprot + (showBands?30:0);
+		int size = this.data.getData().getSize() + nprot + (showBands?30:0);
 		Dimension matrixSize = new Dimension(size, size);
 		this.getImagePane().setSize(matrixSize);
 		this.getImagePane().setPreferredSize(matrixSize);
@@ -119,23 +117,23 @@ public class MIMatrixPane extends JScrollPane {
 		boolean showBands = this.getProteinLengths().length >0;
 		int namesLabelWidth = showBands?30:0;
 		
-		BufferedImage image = new BufferedImage(namesLabelWidth+matrix.getSize()+this.numberOfProteins,namesLabelWidth+matrix.getSize()+this.numberOfProteins,BufferedImage.TYPE_INT_RGB);
+		BufferedImage image = new BufferedImage(namesLabelWidth+data.getData().getSize()+this.numberOfProteins,namesLabelWidth+data.getData().getSize()+this.numberOfProteins,BufferedImage.TYPE_INT_RGB);
 		Graphics2D graphics = (Graphics2D) image.getGraphics();
 		graphics.setColor(Color.white);
 		graphics.fillRect(0, 0, image.getWidth(),image.getHeight());
 		
 		///////////////////////////
 		// Draw Mi Points
-		for (int i=0; i< this.getMatrix().getSize();i++) {
-			for (int j=0; j< this.getMatrix().getSize();j++) {
+		for (int i=0; i< this.data.getData().getSize();i++) {
+			for (int j=0; j< this.data.getData().getSize();j++) {
 				
 				int px = this.translateCoordinate(i+1);
 				
 				int py = this.translateCoordinate(j+1);
 				
-				//image.setRGB(namesLabelWidth+px, namesLabelWidth+py, this.getColor().getColor(matrix.getValue(i+1, j+1)).getRGB());
+				image.setRGB(namesLabelWidth+px, namesLabelWidth+py, this.getColor().getColor(data.getData().getZscoreValue(i+1, j+1)).getRGB());
 				
-				image.setRGB(namesLabelWidth+px, namesLabelWidth+py, Color.black.getRGB());
+				//image.setRGB(namesLabelWidth+px, namesLabelWidth+py, Color.black.getRGB());
 				
 			}
 		}
@@ -148,8 +146,8 @@ public class MIMatrixPane extends JScrollPane {
 		for (int i = 0; i<this.getNumberOfProteins();i++) {
 			protAcum += this.getProteinLengths()[i];
 			image.getGraphics().setColor(Color.white);
-			image.getGraphics().drawLine( namesLabelWidth +protAcum+i, namesLabelWidth + 0, namesLabelWidth+ protAcum+i, namesLabelWidth+ matrix.getSize()+this.getNumberOfProteins()-2);
-			image.getGraphics().drawLine( namesLabelWidth+ 0, namesLabelWidth+ protAcum+i, namesLabelWidth+ matrix.getSize()+this.getNumberOfProteins()-2,namesLabelWidth+protAcum+i );
+			image.getGraphics().drawLine( namesLabelWidth +protAcum+i, namesLabelWidth + 0, namesLabelWidth+ protAcum+i, namesLabelWidth+ data.getData().getSize()+this.getNumberOfProteins()-2);
+			image.getGraphics().drawLine( namesLabelWidth+ 0, namesLabelWidth+ protAcum+i, namesLabelWidth+ data.getData().getSize()+this.getNumberOfProteins()-2,namesLabelWidth+protAcum+i );
 		}
 		//////////////////////////
 		
@@ -255,33 +253,33 @@ public class MIMatrixPane extends JScrollPane {
 
 	/////////////////////////////////////
 	// Getters and Setters
-	public MI_Matrix getMatrix() {
-		return matrix;
+	public DataContainer getMatrix() {
+		return data;
 	}
 
-	public void setMatrix(MI_Matrix matrix) {
-		this.matrix = matrix;
+	public void setData(DataContainer data) {
+		this.data = data;
 		if (this.proteinLengths == null) {
-			this.proteinLengths =  new int[]{this.matrix.getSize()};
+			this.proteinLengths =  new int[]{this.data.getData().getSize()};
 		}
-		char[] aa = new char[this.matrix.getSize()];
+		char[] aa = new char[this.data.getData().getSize()];
 		
-		for (int i =0 ;i<this.matrix.getSize()-1;i++) {
+		for (int i =0 ;i<this.data.getData().getSize()-1;i++) {
 			//aa[i] = this.getMatrix().getValue(i+1, i+2).getAa1();
-			aa[i] = this.getMatrix().getReferenceSequenceCharAt(i+1);
+			aa[i] = this.data.getData().getReferenceSequenceCharAt(i+1);
 			
 		}
-		aa[this.matrix.getSize()-1] = this.getMatrix().getReferenceSequenceCharAt(this.matrix.getSize());
+		aa[this.data.getData().getSize()-1] = this.data.getData().getReferenceSequenceCharAt(this.data.getData().getSize());
 		this.setAminoAcids(aa);
 		this.accomodateSize();
 	}
 
-	public MatrixColoringStrategy getColor() {
-		return (MatrixColoringStrategy) this.getViewer().getColoringPane().getMatrixColoringModel().getSelectedItem();
+	public ColorMapper getColor() {
+		return (ColorMapper) this.getViewer().getColoringPane().getMatrixColoringModel().getSelectedItem();
 //		return color;
 	}
 
-	public void setColor(MatrixColoringStrategy color) {
+	public void setColor(ColorMapper color) {
 		this.color = color;
 	}
 
@@ -350,7 +348,7 @@ public class MIMatrixPane extends JScrollPane {
 		public void paintComponent(Graphics g) {
 			super.paintComponent(g);
 			
-			if (MIMatrixPane.this.matrix!=null) {
+			if (MIMatrixPane.this.data!=null) {
 				if (MIMatrixPane.this.getImage()==null) {
 					MIMatrixPane.this.setImage(MIMatrixPane.this.createMapImage());
 				}
@@ -379,12 +377,12 @@ public class MIMatrixPane extends JScrollPane {
 			Rectangle rect = new Rectangle();
 			int px = mpx - 30;
 			int py = mpy - 30;
-			px = Math.min(MIMatrixPane.this.getMatrix().getSize() - MIMatrixPane.ZOOM_SIZE, px);
-			py = Math.min(MIMatrixPane.this.getMatrix().getSize() - MIMatrixPane.ZOOM_SIZE, py);
+			px = Math.min(MIMatrixPane.this.data.getData().getSize() - MIMatrixPane.ZOOM_SIZE, px);
+			py = Math.min(MIMatrixPane.this.data.getData().getSize() - MIMatrixPane.ZOOM_SIZE, py);
 			px = Math.max(0, px);
 			py = Math.max(0, py);
-			int w = Math.min(MIMatrixPane.ZOOM_SIZE, MIMatrixPane.this.getMatrix().getSize() - px);
-			int h = Math.min(MIMatrixPane.ZOOM_SIZE, MIMatrixPane.this.getMatrix().getSize() - py);
+			int w = Math.min(MIMatrixPane.ZOOM_SIZE, MIMatrixPane.this.data.getData().getSize() - px);
+			int h = Math.min(MIMatrixPane.ZOOM_SIZE, MIMatrixPane.this.data.getData().getSize() - py);
 			rect.setBounds(px, py, w, h);
 			
 			double[][] values = new double[w][h];
@@ -392,13 +390,7 @@ public class MIMatrixPane extends JScrollPane {
 			char[] vChars = Arrays.copyOfRange(MIMatrixPane.this.getAminoAcids(),py,py+h);
 			for (int i = 0; i< w;i++) {
 				for (int j =0 ; j<h;j++) {
-					double value = MIMatrixPane.this.getMatrix().getZscoreValue(1+px+i, 1 + py + j);
-//					double value = 0;
-//					if (position!=null) {
-//						value = position.getMi();
-//					} else {
-//						value = -999;
-//					}
+					double value = MIMatrixPane.this.data.getData().getZscoreValue(1+px+i, 1 + py + j);
 					values[i][j] = value;
 				}
 			}
