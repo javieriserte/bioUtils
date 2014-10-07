@@ -1,0 +1,27 @@
+Split Mi Data.
+	 Split a file of intra/inter protein MI data in three set of data. Two 
+	 for each intra MI data sets and one for inter protein MI data.
+	 This assumes that the calculation was made using an joint alignment of
+	 two proteins. The length of the first protein must be passed to properly
+	 split the data. Also, is assumed that the first index of the data is 1,
+	 not 0. 
+	 
+Usage:
+  misplitter.jar <Options>  
+ 
+Options:
+  --infile          String. Path file to input MI Data. If omitted standard 
+                    input is used.
+  
+  --out             List of String. Must contain three string, each one is the
+                    path of an output file. The first correspond to first 
+                    intra mi data set. The second correspond to the second mi
+                    data set. And the last one correspond to the inter protein
+                    mi data. Each path must be separated by a comma.
+
+  --cut             Integer. Is the length of the first protein. Residues from
+                    1 to this value correspond to the first protein. From this 
+                    value plus one to the end correspond to the second protein.
+  
+  --help            Shows this help.               
+
