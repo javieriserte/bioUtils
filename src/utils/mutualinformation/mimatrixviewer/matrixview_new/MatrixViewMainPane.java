@@ -131,7 +131,8 @@ public class MatrixViewMainPane extends MIViewingPane{
 
 	@Override
 	public void forceDrawing() {
-		// TODO Auto-generated method stub
+		
+		this.getMatrixPane().resetImage();
 		
 	}
 

@@ -57,7 +57,7 @@ public class MIMatrixReader {
 			
 			int posY = mi_Position.getPos2();
 			
-			matrix.setZscoreValue(mi_Position.getMi(), posX, posY);
+			matrix.setZscoreValue((mi_Position.getMi() < -900)?MI_Matrix.UNDEFINED:mi_Position.getMi(), posX, posY);
 			
 			matrix.setApcValue(mi_Position.getRaw_mi(), posX, posY);
 			

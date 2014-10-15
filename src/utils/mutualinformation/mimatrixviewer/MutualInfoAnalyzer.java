@@ -1,20 +1,13 @@
 package utils.mutualinformation.mimatrixviewer;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.util.List;
 
 import javax.swing.JFrame;
-import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.WindowConstants;
-
-import utils.mutualinformation.mimatrixviewer.matrixview.MatrixViewMainPane;
 
 public class MutualInfoAnalyzer extends JFrame {
 
@@ -22,35 +15,32 @@ public class MutualInfoAnalyzer extends JFrame {
 	
 	private GeneralDataPane generalDataPane;
 	private GraphicViewerPane graphicViewerPane;
-	private List<MI_Matrix> data;
-	private MI_Matrix currentData;
+	private Model model;
+	private Controller controller;
+
 	
 	public static void main(String[] args) {
+		
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
-				MutualInfoAnalyzer inst = new MutualInfoAnalyzer();
+				
+				Model model = new Model();
+				
+				MutualInfoAnalyzer inst = new MutualInfoAnalyzer(model, new Controller(model));
 					// creates the main instance
 				
-				inst.setLocationRelativeTo(null);
+				
 				inst.setVisible(true);
+				inst.setPreferredSize(new Dimension(1024,768));
+				inst.setSize(new Dimension(1024,768));
+				inst.setLocationRelativeTo(null);
 				inst.setTitle("Mutual Info Analyzer");
-//				inst.setOptionPane(new OptionsPane(inst));
+				
 				inst.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 				
-//				MatrixViewMainPane matrixPane = new MatrixViewMainPane();
-				
-//				inst.setLayout(new BorderLayout());
-				
-//				inst.getContentPane().add(inst.getOptionPane(), BorderLayout.NORTH);
-
-	//			inst.setMatrixView(matrixPane);
-				
-//				inst.getContentPane().add(inst.getMatrixPane(),BorderLayout.CENTER);
-
 				inst.pack();
-//				inst.getGlassPane();
 				
-					// set swing properties of MainFASDPD
+				
 			}
 		});
 
@@ -59,9 +49,13 @@ public class MutualInfoAnalyzer extends JFrame {
 	
 	////////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTOR
-	public MutualInfoAnalyzer() {
+	public MutualInfoAnalyzer(Model model, Controller controller) {
+		
 		super();
-		createGUI();
+		this.setModel(model);		
+		this.setController(controller);
+		this.createGUI();
+		
 	}
 
 
@@ -98,7 +92,7 @@ public class MutualInfoAnalyzer extends JFrame {
 		constraints.gridy = 0;
 		constraints.gridx = 0;
 		
-		this.generalDataPane = new GeneralDataPane();
+		this.generalDataPane = new GeneralDataPane(this.getController());
 		
 	    this.add(this.generalDataPane,constraints);
 		
@@ -106,11 +100,31 @@ public class MutualInfoAnalyzer extends JFrame {
 		this.setPreferredSize(new Dimension(1024 ,768 ));
 
 		constraints.gridx = 1;
-		this.graphicViewerPane = new GraphicViewerPane();
+		this.graphicViewerPane = new GraphicViewerPane(this.getController());
 		
 		this.add(this.graphicViewerPane,constraints);
 		
 		
 		
 	}
+	
+	public Model getModel() {
+		return this.model;
+	}
+
+
+	public void setModel(Model model) {
+		this.model= model;
+	}
+
+
+	public Controller getController() {
+		return controller;
+	}
+
+
+	public void setController(Controller controller) {
+		this.controller = controller;
+	}
+	
 }

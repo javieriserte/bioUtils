@@ -259,8 +259,10 @@ public class MIMatrixPane extends JScrollPane {
 
 	public void setData(DataContainer data) {
 		this.data = data;
-		if (this.proteinLengths == null) {
+		if (data.getLengths() == null) {
 			this.proteinLengths =  new int[]{this.data.getData().getSize()};
+		} else {
+			this.proteinLengths= data.getLengths();
 		}
 		char[] aa = new char[this.data.getData().getSize()];
 		
