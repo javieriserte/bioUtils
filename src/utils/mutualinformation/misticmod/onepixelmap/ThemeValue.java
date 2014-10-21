@@ -9,13 +9,14 @@ import utils.mutualinformation.misticmod.onepixelmap.themes.YellowAndRedTheme;
 import cmdGA2.returnvalues.ReturnValueParser;
 
 public class ThemeValue extends ReturnValueParser<MatrixColoringTheme> {
-	private static String THEME_REGEX = "(<name>[A-Z]+)(:(<cutoff>[0-9]+))*"; 
+    private static String THEME_REGEX = "(?<name>[A-Z]+)(:(?<cutoff>[0-9]+))*"; 
+	//private static String THEME_REGEX = "(<name>[A-Z]+)";
 	@Override
 	public MatrixColoringTheme parse(String token) {
 		
 		Pattern p = Pattern.compile(THEME_REGEX);
 		
-		Matcher matcher = p.matcher(token);
+		Matcher matcher = p.matcher(token.trim());
 		
 		double cutoff = 0;
 		
