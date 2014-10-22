@@ -1,0 +1,18 @@
+ CmiCalculator - Calculates CMI for every residue in MI Data with some filtering
+                  options.
+ 
+ Usage: 
+   CmiCalculator.jar <Option>
+  
+ Options:
+   --infile   String. Path to input MI data file (standard input by default). 
+                
+   --outfile  String. Path to the resulting CMI data file.
+
+   --filter   String. Indicates what pairs should be used to compute CMI data.
+              There are three kind of filters.
+               1. by cut-off value:  example 6.5c. Keep values greater than 6.5.
+               2. by top percentage: example 5p. Keep values in the top 5%.
+               3. by top n values:   example 100v. Keep top 100 values.
+    
+   --help    Shows this help and exit.
