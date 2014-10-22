@@ -1,0 +1,21 @@
+IntraMiRemover.
+  Sets MI value of intraprotein pairs to -999.
+   
+Usage:
+  intramiremover.jar <Options>  
+ 
+Options:
+  --infile          String. Path file to input MI Data. If omitted standard 
+                    input is used.
+  
+  
+  --outfile         Integer. Filter subnets by the its size. Subnets with more 
+                    than the given cut off value are kept. 
+                    Default Value is '0' (no filtering).
+
+  --lengths         List of Integer. Comma separated list of the length of each
+                    protein of the input multi-protein MSA used to calculate
+                    the MI data. 
+
+  --help            Shows this help.               
+
