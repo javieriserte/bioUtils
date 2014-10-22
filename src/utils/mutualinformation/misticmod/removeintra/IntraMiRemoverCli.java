@@ -19,7 +19,7 @@ import cmdGA2.returnvalues.IntegerValue;
 
 public class IntraMiRemoverCli {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) { 
 		
 		////////////////////////////////////////////////////////////////////////
 		// Create Command Line Parser
@@ -35,8 +35,6 @@ public class IntraMiRemoverCli {
 		SingleArgumentOption<PrintStream> outOpt = OptionsFactory.createBasicPrintStreamArgument(cmd);
 	
 		NoArgumentOption helpOpt = new NoArgumentOption(cmd, "--help");
-		
-		NoArgumentOption removeOpt = new NoArgumentOption(cmd, "--remove");
         ////////////////////////////////////////////////////////////////////////
 		
         ////////////////////////////////////////////////////////////////////////

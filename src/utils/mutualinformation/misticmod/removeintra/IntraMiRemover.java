@@ -28,6 +28,8 @@ public class IntraMiRemover {
 		
 		RangeMap<Integer, Integer> proteinAssignationMap = this.createAssignationMap(lengths);
 		
+		MI_Position.activateMortemPrinter();
+		
 		while((currentLine = in.readLine())!= null) {
 			
 			MI_Position pair = MI_Position.valueOf(currentLine);
@@ -89,6 +91,7 @@ public class IntraMiRemover {
 			accumulator = upperBound;
 			Range<Integer> keyRange = new Range<Integer>(lowerBound, upperBound, true, true);
 			proteinAssignationMap.put(keyRange, proteinCounter);
+			proteinCounter++;
 		}
 		
 		return proteinAssignationMap;
