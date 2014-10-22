@@ -58,9 +58,9 @@ public class GraphicViewerPane extends JTabbedPane implements Observer{
 //			e.printStackTrace();
 //		}
 		
-		this.addTab("Botón #1", component);
-		this.addTab("Botón #2", new JButton("botón 2"));
-		this.addTab("Botón #3", new JButton("botón 3"));
+		this.addTab("Botï¿½n #1", component);
+		this.addTab("Botï¿½n #2", new JButton("botï¿½n 2"));
+		this.addTab("Botï¿½n #3", new JButton("botï¿½n 3"));
 		
 	}
 
@@ -81,14 +81,11 @@ public class GraphicViewerPane extends JTabbedPane implements Observer{
 		DataContainer data = ((Model)o).getCurrentData();
 		
 		if (data!=null) {
-			System.out.println(data.toString());
 			MIViewingPane selectedComponent = (MIViewingPane)this.getSelectedComponent();
 			selectedComponent.setData(data);
 			selectedComponent.forceDrawing();
 			
-		} else {
-			System.out.println("data is null");
-		}
+		} 
 		
 	}
 	
