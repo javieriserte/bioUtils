@@ -26,4 +26,11 @@ public class MisticFormatMi extends FormatMi {
 		return MisticFormatMi.FORMAT_LINE;
 	}
 
+	@Override
+	public double getZscoreFrom(String line) {
+		
+		return Double.valueOf(line.split(" ")[4]);
+		
+	}
+
 }

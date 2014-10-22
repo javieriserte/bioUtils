@@ -26,4 +26,11 @@ public class MortemFormatMi extends FormatMi {
 		return MortemFormatMi.FORMAT_LINE;
 	}
 
+	@Override
+	public double getZscoreFrom(String line) {
+		
+		return Double.valueOf(line.split(" ")[11]);
+		
+	}
+
 }
