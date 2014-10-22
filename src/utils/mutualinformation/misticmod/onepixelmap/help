@@ -1,0 +1,30 @@
+ OnePixelMapMIMatrix - Creates a graphic representation of a MI matrix using
+      one pixel for each residue pair.
+ 
+ Usage: 
+   MIOnePixelMap.jar <Option>
+  
+ Options:
+   --infile   String. Path to input MI data file (standard input by default).
+
+   --out      String. Path to the output PNG image file.
+
+   --lengths  List of Integer. A comma separated list with the length of every 
+              protein. The values must be given in the same order as the 
+              proteins in the alignment.
+
+   --names    List of String. A comma separated list of the names of the 
+              proteins. The size of lists of lengths and names must be the same.
+
+   --color    Coloring theme. There are two coloring theme:
+               - BLUERED  Blue for values lower than the cutoff, red for 
+                           greater. Color intensity increase as the value is 
+                           close two the minimum or maximum value. Values 
+                           close to cut-off value are blackish.
+               - YELLOW   White for values below cut-off. Gradient from yellow 
+                           to red for values above cut-off.
+              Both themes can be optionally set with any desired cut-off value. 
+              For example: Yellow:0.5 , set cutoff value to 0.5.
+              If cut-off value is not set, 6.5 is used as default.
+
+   --help    Shows this help and exit.

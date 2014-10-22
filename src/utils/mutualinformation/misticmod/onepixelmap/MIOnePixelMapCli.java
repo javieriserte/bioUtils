@@ -3,6 +3,7 @@ package utils.mutualinformation.misticmod.onepixelmap;
 import graphics.profile.PngWriter;
 import io.bufferreaders.UncommenterBufferedReader;
 import io.onelinelister.OneLineListReader;
+import io.resources.ResourceContentAsString;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -17,6 +18,7 @@ import utils.mutualinformation.misticmod.onepixelmap.themes.BlueAndRedTheme;
 import utils.mutualinformation.misticmod.onepixelmap.themes.MatrixColoringTheme;
 import cmdGA2.CommandLine;
 import cmdGA2.MultipleArgumentOption;
+import cmdGA2.NoArgumentOption;
 import cmdGA2.OptionsFactory;
 import cmdGA2.SingleArgumentOption;
 import cmdGA2.returnvalues.OutfileValue;
@@ -41,11 +43,24 @@ public class MIOnePixelMapCli {
 		MultipleArgumentOption<Integer> lenOpt = OptionsFactory.createBasicCommaSeparatedIntegersArgument(cmd, "--lengths");
 		
 		MultipleArgumentOption<String> namesOpt = new MultipleArgumentOption<>(cmd, "--names", ',', new ArrayList<String>(), new StringValue());
+		
+		NoArgumentOption helpOpt = new NoArgumentOption(cmd, "--help");
 		////////////////////////////////////////////////////////////////////////
 
 		////////////////////////////////////////////////////////////////////////
 		// Parse Command Line
 		cmd.readAndExitOnError(args);
+		////////////////////////////////////////////////////////////////////////
+
+		////////////////////////////////////////////////////////////////////////
+		// Parse Command Line
+		if (helpOpt.isPresent()) {
+			String helpText = new ResourceContentAsString().readContents(
+					"help", 
+					MIOnePixelMapCli.class);
+			System.err.println(helpText);
+			System.exit(0);
+		}
 		////////////////////////////////////////////////////////////////////////
 		
 		////////////////////////////////////////////////////////////////////////
