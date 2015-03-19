@@ -39,14 +39,24 @@ public class ContactMapper {
 		
 		////////////////////////////////////////////////////////////////////////
 		// Add command line options
-		SingleArgumentOption<InputStream> inOpt= OptionsFactory.createBasicInputStreamArgument(cmd);
-		SingleArgumentOption<PrintStream> outOpt= OptionsFactory.createBasicPrintStreamArgument(cmd);
-		SingleArgumentOption<File> drawOpt= new SingleArgumentOption<File>(cmd, "--draw", new OutfileValue(), null);
-		SingleArgumentOption<ContactCriteria> critOpt = new SingleArgumentOption<ContactCriteria>(cmd, "--criteria", new ContactCriteriaValue(), new ClosestAtomPairContactCriteria(6));
-		NoArgumentOption exportChainOpt = new NoArgumentOption(cmd, "--withChains");
-		NoArgumentOption exportAtomsOpt = new NoArgumentOption(cmd, "--withAtoms");
-		NoArgumentOption exportCoordinatesOpt = new NoArgumentOption(cmd, "--withCoordinates");
-		NoArgumentOption exportDistancesOpt= new NoArgumentOption(cmd, "--withDistances");
+		SingleArgumentOption<InputStream> inOpt= OptionsFactory.
+				createBasicInputStreamArgument(cmd);
+		SingleArgumentOption<PrintStream> outOpt= OptionsFactory.
+				createBasicPrintStreamArgument(cmd);
+		SingleArgumentOption<File> drawOpt= new SingleArgumentOption<File>(cmd, 
+				"--draw", new OutfileValue(), null);
+		SingleArgumentOption<ContactCriteria> critOpt = 
+				new SingleArgumentOption<ContactCriteria>(cmd, "--criteria", 
+						new ContactCriteriaValue(), 
+						new ClosestAtomPairContactCriteria(6));
+		NoArgumentOption exportChainOpt = 
+				new NoArgumentOption(cmd, "--withChains");
+		NoArgumentOption exportAtomsOpt = 
+				new NoArgumentOption(cmd, "--withAtoms");
+		NoArgumentOption exportCoordinatesOpt = 
+				new NoArgumentOption(cmd, "--withCoordinates");
+		NoArgumentOption exportDistancesOpt = 
+				new NoArgumentOption(cmd, "--withDistances");
 		NoArgumentOption helpOpt= new NoArgumentOption(cmd, "--help");
 		////////////////////////////////////////////////////////////////////////
 		

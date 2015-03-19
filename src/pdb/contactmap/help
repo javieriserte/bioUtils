@@ -4,11 +4,22 @@ Usage:
    contactmapper.jar <Option>
   
 Options:
-   --infile   Strings. Path to the input PDB file.
+   --infile           Strings. Path to the input PDB file.
                 
-   --outfile  String. Path to the resulting file with the contacts.
+   --outfile          String. Path to the resulting file with the contacts.
    
-   --draw     String. Path to an file where to export an image of the contact 
-               map.
+   --criteria         Criteria to select pair of residues that are in contact.
+                        Default criteria is closest atom between two residues
+                        must be a 6 or less Angstroms (closest:6).
+   
+   --draw             String. Path to an file where to export an image of the contact 
+                        map.
 
-   --help    Shows this help and exit.
+   --withChains       Flag. Shows the chains identifiers in the output.
+   
+   --withAtoms        Flag. Shows atom numbers in the output.
+   
+   --withCoordinates  Flag. Shows the atomic coordinates of the points used to 
+                        calculate distance.
+   
+   --help             Shows this help and exit.
