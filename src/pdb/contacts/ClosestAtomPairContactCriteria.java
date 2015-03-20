@@ -75,6 +75,15 @@ public class ClosestAtomPairContactCriteria extends ContactCriteria {
 		return null;
 		
 	}
+	
+	/**
+	 * Returns a value that indicates the cost of the operation
+	 */
+  @Override
+  public int cost() {
+    return 1000;
+  }
+	
 	/**
 	 * Gets the cut-off value to decide if two residues are in contact.
 	 * @return
@@ -90,5 +99,7 @@ public class ClosestAtomPairContactCriteria extends ContactCriteria {
 		this.cutoffDistance = cutoffDistance;
 	}
 	////////////////////////////////////////////////////////////////////////////
+
+
 
 }

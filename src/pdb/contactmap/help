@@ -10,7 +10,7 @@ Options:
    
    --criteria         Criteria to select pair of residues that are in contact.
                         Default criteria is closest atom between two residues
-                        must be a 6 or less Angstroms (closest:6).
+                        must be a 6 or less Angstroms (closest,6).
    
    --draw             String. Path to an file where to export an image of the contact 
                         map.

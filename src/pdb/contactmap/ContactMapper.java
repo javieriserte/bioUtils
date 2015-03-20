@@ -30,136 +30,140 @@ import cmdGA2.returnvalues.OutfileValue;
 
 public class ContactMapper {
 
-	public static void main(String[] args) {
+  public static void main(String[] args) {
 
-		////////////////////////////////////////////////////////////////////////
-		// Creates command line object
-		CommandLine cmd = new CommandLine();
-		////////////////////////////////////////////////////////////////////////
-		
-		////////////////////////////////////////////////////////////////////////
-		// Add command line options
-		SingleArgumentOption<InputStream> inOpt= OptionsFactory.
-				createBasicInputStreamArgument(cmd);
-		SingleArgumentOption<PrintStream> outOpt= OptionsFactory.
-				createBasicPrintStreamArgument(cmd);
-		SingleArgumentOption<File> drawOpt= new SingleArgumentOption<File>(cmd, 
-				"--draw", new OutfileValue(), null);
-		SingleArgumentOption<ContactCriteria> critOpt = 
-				new SingleArgumentOption<ContactCriteria>(cmd, "--criteria", 
-						new ContactCriteriaValue(), 
-						new ClosestAtomPairContactCriteria(6));
-		NoArgumentOption exportChainOpt = 
-				new NoArgumentOption(cmd, "--withChains");
-		NoArgumentOption exportAtomsOpt = 
-				new NoArgumentOption(cmd, "--withAtoms");
-		NoArgumentOption exportCoordinatesOpt = 
-				new NoArgumentOption(cmd, "--withCoordinates");
-		NoArgumentOption exportDistancesOpt = 
-				new NoArgumentOption(cmd, "--withDistances");
-		NoArgumentOption helpOpt= new NoArgumentOption(cmd, "--help");
-		////////////////////////////////////////////////////////////////////////
-		
-		////////////////////////////////////////////////////////////////////////
-		// Parse Command line
-		cmd.readAndExitOnError(args);
-		////////////////////////////////////////////////////////////////////////
+    // /////////////////////////////////////////////////////////////////////////
+    // Creates command line object
+    CommandLine cmd = new  CommandLine(); 
+    // /////////////////////////////////////////////////////////////////////////
 
-		////////////////////////////////////////////////////////////////////////
-		// Check for Help
-		if (helpOpt.isPresent()) {
-			String helpText = (new ResourceContentAsString()).readContents("help", ContactMapper.class);
-			System.err.println(helpText);
-			System.exit(0);
-		}
-		////////////////////////////////////////////////////////////////////////
+    // /////////////////////////////////////////////////////////////////////////
+    // Add command line options
+    SingleArgumentOption<InputStream> inOpt     = OptionsFactory
+        .createBasicInputStreamArgument(cmd);
+    SingleArgumentOption<PrintStream> outOpt = OptionsFactory
+        .createBasicPrintStreamArgument(cmd);
+    SingleArgumentOption<File> drawOpt = new SingleArgumentOption<File>(cmd,
+        "--draw", new OutfileValue(), null);
+    SingleArgumentOption<ContactCriteria> critOpt = 
+        new SingleArgumentOption<ContactCriteria>(
+        cmd, "--criteria", new ContactCriteriaValue(),
+        new ClosestAtomPairContactCriteria(6));
+    NoArgumentOption exportChainOpt = new NoArgumentOption(cmd, "--withChains");
+    NoArgumentOption exportAtomsOpt = new NoArgumentOption(cmd, "--withAtoms");
+    NoArgumentOption exportCoordinatesOpt = new NoArgumentOption(cmd,
+        "--withCoordinates");
+    NoArgumentOption exportDistancesOpt = new NoArgumentOption(cmd,
+        "--withDistances");
+    NoArgumentOption helpOpt = new NoArgumentOption(cmd, "--help");
+    // /////////////////////////////////////////////////////////////////////////
 
-		
-		////////////////////////////////////////////////////////////////////////
-		// Get values from the command line.
-		BufferedReader in = new BufferedReader(new InputStreamReader(inOpt.getValue()));
-		PrintStream out = outOpt.getValue();
-		ContactCriteria criteria = critOpt.getValue();
-		if (criteria==null) {
-			System.err.println("Criteria was not parsed correctly");
-			System.exit(1);
-		}
-		////////////////////////////////////////////////////////////////////////
-		
-		////////////////////////////////////////////////////////////////////////
-		// Read PDB
-		Map<Character, Chain> pdb = new SimplePdbReader().readPdb(in);
-		////////////////////////////////////////////////////////////////////////
+    // /////////////////////////////////////////////////////////////////////////
+    // Parse Command line
+    cmd.readAndExitOnError(args);
+    // /////////////////////////////////////////////////////////////////////////
 
-		////////////////////////////////////////////////////////////////////////
-		// Get Contacts
-		List<Pair<SpacePoint, SpacePoint>> contacts = new ContactMapListGenerator().getSpacePointsInContact(pdb, criteria);
-		////////////////////////////////////////////////////////////////////////
+    // /////////////////////////////////////////////////////////////////////////
+    // Check for Help
+    if (helpOpt.isPresent()) {
+      String helpText = (new ResourceContentAsString()).readContents("help",
+          ContactMapper.class);
+      System.err.println(helpText);
+      System.exit(0);
+    }
+    // /////////////////////////////////////////////////////////////////////////
 
-		////////////////////////////////////////////////////////////////////////
-		// Export contacts
-		for (Pair<SpacePoint, SpacePoint> pair : contacts) {
-			
-			List<String> dataToExport = new ArrayList<String>();
-			
-			dataToExport.add(String.valueOf(pair.getFirst().getResidueSequenceNumber()));
-			dataToExport.add(String.valueOf(pair.getFirst().getResidueName()));
-			dataToExport.add(String.valueOf(pair.getSecond().getResidueSequenceNumber()));
-			dataToExport.add(String.valueOf(pair.getSecond().getResidueName()));
-			
-			if (exportChainOpt.isPresent()) {
-				dataToExport.add(String.valueOf(pair.getFirst().getChainIdentifier()));
-				dataToExport.add(String.valueOf(pair.getSecond().getChainIdentifier()));
-			}
+    // /////////////////////////////////////////////////////////////////////////
+    // Get values from the command line.
+    BufferedReader in = new BufferedReader(new InputStreamReader(
+        inOpt.getValue()));
+    PrintStream out = outOpt.getValue();
+    ContactCriteria criteria = critOpt.getValue();
+    if (criteria == null) {
+      System.err.println("Criteria was not parsed correctly");
+      System.exit(1);
+    }
+    // /////////////////////////////////////////////////////////////////////////
 
-			if (exportAtomsOpt.isPresent()) {
-				dataToExport.add(String.valueOf(pair.getFirst().getAtomSerialNumber()));
-				dataToExport.add(String.valueOf(pair.getFirst().getAtomName()));
-				dataToExport.add(String.valueOf(pair.getSecond().getAtomSerialNumber()));
-				dataToExport.add(String.valueOf(pair.getSecond().getAtomName()));
-			}
-			
-			if (exportCoordinatesOpt.isPresent()) {
-				dataToExport.add(String.valueOf(pair.getFirst().getX()));
-				dataToExport.add(String.valueOf(pair.getFirst().getY()));
-				dataToExport.add(String.valueOf(pair.getFirst().getZ()));
-				dataToExport.add(String.valueOf(pair.getSecond().getX()));
-				dataToExport.add(String.valueOf(pair.getSecond().getY()));
-				dataToExport.add(String.valueOf(pair.getSecond().getZ()));
-			}
-			
-			if (exportDistancesOpt.isPresent()) {
-				dataToExport.add(String.valueOf(pair.getFirst().distanceTo(pair.getSecond())));
-			}
-			
-			out.println(StringEditor.join(dataToExport, "\t"));
-			
-		}
-		out.flush();
-		out.close();
-		////////////////////////////////////////////////////////////////////////
+    // /////////////////////////////////////////////////////////////////////////
+    // Read PDB
+    Map<Character, Chain> pdb = new SimplePdbReader().readPdb(in);
+    // /////////////////////////////////////////////////////////////////////////
 
-		////////////////////////////////////////////////////////////////////////
-		// Draw Image
-		if (drawOpt.isPresent()) {
-			
-			ContactMapDrawer drawer = new ContactMapDrawer();
-			
-			BufferedImage image = drawer.drawMap(pdb, contacts);
-			
-			PngWriter writer = new PngWriter();
-			
-			try {
-				writer.write(drawOpt.getValue(), image);
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			
-		}
-		////////////////////////////////////////////////////////////////////////
-		
-	}
+    // /////////////////////////////////////////////////////////////////////////
+    // Get Contacts
+    List<Pair<SpacePoint, SpacePoint>> contacts = new ContactMapListGenerator()
+        .getSpacePointsInContact(pdb, criteria);
+    // /////////////////////////////////////////////////////////////////////////
+
+    // /////////////////////////////////////////////////////////////////////////
+    // Export contacts
+    for (Pair<SpacePoint, SpacePoint> pair : contacts) {
+
+      List<String> dataToExport = new ArrayList<String>();
+
+      dataToExport.add(String.valueOf(pair.getFirst()
+          .getResidueSequenceNumber()));
+      dataToExport.add(String.valueOf(pair.getFirst().getResidueName()));
+      dataToExport.add(String.valueOf(pair.getSecond()
+          .getResidueSequenceNumber()));
+      dataToExport.add(String.valueOf(pair.getSecond().getResidueName()));
+
+      if (exportChainOpt.isPresent()) {
+        dataToExport.add(String.valueOf(pair.getFirst().getChainIdentifier()));
+        dataToExport.add(String.valueOf(pair.getSecond().getChainIdentifier()));
+      }
+
+      if (exportAtomsOpt.isPresent()) {
+        dataToExport.add(String.valueOf(pair.getFirst().getAtomSerialNumber()));
+        dataToExport.add(String.valueOf(pair.getFirst().getAtomName()));
+        dataToExport
+            .add(String.valueOf(pair.getSecond().getAtomSerialNumber()));
+        dataToExport.add(String.valueOf(pair.getSecond().getAtomName()));
+      }
+
+      if (exportCoordinatesOpt.isPresent()) {
+        dataToExport.add(String.valueOf(pair.getFirst().getX()));
+        dataToExport.add(String.valueOf(pair.getFirst().getY()));
+        dataToExport.add(String.valueOf(pair.getFirst().getZ()));
+        dataToExport.add(String.valueOf(pair.getSecond().getX()));
+        dataToExport.add(String.valueOf(pair.getSecond().getY()));
+        dataToExport.add(String.valueOf(pair.getSecond().getZ()));
+      }
+
+      if (exportDistancesOpt.isPresent()) {
+        dataToExport.add(String.valueOf(pair.getFirst().distanceTo(
+            pair.getSecond())));
+      }
+
+      out.println(StringEditor.join(dataToExport, "\t"));
+
+    }
+    out.flush();
+    out.close();
+    // /////////////////////////////////////////////////////////////////////////
+
+    // /////////////////////////////////////////////////////////////////////////
+    // Draw Image
+    if (drawOpt.isPresent()) {
+
+      ContactMapDrawer drawer = new ContactMapDrawer();
+
+      BufferedImage image = drawer.drawMap(pdb, contacts);
+
+      PngWriter writer = new PngWriter();
+
+      try {
+        writer.write(drawOpt.getValue(), image);
+      } catch (FileNotFoundException e) {
+        e.printStackTrace();
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+ 
+    }
+    // /////////////////////////////////////////////////////////////////////////
+
+  }
 
 }
