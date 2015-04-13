@@ -12,7 +12,7 @@ import pdb.structures.Residue;
  * @author javier iserte
  *
  */
-public class ResidueInDefferentChainCriteria extends ChainCriteria {
+public class ResidueInDifferentChainCriteria extends ChainCriteria {
   // ///////////////////////////////////////////////////////////////////////////
   // Instance variables
   private Set<Character> acceptedChains;
@@ -21,11 +21,11 @@ public class ResidueInDefferentChainCriteria extends ChainCriteria {
 
   // ///////////////////////////////////////////////////////////////////////////
   // Constructors
-  public ResidueInDefferentChainCriteria(Set<Character> acceptedChains) {
+  public ResidueInDifferentChainCriteria(Set<Character> acceptedChains) {
     this.setAcceptedChains(acceptedChains);
   }
 
-  public ResidueInDefferentChainCriteria() {
+  public ResidueInDifferentChainCriteria() {
     this.setAcceptedChains(new HashSet<Character>());
   }
 

@@ -9,7 +9,8 @@ import pdb.contacts.AndContactCriteria;
 import pdb.contacts.ClosestAtomPairContactCriteria;
 import pdb.contacts.ContactCriteria;
 import pdb.contacts.ResidueInChainCriteria;
-import pdb.contacts.ResidueInDefferentChainCriteria;
+import pdb.contacts.ResidueInDifferentChainCriteria;
+import pdb.contacts.ResidueInManyChainsCriteria;
 import cmdGA2.returnvalues.ReturnValueParser;
 
 public class ContactCriteriaValue extends ReturnValueParser<ContactCriteria> {
@@ -18,6 +19,7 @@ public class ContactCriteriaValue extends ReturnValueParser<ContactCriteria> {
   // Class Constants
   public static final String CRITERIA_CLOSEST = "closest";
   public static final String CRITERIA_INCHAIN = "chain";
+  public static final String CRITERIA_MANYCHAINS = "chains";
   public static final String CRITERIA_DIFF_CHAIN = "diffchain";
 
   // ///////////////////////////////////////////////////////////////////////////
@@ -65,7 +67,18 @@ public class ContactCriteriaValue extends ReturnValueParser<ContactCriteria> {
         } else {
           chains.add('A');
         }
-        criterias.add(new ResidueInDefferentChainCriteria(chains));
+        criterias.add(new ResidueInDifferentChainCriteria(chains));
+        break;
+      case CRITERIA_MANYCHAINS:
+        Set<Character> chainsb = new HashSet<>();
+        if (data.length > 1) {
+          for (int j  = 1; j < data.length ; j++) {
+            chainsb.add(data[j].toUpperCase().charAt(0));
+          }
+        } else {
+          chainsb.add('A');
+        }
+        criterias.add(new ResidueInManyChainsCriteria(chainsb));
         break;
       }
     }
