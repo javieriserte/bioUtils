@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/cmdGetArg"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/generalUtils"/>
 	<classpathentry kind="src" path="/generalUtils"/>
-	<classpathentry kind="lib" path="B:/Javier/Dropbox/Informatica/Proyectos/FASDPD/JavaWorkspace/cmdGetArg_2.1.1.jar"/>
-	<classpathentry kind="lib" path="B:/Javier/Dropbox/Informatica/Proyectos/FASDPD/JavaWorkspace/jgap_3.6.2_full.zip"/>
-	<classpathentry kind="lib" path="B:/Javier/Dropbox/Informatica/Proyectos/FASDPD/JavaWorkspace/mdsj.jar"/>
-	<classpathentry kind="lib" path="B:/Javier/Dropbox/Informatica/Proyectos/FASDPD/JavaWorkspace/jcommon-1.0.20/jcommon-1.0.20.jar"/>
-	<classpathentry kind="lib" path="B:/Javier/Dropbox/Informatica/Proyectos/FASDPD/JavaWorkspace/jfreechart-1.0.16/lib/jfreechart-1.0.16.jar"/>
-	<classpathentry kind="lib" path="B:/Javier/Dropbox/Informatica/Proyectos/FASDPD/JavaWorkspace/generalUtils.jar"/>
+	<classpathentry kind="lib" path="C:/Javier/javalibs/jcommon-1.0.20.jar"/>
+	<classpathentry kind="lib" path="C:/Javier/javalibs/jgap.jar"/>
+	<classpathentry kind="lib" path="C:/Javier/javalibs/mdsj.jar"/>
+	<classpathentry kind="lib" path="C:/Javier/javalibs/jfreechart-1.0.16.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
