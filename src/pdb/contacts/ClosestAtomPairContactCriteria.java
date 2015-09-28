@@ -98,7 +98,19 @@ public class ClosestAtomPairContactCriteria extends ContactCriteria {
 	public void setCutoffDistance(double cutoffDistance) {
 		this.cutoffDistance = cutoffDistance;
 	}
+	
+
+  @Override
+  public boolean useDistance() {
+    return true;
+  }
+
+  @Override
+  public double getUsedDistance() {
+    return this.getCutoffDistance();
+  }
 	////////////////////////////////////////////////////////////////////////////
+
 
 
 

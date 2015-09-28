@@ -107,4 +107,9 @@ public class AndContactCriteria extends ContactCriteria {
   }
   // ///////////////////////////////////////////////////////////////////////////
 
+  @Override
+  public boolean useDistance() {
+    return false;
+  }
+
 }
