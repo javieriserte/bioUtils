@@ -62,4 +62,14 @@ public class ResidueInDifferentChainCriteria extends ChainCriteria {
         && chainFirst != chainSecond;
   }
   // ///////////////////////////////////////////////////////////////////////////
+
+  @Override
+  public boolean useDistance() {
+    return false;
+  }
+
+  @Override
+  public double getUsedDistance() {
+    return 0;
+  }
 }

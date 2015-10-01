@@ -62,4 +62,14 @@ public class ResidueInManyChainsCriteria extends ChainCriteria {
            this.getAllowedChains().contains(currentSecondPoint.getChain());
   }
   // ///////////////////////////////////////////////////////////////////////////
+
+  @Override
+  public boolean useDistance() {
+    return false;
+  }
+
+  @Override
+  public double getUsedDistance() {
+    return 0;
+  }
 }

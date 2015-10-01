@@ -109,7 +109,20 @@ public class AndContactCriteria extends ContactCriteria {
 
   @Override
   public boolean useDistance() {
-    return false;
+    boolean result=false;
+    for (ContactCriteria criteria : this.getCriterias()) {
+      result = result || criteria.useDistance();
+    }
+    return result;
+  }
+
+  @Override
+  public double getUsedDistance() {
+    double maxDistance= 0;
+    for (ContactCriteria criteria : this.getCriterias()) {
+      maxDistance = Math.max(criteria.getUsedDistance(), maxDistance);
+    }
+    return maxDistance;
   }
 
 }
