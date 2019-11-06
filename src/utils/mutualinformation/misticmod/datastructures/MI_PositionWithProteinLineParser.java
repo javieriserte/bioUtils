@@ -1,10 +1,10 @@
 package utils.mutualinformation.misticmod.datastructures;
 
-import io.onelinelister.OneLineListReader;
+import io.onelinelister.LineParser;
 
 import java.util.List;
 
-public class MI_PositionWithProteinLineParser implements OneLineListReader.LineParser<MI_PositionWithProtein>{
+public class MI_PositionWithProteinLineParser implements LineParser<MI_PositionWithProtein>{
 
 	List<Integer> lengths;
 		

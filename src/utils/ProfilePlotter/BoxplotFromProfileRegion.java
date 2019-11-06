@@ -161,7 +161,8 @@ public class BoxplotFromProfileRegion {
         	
         	renderer.setSeriesPaint(i, currentColor);
         	
-        	renderer.setBasePaint(currentColor);
+//        	renderer.setBasePaint(currentColor);
+        	renderer.setArtifactPaint(currentColor);
         	
         	renderer.setSeriesItemLabelFont(i, new Font("Arial", 1, 30));
         	
@@ -192,7 +193,7 @@ public class BoxplotFromProfileRegion {
         
         
         
-        renderer.setBaseLegendTextFont(new Font("Arial", 1, 25));
+        renderer.setDefaultLegendTextFont(new Font("Arial", 1, 25));
         
 		return chart.createBufferedImage(3000, 1200);
 		

@@ -1,7 +1,7 @@
 package pdb;
 
 import io.onelinelister.OneLineListReader;
-import io.onelinelister.OneLineListReader.LineParser;
+import io.onelinelister.LineParser;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -15,8 +15,8 @@ import java.util.List;
 import java.util.Map;
 
 import pair.Pair;
-import pdb.structures.SpacePoint;
-import pdb.structures.SpacePointLineParser;
+import org.jiserte.biopdb.structures.SpacePoint;
+import org.jiserte.biopdb.structures.SpacePointLineParser;
 import cmdGA.NoOption;
 import cmdGA.Parser;
 import cmdGA.SingleOption;

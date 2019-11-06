@@ -1,7 +1,7 @@
 package pdb;
 
 import io.onelinelister.OneLineListReader;
-import io.onelinelister.OneLineListReader.LineParser;
+import io.onelinelister.LineParser;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -18,8 +18,8 @@ import cmdGA2.OptionsFactory;
 import cmdGA2.SingleArgumentOption;
 import cmdGA2.returnvalues.InfileValue;
 import pair.Pair;
-import pdb.structures.SpacePoint;
-import pdb.structures.SpacePointLineParser;
+import org.jiserte.biopdb.structures.SpacePoint;
+import org.jiserte.biopdb.structures.SpacePointLineParser;
 
 public class ResidueDistanceCalculator {
 	

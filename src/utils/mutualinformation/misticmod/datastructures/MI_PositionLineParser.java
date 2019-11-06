@@ -1,9 +1,9 @@
 package utils.mutualinformation.misticmod.datastructures;
 
 import utils.mutualinformation.misticmod.datastructures.format.FormatContainer;
-import io.onelinelister.OneLineListReader;
+import io.onelinelister.LineParser;
 
-public class MI_PositionLineParser implements OneLineListReader.LineParser<MI_Position>{
+public class MI_PositionLineParser implements LineParser<MI_Position>{
 
 	private FormatContainer container = new FormatContainer();
 	

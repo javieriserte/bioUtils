@@ -1,6 +1,6 @@
 package utils.mutualinformation.misticmod.onepixelmap;
 
-import io.onelinelister.OneLineListReader;
+import io.onelinelister.LineParser;
 
 import java.util.List;
 
@@ -8,7 +8,7 @@ import utils.mutualinformation.misticmod.datastructures.MI_PositionWithProtein;
 
 ////////////////////////////////////////////////////////////////////////////
 // Auxiliary classes
-class MI_PosLinePaser implements OneLineListReader.LineParser<MI_PositionWithProtein>{
+class MI_PosLinePaser implements LineParser<MI_PositionWithProtein>{
 
 	List<Integer> lengths;
 	

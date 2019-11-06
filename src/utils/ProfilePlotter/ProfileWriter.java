@@ -25,10 +25,10 @@ import org.jfree.chart.renderer.category.BoxAndWhiskerRenderer;
 import org.jfree.data.statistics.DefaultBoxAndWhiskerCategoryDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
-import org.jfree.ui.Layer;
-import org.jfree.ui.RectangleAnchor;
-import org.jfree.ui.RectangleInsets;
-import org.jfree.ui.TextAnchor;
+import org.jfree.chart.ui.Layer;
+import org.jfree.chart.ui.RectangleAnchor;
+import org.jfree.chart.ui.RectangleInsets;
+import org.jfree.chart.ui.TextAnchor;
 
 import cmdGA.NoOption;
 import cmdGA.Parser;
@@ -192,7 +192,8 @@ public class ProfileWriter {
 	        	
 	        	renderer.setSeriesPaint(i, currentColor);
 	        	
-	        	renderer.setBasePaint(currentColor);
+//	        	renderer.setBasePaint(currentColor);
+	        	renderer.setArtifactPaint(currentColor);
 	        	
 	        }
 	        
